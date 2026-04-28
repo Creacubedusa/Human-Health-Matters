@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(winget --version)",
+      "Bash(powershell.exe -Command ' *)",
+      "Bash(\"C:/Users/USER/Android/Sdk/platform-tools/adb.exe\" logcat *)"
+    ]
+  }
+}

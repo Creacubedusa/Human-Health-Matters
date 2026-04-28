@@ -1,0 +1,659 @@
+{
+  "splash": {
+    "subtitle": "Human Health Matters",
+    "tagline": "Plataforma Sin Comisiones",
+    "loading": "Inicializando tu aplicación de telesalud con IA"
+  },
+  "common": {
+    "back": "Regresar",
+    "continue": "Continuar",
+    "retry": "Intentar de nuevo",
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "noData": "Nada aquí todavía"
+  },
+  "selectLanguage": {
+    "headerTitle": "Idioma",
+    "title": "Selecciona tu idioma preferido",
+    "english": "Inglés (EE. UU.)",
+    "spanish": "Español",
+    "save": "Guardar",
+    "cardHint": "Toca dos veces para seleccionar este idioma"
+  },
+  "patientGetStarted": {
+    "title": "Comienza con HHMS",
+    "subtitle": "HHMS te ayuda a encontrar atención, entender tu salud, sin costo alguno—todo en un solo lugar",
+    "signUp": "Registrarse",
+    "logIn": "Iniciar sesión"
+  },
+  "patientOnboarding": {
+    "getStarted": "Comenzar",
+    "slide1Title": "Salud más inteligente, hecha para ti",
+    "slide1Subtitle": "Un sistema integrado de IA, atención clínica, seguro y apoyo de donantes—para que recibas tratamiento sin barreras.",
+    "slide2Title": "Siéntete escuchado. Recibe la atención correcta.",
+    "slide2Subtitle": "Habla con un médico certificado mientras la IA escucha, captura tu historia y asegura que nada importante se pase por alto.",
+    "slide3Title": "Salud sin fronteras ni barreras.",
+    "slide3Subtitle": "Si tu seguro no cubre todo, puedes recibir apoyo para el costo restante—para que nada te separe de la atención."
+  },
+  "patientSignUp": {
+    "title": "Crear una cuenta",
+    "subtitle": "Por favor completa los datos a continuación",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "phone": "Número de teléfono",
+    "password": "Contraseña",
+    "passwordStrengthTitle": "La contraseña debe contener:",
+    "passwordRule8Chars": "Al menos 8 caracteres",
+    "passwordRule1Number": "Al menos 1 número",
+    "passwordRule1Special": "Al menos 1 carácter especial",
+    "passwordRule1Upper": "Al menos 1 letra mayúscula",
+    "passwordRule1Lower": "Al menos 1 letra minúscula",
+    "showPassword": "Mostrar",
+    "hidePassword": "Ocultar",
+    "termsPrefix": "Al registrarte aceptas nuestros",
+    "terms": "Términos",
+    "signUp": "Registrarse",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "signIn": "Iniciar sesión",
+    "errors": {
+      "firstNameRequired": "El nombre es obligatorio",
+      "lastNameRequired": "El apellido es obligatorio",
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailInvalid": "Por favor ingresa un correo válido",
+      "phoneRequired": "El número de teléfono es obligatorio",
+      "phoneInvalid": "Por favor ingresa un número de teléfono válido",
+      "passwordRequired": "La contraseña es obligatoria",
+      "submitFailedTitle": "Registro fallido",
+      "submitFailed": "Algo salió mal. Por favor intenta de nuevo."
+    }
+  },
+  "patientVerify": {
+    "title": "Verificación Requerida",
+    "subtitlePrefix": "Enviamos un código de 6 dígitos a",
+    "timerLabel": "{{minutes}}:{{seconds}}",
+    "verify": "Verificar",
+    "resendCode": "Reenviar Código",
+    "errors": {
+      "invalidCode": "Código incorrecto. Por favor intenta de nuevo.",
+      "submitFailed": "Algo salió mal. Por favor intenta de nuevo.",
+      "resendFailed": "No se pudo reenviar el código. Por favor intenta de nuevo."
+    }
+  },
+  "patientProfile": {
+    "headerTitle": "Configurar perfil",
+    "next": "Siguiente",
+    "skip": "Omitir",
+    "back": "Regresar",
+    "submit": "Enviar",
+    "step1Title": "Configuremos tu perfil",
+    "genderLabel": "Género",
+    "dobLabel": "Fecha de nacimiento",
+    "nationalityLabel": "Nacionalidad",
+    "addressLabel": "Dirección",
+    "step2Title": "¿Cuál es tu peso?",
+    "step2Subtitle": "Tu peso nos ayuda a darte mejores recomendaciones de salud.",
+    "weightLabel": "Peso",
+    "step3Title": "¿Cuál es tu estatura?",
+    "step3Subtitle": "Tu estatura nos ayuda a personalizar tus recomendaciones.",
+    "unitCm": "cm",
+    "unitFeet": "Pies",
+    "unitInches": "pulgadas",
+    "step4Title": "¿Tienes diabetes?",
+    "diabetesType1": "Sí, Tipo 1",
+    "diabetesType2": "Sí, Tipo 2",
+    "diabetesGest": "Sí, Gestacional",
+    "diabetesNo": "No",
+    "diabetesPreferNot": "Prefiero no decir",
+    "step5Title": "¿Qué medicamento usas para manejar tu diabetes?",
+    "medicationInsulin": "Insulina",
+    "insulinRapidActing": "Acción rápida",
+    "medicationAntidiabetic": "Antidiabéticos",
+    "antidiabeticMetformin": "Metformina",
+    "medicationOther": "Otros",
+    "otherSpecifyPlaceholder": "especifica",
+    "step6Title": "¿Historial familiar de diabetes?",
+    "step6Subtitle": "Indica si algún familiar de primer grado ha sido diagnosticado con diabetes.",
+    "yes": "Sí",
+    "no": "No",
+    "unknown": "Desconocido",
+    "step7Title": "¿Otras enfermedades crónicas?",
+    "step7Subtitle": "Indica si has sido diagnosticado con alguna condición crónica",
+    "chronicHypertension": "Hipertensión",
+    "chronicAsthma": "Asma",
+    "chronicHeartDisease": "Enfermedad cardíaca",
+    "chronicOthers": "Otros",
+    "step8Title": "¿Historial familiar general?",
+    "step8Subtitle": "Indica si algún familiar de primer grado ha sido diagnosticado con estas condiciones",
+    "familyHypertension": "Hipertensión",
+    "familyHeartDisease": "Enfermedad cardíaca",
+    "familyStroke": "Accidente cerebrovascular",
+    "familyCancer": "Cáncer",
+    "familyOthers": "Otros",
+    "step9Title": "¿Tienes alguna alergia?",
+    "step9Subtitle": "Si es así, por favor especifica",
+    "allergyFood": "Alergias alimentarias",
+    "allergyMedication": "Alergias a medicamentos",
+    "allergyEnvironmental": "Alergias ambientales (polen)",
+    "allergyOther": "Otras alergias",
+    "step10Title": "¿Has tenido operaciones?",
+    "step10Subtitle": "Por favor lista las cirugías que te has realizado",
+    "operationType": "Tipo de operación",
+    "surgeriesPlaceholder": "Ej. Cirugía cardíaca",
+    "errors": {
+      "genderRequired": "Por favor selecciona tu género",
+      "dobRequired": "La fecha de nacimiento es obligatoria",
+      "nationalityRequired": "La nacionalidad es obligatoria",
+      "addressRequired": "La dirección es obligatoria",
+      "weightRequired": "Por favor ingresa tu peso",
+      "heightRequired": "Por favor ingresa tu estatura",
+      "diabetesRequired": "Por favor indica si tienes diabetes",
+      "submitFailed": "Algo salió mal. Por favor intenta de nuevo."
+    }
+  },
+  "selectRole": {
+    "headerTitle": "Selecciona tu rol",
+    "title": "Selecciona tu rol",
+    "patient": {
+      "title": "Paciente",
+      "description": "Necesito atención"
+    },
+    "doctor": {
+      "title": "Doctor",
+      "description": "Brindo atención"
+    },
+    "donor": {
+      "title": "Donante",
+      "description": "Quiero donar"
+    }
+  },
+  "tabs": {
+    "home": "Inicio",
+    "appointment": "Cita",
+    "care": "Cuidado",
+    "profile": "Perfil",
+    "triage": "Triaje",
+    "consultations": "Consultas"
+  },
+  "nuraAI": {
+    "title": "Nura IA",
+    "headerTitle": "Nura IA",
+    "placeholder": "Chatea con Nura",
+    "howCanIHelp": "¿En qué puedo ayudarte?",
+    "suggestion1": "¿Qué debo evitar con la presión arterial alta?",
+    "suggestion2": "¿Qué podría causar falta de aliento?",
+    "menuNewChat": "Nuevo chat",
+    "menuHistory": "Historial",
+    "viewResult": "Ver resultado",
+    "historyTitle": "Historial",
+    "historyEmpty": "Aún no hay historial de triaje.",
+    "viewSummary": "Ver Resumen",
+    "summaryTitle": "Resumen",
+    "assessmentSummary": "Resumen de Evaluación",
+    "recommendedSteps": "Próximos Pasos Recomendados",
+    "triageResultTitle": "Resultado del Triaje",
+    "urgencyLevel": "Nivel de urgencia",
+    "connectDoctor": "Conectar con un Doctor",
+    "saveWishlist": "Guardar en Lista de Deseos",
+    "alertEmergency": "No necesitas seguro para conectarte con un doctor. Nuestra plataforma lo cubre siempre que tu caso esté dentro de nuestra cobertura.",
+    "alertWishlist": "Por el momento, nuestra plataforma está enfocada en pacientes con condiciones crónicas. Según tu evaluación, este tipo de atención aún no está disponible.",
+    "severity": {
+      "emergency": "Emergencia",
+      "urgent": "Urgente",
+      "moderate": "Moderado",
+      "low": "Bajo"
+    },
+    "typing": "Nura está escribiendo…",
+    "errorMessage": "Algo salió mal. Por favor intenta de nuevo.",
+    "wishlistSaved": "Guardado en tu lista de deseos."
+  },
+  "patientLogin": {
+    "title": "Bienvenido de vuelta",
+    "subtitle": "Selecciona cómo quieres iniciar sesión",
+    "methodEmail": "Correo",
+    "methodPhone": "Teléfono",
+    "methodSelectorLabel": "Método de inicio de sesión",
+    "emailPlaceholder": "Correo electrónico",
+    "phonePlaceholder": "Número de teléfono",
+    "passwordPlaceholder": "Contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "logIn": "Iniciar sesión",
+    "noAccount": "¿No tienes una cuenta?",
+    "signUp": "Regístrate",
+    "errors": {
+      "emailRequired": "El correo es obligatorio",
+      "emailInvalid": "Ingresa un correo válido",
+      "phoneRequired": "El teléfono es obligatorio",
+      "phoneInvalid": "Ingresa un número de teléfono válido",
+      "passwordRequired": "La contraseña es obligatoria",
+      "submitFailed": "Credenciales inválidas. Intenta de nuevo."
+    }
+  },
+  "patientForgotPassword": {
+    "title": "Restablecer contraseña",
+    "subtitle": "Ingresa tu información para restablecer tu contraseña",
+    "identifierPlaceholder": "Correo o número de teléfono",
+    "sendCode": "Enviar código",
+    "rememberPassword": "¿No recibiste ningún código?",
+    "backToLogin": "Reenviar código",
+    "errors": {
+      "identifierRequired": "Correo o teléfono es obligatorio",
+      "identifierInvalid": "Ingresa un correo o teléfono válido",
+      "submitFailed": "Algo salió mal. Intenta de nuevo."
+    }
+  },
+  "patientResetVerify": {
+    "title": "Verificación requerida",
+    "subtitlePrefix": "Enviamos un código de 6 dígitos a",
+    "verify": "Verificar",
+    "resendCode": "Reenviar código",
+    "errors": {
+      "invalidCode": "Código incorrecto. Intenta de nuevo.",
+      "resendFailed": "No se pudo reenviar el código. Intenta de nuevo."
+    }
+  },
+  "patientSetPassword": {
+    "title": "Establecer nueva contraseña",
+    "subtitle": "Ingresa tu nueva contraseña dos veces",
+    "newPasswordPlaceholder": "Nueva contraseña",
+    "confirmPasswordPlaceholder": "Confirmar contraseña",
+    "changePassword": "Cambiar contraseña",
+    "errors": {
+      "passwordRequired": "La contraseña es obligatoria",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+      "confirmRequired": "Por favor confirma tu contraseña",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "submitFailed": "Algo salió mal. Intenta de nuevo."
+    }
+  },
+  "notifications": {
+    "headerTitle": "Notificación",
+    "filterAll": "Todos",
+    "filterRead": "Leídos",
+    "filterUnread": "No leídos",
+    "emptyTitle": "Aún no hay notificaciones",
+    "emptySubtitle": "Tus notificaciones aparecerán aquí una vez que tengas una",
+    "ctaJoin": "Unirse",
+    "ctaViewReport": "Ver reporte",
+    "ctaCheck": "Verificar",
+    "errorMessage": "No se pudieron cargar las notificaciones"
+  },
+  "patientHome": {
+    "headerTitle": "Inicio",
+    "welcome": "Bienvenido,",
+    "greeting": "Hola  {{name}}",
+    "greetingFallback": "Hola",
+    "active": "Activo",
+    "byDoctor": "Por {{name}}, {{specialty}}",
+    "viewCarePlan": "Ver Plan de Cuidado",
+    "quickAction": "Acción Rápida",
+    "book": "Reservar",
+    "diagnosis": "Diagnóstico",
+    "prescription": "Receta",
+    "test": "Prueba",
+    "checkSymptomTitle": "Revisa tus síntomas",
+    "checkSymptomDesc": "Nuestra enfermera IA, Nura, evalúa tus síntomas y te dirige al cuidado correcto",
+    "checkSymptomDescShort": "Nura evalúa tus síntomas y guía tu próximo paso",
+    "start": "Iniciar",
+    "recentActivity": "Actividad Reciente",
+    "symptomCheck": "Revisión de síntomas",
+    "communityFund": "Fondo de Salud Comunitario",
+    "join": "Unirse",
+    "upcoming": "Próximo",
+    "completed": "Completado",
+    "emergency": "Emergencia",
+    "low": "Bajo",
+    "moderate": "Moderado",
+    "applied": "Aplicado",
+    "emptyTitle": "¡Ups! Sin actividad reciente",
+    "emptyDesc": "Actualmente no tienes ninguna actividad. Comienza haciendo clic en el botón \"Revisar síntomas\"",
+    "checkSymptoms": "Revisar síntomas",
+    "careFunding": "Tu financiamiento de cuidado",
+    "totalCost": "Costo total",
+    "insurance": "Seguro {{percent}}%",
+    "donor": "Donante {{percent}}%",
+    "errorMessage": "No se pudo cargar tu panel"
+  },
+  "insuranceCoverage": {
+    "headerTitle": "Seguro",
+    "verifyingHeaderTitle": "Verificando cobertura",
+    "coverageHeaderTitle": "Cobertura del seguro",
+    "devScenarioLabel": "Escenario de desarrollo",
+    "devScenarioHelper": "Úsalo para forzar un resultado simulado de cobertura mientras construyes este flujo.",
+    "emptyResultDescription": "No pudimos encontrar un resultado de cobertura para esta sesión. Regresa e inténtalo de nuevo.",
+    "entry": {
+      "title": "Seguro",
+      "subtitle": "Por favor, elige una de estas opciones. Esto nos ayuda a conocer tu estado actual de cobertura.",
+      "hasInsurance": "Sí, tengo seguro",
+      "noInsurance": "No, no tengo seguro"
+    },
+    "actions": {
+      "next": "Siguiente",
+      "checkCoverage": "Revisar mi cobertura",
+      "submit": "Enviar",
+      "bookConsultation": "Reservar consulta",
+      "retryVerification": "Reintentar verificación",
+      "editInsuranceDetails": "Editar datos del seguro",
+      "requestDonorSupport": "Solicitar apoyo de donantes",
+      "saveToWishlist": "Guardar en deseos"
+    },
+    "stepper": {
+      "patientInfo": "Datos del paciente",
+      "insuranceInfo": "Datos del seguro",
+      "subscriberInfo": "Datos del titular"
+    },
+    "patientInfo": {
+      "title": "Información del paciente",
+      "firstNameLabel": "Nombre *",
+      "firstNamePlaceholder": "Nombre",
+      "lastNameLabel": "Apellido *",
+      "lastNamePlaceholder": "Apellido",
+      "dateOfBirthLabel": "Fecha de nacimiento *",
+      "dateOfBirthPlaceholder": "DD/MM/AAAA",
+      "genderLabel": "Género",
+      "genderPlaceholder": "Selecciona género"
+    },
+    "insuranceInfo": {
+      "title": "Información del seguro",
+      "providerLabel": "Proveedor del seguro",
+      "providerHelper": "Por el momento solo admitimos United Healthcare",
+      "memberIdLabel": "ID de miembro *",
+      "memberIdPlaceholder": "ej. UHC123456789",
+      "groupNumberLabel": "Número de grupo",
+      "groupNumberPlaceholder": "ej. GRP-001"
+    },
+    "subscriberInfo": {
+      "title": "Información del titular",
+      "subtitle": "Completa esto si no eres el titular",
+      "firstNameLabel": "Nombre del titular",
+      "firstNamePlaceholder": "Nombre",
+      "lastNameLabel": "Apellido del titular",
+      "lastNamePlaceholder": "Apellido",
+      "dateOfBirthLabel": "Fecha de nacimiento del titular",
+      "dateOfBirthPlaceholder": "DD/MM/AAAA",
+      "relationshipLabel": "Relación con el titular",
+      "relationshipPlaceholder": "ej. Cónyuge"
+    },
+    "noInsurance": {
+      "title": "Verificación sin reclamo de seguro",
+      "subtitle": "Por favor completa los datos a continuación",
+      "fullNameLabel": "Nombre completo",
+      "fullNamePlaceholder": "Nombre completo",
+      "fullNameHelper": "Tal como aparece en tu documento legal",
+      "dateOfBirthLabel": "Fecha de nacimiento *",
+      "dateOfBirthPlaceholder": "Fecha de nacimiento",
+      "employmentStatusLabel": "Situación laboral *",
+      "employmentStatusPlaceholder": "Selecciona tu situación laboral",
+      "householdSizeLabel": "Tamaño del hogar *",
+      "householdSizePlaceholder": "Tamaño del hogar",
+      "householdIncomeLabel": "Ingresos del hogar *",
+      "householdIncomePlaceholder": "Ingresos del hogar",
+      "proofOfIncomeLabel": "Comprobante de ingresos *",
+      "proofOfIncomePlaceholder": "Subir",
+      "uploading": "Subiendo...",
+      "permissionTitle": "Permiso requerido",
+      "permissionDescription": "Permite el acceso a tu galería de fotos."
+    },
+    "verifying": {
+      "title": "Revisando tu seguro...",
+      "infoTitle": "Esto normalmente tarda de 30 a 60 segundos",
+      "infoDescription": "Ten paciencia mientras verificamos tu cobertura.",
+      "steps": {
+        "insuranceDetails": "Verificando datos del seguro",
+        "fetchingBenefits": "Obteniendo beneficios",
+        "checkingSupport": "Revisando disponibilidad de apoyo"
+      }
+    },
+    "results": {
+      "profileSubtitle": "Miembro · ID {{memberId}}",
+      "inactiveProfileSubtitle": "No encontramos un plan activo",
+      "inconclusiveProfileSubtitle": "Todavía no pudimos confirmar este plan",
+      "status": {
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "inconclusive": "Inconcluso"
+      },
+      "eligibility": {
+        "unknown": "Pendiente",
+        "eligible": "Elegible",
+        "ineligible": "No elegible",
+        "inconclusive": "Inconcluso"
+      },
+      "fullyCoveredTitle": "Cobertura confirmada",
+      "fullyCoveredDescription": "Tu seguro cubre completamente esta consulta, así que puedes continuar de inmediato.",
+      "partialWithDonorTitle": "HMM no cobra comisiones.",
+      "partialWithDonorDescription": "Cualquier costo restante después de que pague tu seguro es cubierto por nuestra comunidad de donantes — no se te cobrará.",
+      "donorUnavailableTitle": "Fondos de donantes temporalmente no disponibles",
+      "donorUnavailableDescription": "Tu seguro deja un saldo restante, pero el apoyo de donantes no está disponible en este momento.",
+      "donorUnavailableNoInsuranceDescription": "El apoyo de donantes no está disponible en este momento, así que todavía no existe una ruta válida de pago para esta consulta.",
+      "inactiveTitle": "Seguro inactivo",
+      "inactiveDescription": "No pudimos encontrar un plan activo de UHC con los datos ingresados.",
+      "donorApprovedTitle": "Apoyo de donantes aprobado",
+      "donorApprovedDescription": "Nuestro fondo de donantes puede cubrir esta consulta, así que puedes continuar.",
+      "inconclusiveTitle": "Verificación inconclusa",
+      "inconclusiveDescription": "Necesitamos que revises los datos a continuación y vuelvas a intentar la verificación.",
+      "wishlistSavedTitle": "Guardado para después",
+      "wishlistSavedDescription": "Hemos guardado esta solicitud de consulta en tu lista de deseos.",
+      "insurancePays": "El seguro paga",
+      "uhcPays": "UHC paga ({{percent}}%)",
+      "groupLabel": "Grupo",
+      "telehealthLabel": "Telemedicina",
+      "donorSupportLabel": "APOYO DE DONANTES HMM",
+      "donorSupportSubtitle": "Revisión de apoyo comunitario para tu consulta",
+      "incomeLabel": "Ingresos",
+      "supportLabel": "Apoyo",
+      "coverageBreakdownTitle": "Desglose de cobertura",
+      "consultationLabel": "Consulta",
+      "standardCopayLabel": "Copago estándar del paciente",
+      "donorCoversLabel": "Los donantes de HMM cubren",
+      "youPayLabel": "Tú pagas",
+      "outOfPocketLabel": "Tu saldo de bolsillo",
+      "availableFromDonors": "${{amount}} disponibles de donantes",
+      "missingValue": "—",
+      "notAvailable": "N/D",
+      "covered": "Cubierto",
+      "approved": "Aprobado",
+      "pending": "Pendiente",
+      "inNetwork": "Dentro de la red",
+      "no": "No",
+      "yesIncluded": "Sí — incluido"
+    },
+    "benefits": {
+      "title": "Tu beneficio UHC (FYI)",
+      "planType": "Tipo de plan",
+      "network": "Red",
+      "deductible": "Deducible cubierto",
+      "referralRequired": "Referencia requerida",
+      "priorAuthorization": "Autorización previa",
+      "rxCoverage": "Cobertura Rx"
+    },
+    "bookingDisabledReason": "Necesitas cobertura o apoyo de donantes antes de continuar",
+    "errors": {
+      "firstNameRequired": "El nombre es obligatorio",
+      "lastNameRequired": "El apellido es obligatorio",
+      "dateOfBirthRequired": "La fecha de nacimiento es obligatoria",
+      "genderRequired": "Por favor selecciona un género",
+      "memberIdRequired": "El ID de miembro es obligatorio",
+      "fullNameRequired": "El nombre completo es obligatorio",
+      "employmentStatusRequired": "La situación laboral es obligatoria",
+      "householdSizeRequired": "El tamaño del hogar es obligatorio",
+      "householdIncomeRequired": "Los ingresos del hogar son obligatorios",
+      "proofOfIncomeRequired": "El comprobante de ingresos es obligatorio",
+      "verificationFailedTitle": "La verificación falló",
+      "verificationFailed": "No pudimos verificar la cobertura en este momento. Regresa e inténtalo de nuevo."
+    },
+    "employment": {
+      "unemployed": "Desempleado",
+      "employedFullTime": "Empleado (tiempo completo)",
+      "employedPartTime": "Empleado (tiempo parcial)",
+      "selfEmployed": "Autónomo / Freelancer",
+      "student": "Estudiante",
+      "retired": "Jubilado",
+      "unableToWork": "Incapaz de trabajar (por salud/discapacidad)"
+    },
+    "relationship": {
+      "self": "Yo mismo",
+      "spouse": "Cónyuge",
+      "parent": "Padre o madre",
+      "child": "Hijo o hija",
+      "other": "Otro"
+    },
+    "gender": {
+      "female": "Femenino",
+      "male": "Masculino",
+      "other": "Otro"
+    }
+  },
+  "appointmentManagement": {
+    "headerTitle": "Cita",
+    "policyHeaderTitle": "Política",
+    "rescheduleHeaderTitle": "Reprogramar",
+    "cancelHeaderTitle": "Cancelar cita",
+    "upcomingLabel": "Próxima cita",
+    "atLabel": "a las",
+    "listTitle": "Lista de citas",
+    "bookAppointment": "Reservar cita",
+    "cancelBtn": "Cancelar",
+    "rescheduleBtn": "Reprogramar",
+    "next": "Siguiente",
+    "goBack": "Volver",
+    "noUpcoming": "Sin próximas citas",
+    "emptyTitle": "Aún no tienes citas",
+    "emptySubtitle": "Tu historial de citas aparecerá aquí una vez que reserves",
+    "errorMessage": "Error al cargar las citas",
+    "cancelConfirmMessage": "Estás a punto de cancelar tu cita. Ver política",
+    "rescheduleConfirmMessage": "Estás a punto de reprogramar tu cita. Ver política",
+    "noCancel": "No, Cancelar",
+    "yesSure": "Sí, claro",
+    "cancelSuccessMessage": "Nos entristece que canceles tu cita. Si cambias de opinión, vuelve a reservar",
+    "rescheduleSuccessMessage": "La fecha de tu cita ha sido cambiada exitosamente. Puedes ver los cambios en la sección de citas",
+    "policy": {
+      "reschedule": {
+        "title": "Reprogramar tu cita",
+        "body": "Entendemos que pueden surgir cambios inesperados. Si no puedes asistir a tu cita programada, puedes reprogramarla fácilmente:",
+        "bullet1": "Por favor reprograma con al menos 24 horas de anticipación",
+        "bullet2": "Las citas reprogramadas están sujetas a la disponibilidad del proveedor",
+        "bullet3": "Una vez confirmado el nuevo horario, recibirás una notificación actualizada"
+      },
+      "cancel": {
+        "title": "Cancelar tu cita",
+        "body": "Puedes cancelar tu cita en cualquier momento antes de que comience. Ten en cuenta lo siguiente:",
+        "bullet1": "Las cancelaciones con al menos 24 horas de anticipación pueden ser elegibles para reembolso completo",
+        "bullet2": "Las cancelaciones tardías o citas perdidas pueden no ser elegibles para reembolso",
+        "bullet3": "Las cancelaciones frecuentes pueden afectar tu capacidad de reservar futuras sesiones",
+        "bullet4": "Cancelar con anticipación permite que otros pacientes usen el espacio"
+      }
+    },
+    "reason": {
+      "reschedule": {
+        "question": "¿Por qué quieres reprogramar?",
+        "importantEvent": "Tengo un evento importante al que asistir",
+        "notAvailable": "No estaré disponible en ese horario",
+        "noDisclose": "No quiero decirlo",
+        "nothing": "Nada",
+        "others": "Otros"
+      },
+      "cancel": {
+        "question": "¿Por qué quieres cancelar?",
+        "recovered": "Me he recuperado de la enfermedad",
+        "badService": "No me gusta el servicio",
+        "badDoctor": "No me gusta el médico",
+        "noDisclose": "No quiero decirlo",
+        "others": "Otros"
+      }
+    }
+  },
+  "appointmentBooking": {
+    "headers": {
+      "default": "Reservar cita",
+      "details": "Appointmnet",
+      "dateTime": "Reservar"
+    },
+    "finding": {
+      "title": "Buscando tu mejor opción"
+    },
+    "nura": {
+      "title": "Nura IA"
+    },
+    "filters": {
+      "aiRecommended": "Recomendado por IA",
+      "availableNow": "Disponible ahora",
+      "topRated": "Mejor valorado"
+    },
+    "actions": {
+      "selectDoctor": "Seleccionar doctor",
+      "next": "Siguiente",
+      "makeAppointment": "Hacer cita",
+      "addToCalender": "Add to Calender"
+    },
+    "details": {
+      "aboutTitle": "Acerca de",
+      "availabilityTitle": "Disponibilidad",
+      "stats": {
+        "patients": "Pacientes",
+        "experience": "Exp.",
+        "rating": "Calificación"
+      }
+    },
+    "dateTime": {
+      "availableTimeSlotTitle": "Horario disponible"
+    },
+    "success": {
+      "messagePrefix": "Has reservado correctamente una cita con"
+    },
+    "states": {
+      "errorTitle": "No pudimos cargar las recomendaciones de doctores",
+      "errorDescription": "Inténtalo de nuevo para continuar con la reserva de tu cita.",
+      "emptyTitle": "No hay doctores disponibles en este momento",
+      "emptyDescription": "Todavía no pudimos encontrar una coincidencia de doctor para esta sesión."
+    },
+    "weekdays": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    }
+  },
+  "doctorHome": {
+    "greeting": "Dr. {{name}}",
+    "greetingFallback": "Bienvenido, Doctor",
+    "pendingCard": {
+      "title": "Consultas pendientes",
+      "none": "Sin consultas pendientes"
+    },
+    "statsCard": {
+      "title": "Esta semana",
+      "consultations": "Consultas",
+      "patients": "Pacientes"
+    },
+    "recentPatients": "Pacientes recientes",
+    "noPatients": "Sin pacientes aún",
+    "noPatientsHint": "Acepta una consulta para comenzar",
+    "onboardingBanner": "Completa tu perfil para aceptar consultas",
+    "completeProfile": "Completar perfil",
+    "errorMessage": "No se pudo cargar tu panel"
+  },
+  "donorHome": {
+    "greeting": "Hola, {{name}}",
+    "greetingFallback": "¡Hola!",
+    "impactCard": {
+      "title": "Tu impacto",
+      "totalDonated": "Total donado",
+      "patientsHelped": "Pacientes ayudados"
+    },
+    "poolCard": {
+      "title": "Pool de donantes",
+      "balance": "Saldo actual",
+      "donateNow": "Donar ahora"
+    },
+    "recentActivity": "Actividad reciente",
+    "noActivity": "Sin donaciones aún",
+    "noActivityHint": "Tu primera donación ayuda a un paciente a recibir atención",
+    "errorMessage": "No se pudo cargar tu panel"
+  }
+}

@@ -1,0 +1,147 @@
+:root {
+  /* ── Primitive: Primary ── */
+  --color-primary-50:  #EDEFFE;
+  --color-primary-100: #C8CEFC;
+  --color-primary-200: #AEB6FB;
+  --color-primary-300: #8895F9;
+  --color-primary-400: #7181F8;
+  --color-primary-500: #4E61F6;
+  --color-primary-600: #4758E0;
+  --color-primary-700: #3745AF;
+  --color-primary-800: #2B3587;
+  --color-primary-900: #212967;
+
+  /* ── Primitive: Grey ── */
+  --color-grey-50:  #F9FAFB;
+  --color-grey-100: #F3F4F6;
+  --color-grey-200: #E5E7EA;
+  --color-grey-300: #D2D5DB;
+  --color-grey-400: #9EA2AE;
+  --color-grey-500: #6D717F;
+  --color-grey-600: #4D5461;
+  --color-grey-700: #394050;
+  --color-grey-800: #212936;
+  --color-grey-900: #131927;
+
+  /* ── Primitive: Green ── */
+  --color-green-50:  #ECF8EF;
+  --color-green-100: #C5E9CD;
+  --color-green-200: #A9DEB4;
+  --color-green-300: #81CF92;
+  --color-green-400: #69C57D;
+  --color-green-500: #43B75D;
+  --color-green-600: #3DA755;
+  --color-green-700: #308242;
+  --color-green-800: #256533;
+  --color-green-900: #1C4D27;
+
+  /* ── Primitive: Red ── */
+  --color-red-50:  #FDECEC;
+  --color-red-100: #FAC5C3;
+  --color-red-200: #F7A9A7;
+  --color-red-300: #F4827E;
+  --color-red-400: #F16965;
+  --color-red-500: #EE443F;
+  --color-red-600: #D93E39;
+  --color-red-700: #A9302D;
+  --color-red-800: #832523;
+  --color-red-900: #641D1A;
+
+  /* ── Primitive: Yellow ── */
+  --color-yellow-50:  #FFF7E6;
+  --color-yellow-100: #FFE5B0;
+  --color-yellow-200: #FFD88A;
+  --color-yellow-300: #FFC654;
+  --color-yellow-400: #FFBB33;
+  --color-yellow-500: #FFAA00;
+  --color-yellow-600: #E89B00;
+  --color-yellow-700: #B57900;
+  --color-yellow-800: #8C5E00;
+  --color-yellow-900: #6B4700;
+
+  /* ── Primitive: Blue ── */
+  --color-blue-50:  #E6F4FF;
+  --color-blue-100: #B0DEFF;
+  --color-blue-200: #8ACEFF;
+  --color-blue-300: #54B8FF;
+  --color-blue-400: #33AAFF;
+  --color-blue-500: #0095FF;
+  --color-blue-600: #0088E8;
+  --color-blue-700: #006AB5;
+  --color-blue-800: #00528C;
+  --color-blue-900: #003F6B;
+
+  /* ── Semantic: Backgrounds ── */
+  --bg-default: var(--color-grey-50);
+  --bg-surface: #FFFFFF;
+  --bg-subtle:  var(--color-grey-100);
+  --bg-muted:   var(--color-grey-200);
+  --bg-inverse: var(--color-grey-900);
+
+  /* ── Semantic: Borders ── */
+  --border-default: var(--color-grey-200);
+  --border-strong:  var(--color-grey-300);
+  --border-subtle:  var(--color-grey-100);
+  --border-brand:   var(--color-primary-600);
+
+  /* ── Semantic: Text ── */
+  --text-primary:   var(--color-grey-900);
+  --text-secondary: var(--color-grey-600);
+  --text-tertiary:  var(--color-grey-400);
+  --text-disabled:  var(--color-grey-300);
+  --text-inverse:   #FFFFFF;
+  --text-brand:     var(--color-primary-600);
+
+  /* ── Semantic: Actions ── */
+  --action-primary:        var(--color-primary-600);
+  --action-primary-hover:  var(--color-primary-700);
+  --action-primary-active: var(--color-primary-800);
+  --action-primary-subtle: var(--color-primary-50);
+  --action-primary-text:   #FFFFFF;
+
+  /* ── Semantic: Status ── */
+  --status-success:        var(--color-green-500);
+  --status-success-subtle: var(--color-green-50);
+  --status-success-strong: var(--color-green-700);
+  --status-error:          var(--color-red-500);
+  --status-error-subtle:   var(--color-red-50);
+  --status-error-strong:   var(--color-red-700);
+  --status-warning:        var(--color-yellow-500);
+  --status-warning-subtle: var(--color-yellow-50);
+  --status-warning-strong: var(--color-yellow-700);
+  --status-info:           var(--color-blue-500);
+  --status-info-subtle:    var(--color-blue-50);
+  --status-info-strong:    var(--color-blue-700);
+
+  /* ── Spacing ── */
+  --spacing-1:  4px;
+  --spacing-2:  8px;
+  --spacing-3:  12px;
+  --spacing-4:  16px;
+  --spacing-5:  20px;
+  --spacing-6:  24px;
+  --spacing-8:  32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+
+  /* ── Border Radius ── */
+  --radius-none: 0px;
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-full: 9999px;
+
+  /* ── Shadows ── */
+  --shadow-100: 0 2px 4px -2px rgba(19,25,39,.12), 0 4px 4px -2px rgba(19,25,39,.08);
+  --shadow-200: 0 4px 6px -4px rgba(19,25,39,.12), 0 8px 8px -4px rgba(19,25,39,.08);
+  --shadow-300: 0 6px 8px -6px rgba(19,25,39,.12), 0 8px 16px -6px rgba(19,25,39,.08);
+  --shadow-400: 0 6px 12px -6px rgba(19,25,39,.12), 0 8px 24px -4px rgba(19,25,39,.08);
+  --shadow-500: 0 6px 14px -6px rgba(19,25,39,.12), 0 10px 32px -4px rgba(19,25,39,.10);
+  --shadow-600: 0 8px 18px -6px rgba(19,25,39,.12), 0 12px 42px -4px rgba(19,25,39,.12);
+  --shadow-700: 0 8px 22px -6px rgba(19,25,39,.12), 0 14px 64px -4px rgba(19,25,39,.12);
+  --shadow-800: 0 8px 28px -6px rgba(19,25,39,.12), 0 18px 88px -4px rgba(19,25,39,.14);
+}

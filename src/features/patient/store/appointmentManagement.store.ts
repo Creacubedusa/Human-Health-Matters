@@ -1,0 +1,70 @@
+import { create } from 'zustand';
+import type {
+  CancelReason,
+  PatientAppointment,
+  RescheduleReason,
+} from '../types/appointmentManagement.types';
+
+interface AppointmentManagementState {
+  appointments: PatientAppointment[];
+  selectedId: string | null;
+  cancelModalOpen: boolean;
+  rescheduleModalOpen: boolean;
+  cancelReason: CancelReason | null;
+  rescheduleReason: RescheduleReason | null;
+  selectedDate: string | null;
+  selectedTimeSlotId: string | null;
+
+  setAppointments: (data: PatientAppointment[]) => void;
+  setSelectedId: (id: string | null) => void;
+  openCancelModal: (id: string) => void;
+  openRescheduleModal: (id: string) => void;
+  closeModals: () => void;
+  setCancelReason: (reason: CancelReason) => void;
+  setRescheduleReason: (reason: RescheduleReason) => void;
+  setSelectedDate: (isoDate: string | null) => void;
+  setSelectedTimeSlot: (id: string | null) => void;
+  applyCancel: () => void;
+  applyReschedule: (isoDate: string, timeSlotId: string) => void;
+}
+
+export const useAppointmentManagementStore = create<AppointmentManagementState>((set) => ({
+  appointments: [],
+  selectedId: null,
+  cancelModalOpen: false,
+  rescheduleModalOpen: false,
+  cancelReason: null,
+  rescheduleReason: null,
+  selectedDate: null,
+  selectedTimeSlotId: null,
+
+  setAppointments: (data) => set({ appointments: data }),
+  setSelectedId: (id) => set({ selectedId: id }),
+  openCancelModal: (id) => set({ selectedId: id, cancelModalOpen: true }),
+  openRescheduleModal: (id) => set({ selectedId: id, rescheduleModalOpen: true }),
+  closeModals: () => set({ cancelModalOpen: false, rescheduleModalOpen: false }),
+  setCancelReason: (reason) => set({ cancelReason: reason }),
+  setRescheduleReason: (reason) => set({ rescheduleReason: reason }),
+  setSelectedDate: (isoDate) => set({ selectedDate: isoDate, selectedTimeSlotId: null }),
+  setSelectedTimeSlot: (id) => set({ selectedTimeSlotId: id }),
+  applyCancel: () =>
+    set((state) => ({
+      appointments: state.appointments.map((a) =>
+        a.id === state.selectedId ? { ...a, status: 'cancelled', canCancel: false, canReschedule: false } : a
+      ),
+      cancelModalOpen: false,
+      cancelReason: null,
+      selectedId: null,
+    })),
+  applyReschedule: (_isoDate, _timeSlotId) =>
+    set((state) => ({
+      appointments: state.appointments.map((a) =>
+        a.id === state.selectedId ? { ...a, status: 'upcoming' } : a
+      ),
+      rescheduleModalOpen: false,
+      rescheduleReason: null,
+      selectedDate: null,
+      selectedTimeSlotId: null,
+      selectedId: null,
+    })),
+}));
