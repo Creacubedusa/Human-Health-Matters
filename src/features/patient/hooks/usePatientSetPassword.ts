@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { resetPassword } from '../services/auth.service';
+import { useAuthStore } from '@shared/store/auth.store';
 import type { SetPasswordErrors, SetPasswordForm } from '../types/patient.types';
 
 type Status = 'idle' | 'loading' | 'error' | 'success';
@@ -35,6 +36,7 @@ export interface UsePatientSetPasswordResult {
 }
 
 export function usePatientSetPassword(): UsePatientSetPasswordResult {
+  const pendingResetCode = useAuthStore((s) => s.pendingResetCode);
   const [form, setForm] = useState<SetPasswordForm>(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
@@ -54,7 +56,7 @@ export function usePatientSetPassword(): UsePatientSetPasswordResult {
     if (!isFormValid) return;
     setStatus('loading');
     try {
-      await resetPassword(form.newPassword);
+      await resetPassword(form.newPassword, pendingResetCode ?? '');
       setStatus('success');
       onSuccess();
     } catch {

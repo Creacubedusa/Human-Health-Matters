@@ -1,6 +1,6 @@
-import * as SecureStore from 'expo-secure-store';
 import { useCallback, useState } from 'react';
 import type { UserRole } from '@shared/components/ui/RoleCard';
+import { kvSet } from '@shared/storage/kv';
 
 const ROLE_KEY = 'app_role';
 
@@ -15,7 +15,7 @@ export function useSelectRole(): UseSelectRoleReturn {
 
   const handleContinue = useCallback(async () => {
     if (selectedRole !== null) {
-      await SecureStore.setItemAsync(ROLE_KEY, selectedRole);
+      await kvSet(ROLE_KEY, selectedRole);
     }
   }, [selectedRole]);
 

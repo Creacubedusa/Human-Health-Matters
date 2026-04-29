@@ -1,56 +1,50 @@
 import type { PatientSignUpPayload } from '../types/patient.types';
+import { http } from '@shared/api/http';
 
 export async function registerPatient(
   data: PatientSignUpPayload,
 ): Promise<{ userId: string }> {
-  // Stub — replace with real API call via shared/api
-  void data;
-  await new Promise<void>((r) => setTimeout(r, 1200));
-  return { userId: 'patient_123' };
+  const res = await http.post<{ userId: string }>('/auth/patients/register', data);
+  return res.data;
 }
 
 export async function verifyOtp(code: string): Promise<void> {
-  // Stub — replace with real API call via shared/api
-  void code;
-  await new Promise<void>((r) => setTimeout(r, 1000));
-  // Throw to simulate wrong code: throw new Error('invalid_code');
+  await http.post('/auth/otp/verify', { code });
 }
 
 export async function resendOtp(email: string): Promise<void> {
-  // Stub — replace with real API call via shared/api
-  void email;
-  await new Promise<void>((r) => setTimeout(r, 800));
+  await http.post('/auth/otp/resend', { email });
 }
 
 export async function loginWithEmail(
   email: string,
   password: string,
 ): Promise<{ userId: string }> {
-  void email; void password;
-  await new Promise<void>((r) => setTimeout(r, 1200));
-  return { userId: 'patient_123' };
+  const res = await http.post<{ userId: string; accessToken: string }>('/auth/login/email', { email, password });
+  return res.data;
 }
 
 export async function loginWithPhone(
   phone: string,
+  phoneCountryCode: string,
   password: string,
 ): Promise<{ userId: string }> {
-  void phone; void password;
-  await new Promise<void>((r) => setTimeout(r, 1200));
-  return { userId: 'patient_123' };
+  const res = await http.post<{ userId: string; accessToken: string }>('/auth/login/phone', {
+    phone,
+    phoneCountryCode,
+    password,
+  });
+  return res.data;
 }
 
 export async function sendResetCode(identifier: string): Promise<void> {
-  void identifier;
-  await new Promise<void>((r) => setTimeout(r, 1000));
+  await http.post('/auth/password/reset/request', { identifier });
 }
 
 export async function verifyResetOtp(code: string): Promise<void> {
-  void code;
-  await new Promise<void>((r) => setTimeout(r, 1000));
+  await http.post('/auth/password/reset/verify', { code });
 }
 
-export async function resetPassword(newPassword: string): Promise<void> {
-  void newPassword;
-  await new Promise<void>((r) => setTimeout(r, 1000));
+export async function resetPassword(newPassword: string, code: string): Promise<void> {
+  await http.post('/auth/password/reset/confirm', { newPassword, code });
 }

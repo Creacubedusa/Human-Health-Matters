@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { loginWithEmail, loginWithPhone } from '../services/auth.service';
 import { useAuthStore } from '@shared/store/auth.store';
+import { setAccessToken } from '@shared/api/token';
 import type { LoginErrors, LoginForm, LoginMethod } from '../types/patient.types';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -22,7 +23,7 @@ function validate(form: LoginForm, method: LoginMethod): LoginErrors {
   return e;
 }
 
-const EMPTY_FORM: LoginForm = { email: '', phone: '', password: '' };
+const EMPTY_FORM: LoginForm = { email: '', phone: '', phoneCountryCode: '+1', password: '' };
 
 export interface UsePatientLoginResult {
   form: LoginForm;
@@ -40,6 +41,7 @@ export interface UsePatientLoginResult {
 
 export function usePatientLogin(): UsePatientLoginResult {
   const setAuth = useAuthStore((s) => s.setAuth);
+  const setToken = useAuthStore((s) => s.setAccessToken);
 
   const [form, setForm] = useState<LoginForm>(EMPTY_FORM);
   const [signInMethod, setSignInMethod] = useState<LoginMethod>('email');
@@ -79,9 +81,15 @@ export function usePatientLogin(): UsePatientLoginResult {
     if (!isFormValid) return;
     setStatus('loading');
     try {
-      const { userId } = signInMethod === 'email'
+      const data = signInMethod === 'email'
         ? await loginWithEmail(form.email.trim(), form.password)
-        : await loginWithPhone(form.phone.trim(), form.password);
+        : await loginWithPhone(form.phone.trim(), form.phoneCountryCode, form.password);
+      const userId = (data as any).userId as string;
+      const accessToken = (data as any).accessToken as string | undefined;
+      if (accessToken) {
+        setToken(accessToken);
+        await setAccessToken(accessToken);
+      }
       setAuth(userId, 'patient');
       setStatus('success');
       onSuccess();

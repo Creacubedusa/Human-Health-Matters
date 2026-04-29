@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   Modal,
@@ -49,6 +49,7 @@ const COUNTRIES: Country[] = [
 export interface PhoneInputProps {
   value: string;
   onChangeText: (text: string) => void;
+  onChangeCountryCode?: (dialCode: string) => void;
   status?: InputStatus;
   helperText?: string;
   placeholder?: string;
@@ -78,6 +79,7 @@ const PLACEHOLDER_COLOR = primitiveColors['grey-400'];
 export function PhoneInput({
   value,
   onChangeText,
+  onChangeCountryCode,
   status = 'default',
   helperText,
   placeholder = 'Phone number',
@@ -89,6 +91,10 @@ export function PhoneInput({
   const [focused, setFocused] = useState(false);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<Country>(COUNTRIES[0]);
+
+  useEffect(() => {
+    onChangeCountryCode?.(selectedCountry.dialCode);
+  }, [onChangeCountryCode, selectedCountry.dialCode]);
 
   const containerState =
     disabled          ? 'disabled'
@@ -103,6 +109,7 @@ export function PhoneInput({
 
   function handleSelectCountry(country: Country) {
     setSelectedCountry(country);
+    onChangeCountryCode?.(country.dialCode);
     setPickerVisible(false);
   }
 

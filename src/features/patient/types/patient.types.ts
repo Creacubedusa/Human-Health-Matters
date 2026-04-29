@@ -24,6 +24,7 @@ export type LoginMethod = 'email' | 'phone';
 export interface LoginForm {
   email: string;
   phone: string;
+  phoneCountryCode: string;
   password: string;
 }
 
@@ -47,6 +48,7 @@ export interface SignUpForm {
   lastName: string;
   email: string;
   phone: string;
+  phoneCountryCode: string;
   password: string;
 }
 
@@ -57,6 +59,7 @@ export interface PatientSignUpPayload {
   lastName: string;
   email: string;
   phone: string;
+  phoneCountryCode: string;
   password: string;
 }
 

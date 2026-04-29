@@ -27,6 +27,7 @@ export interface UsePatientResetVerifyResult {
 
 export function usePatientResetVerify(): UsePatientResetVerifyResult {
   const pendingResetContact = useAuthStore((s) => s.pendingResetContact);
+  const setPendingResetCode = useAuthStore((s) => s.setPendingResetCode);
 
   const [code, setCode] = useState('');
   const [status, setStatus] = useState<Status>('idle');
@@ -68,6 +69,7 @@ export function usePatientResetVerify(): UsePatientResetVerifyResult {
     setErrorKey(null);
     try {
       await verifyResetOtp(code);
+      setPendingResetCode(code);
       setStatus('success');
       onSuccess();
     } catch {

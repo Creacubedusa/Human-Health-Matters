@@ -1,7 +1,8 @@
 import type { ProfileSetupPayload } from '../types/profile.types';
+import { http } from '@shared/api/http';
 
-// Stub — replace with real API call via shared/api
 export async function setupPatientProfile(data: ProfileSetupPayload): Promise<void> {
-  void data;
-  await new Promise<void>((r) => setTimeout(r, 1200));
+  const { userId, ...payload } = data;
+  void userId;
+  await http.post('/patients/profile/setup', { payload });
 }

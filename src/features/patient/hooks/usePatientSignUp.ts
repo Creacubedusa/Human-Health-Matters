@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
-import { registerPatient } from '../services/auth.service';
+import { loginWithEmail, registerPatient } from '../services/auth.service';
 import { useAuthStore } from '@shared/store/auth.store';
+import { setAccessToken } from '@shared/api/token';
 import type {
   PasswordStrength,
   SignUpErrors,
@@ -38,6 +39,7 @@ const EMPTY_FORM: SignUpForm = {
   lastName: '',
   email: '',
   phone: '',
+  phoneCountryCode: '+1',
   password: '',
 };
 
@@ -59,6 +61,7 @@ export interface UsePatientSignUpResult {
 export function usePatientSignUp(): UsePatientSignUpResult {
   const setAuth = useAuthStore((s) => s.setAuth);
   const setPendingEmail = useAuthStore((s) => s.setPendingEmail);
+  const setToken = useAuthStore((s) => s.setAccessToken);
 
   const [form, setForm] = useState<SignUpForm>(EMPTY_FORM);
   const [touched, setTouched] = useState<Set<keyof SignUpForm>>(new Set());
@@ -104,8 +107,15 @@ export function usePatientSignUp(): UsePatientSignUpResult {
         lastName: form.lastName.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
+        phoneCountryCode: form.phoneCountryCode,
         password: form.password,
       });
+      const login = await loginWithEmail(form.email.trim(), form.password);
+      const accessToken = (login as any).accessToken as string | undefined;
+      if (accessToken) {
+        setToken(accessToken);
+        await setAccessToken(accessToken);
+      }
       setPendingEmail(form.email.trim());
       setAuth(userId, 'patient');
       setStatus('success');

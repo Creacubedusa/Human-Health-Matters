@@ -149,6 +149,7 @@ export function PatientSignUpView({ onSuccess, onSignIn }: PatientSignUpViewProp
             <PhoneInput
               value={form.phone}
               onChangeText={(v) => handleChange('phone', v)}
+              onChangeCountryCode={(code) => handleChange('phoneCountryCode', code)}
               onBlur={() => handleBlur('phone')}
               status={errors.phone ? 'error' : 'default'}
               helperText={errors.phone ? t(errors.phone) : undefined}
