@@ -11,6 +11,8 @@ import type {
   DoctorMatchContext,
   DoctorRecommendation,
 } from '../types/appointmentBooking.types';
+import { http } from '@shared/api/http';
+import { addMinutes, parse } from 'date-fns';
 
 const MONTH_NAMES = [
   'January',
@@ -214,39 +216,14 @@ export async function getDoctorRecommendations(
   context: DoctorMatchContext,
   filter: DoctorFilterTab,
 ): Promise<DoctorRecommendation[]> {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-
-  const cloned = [...DOCTORS];
-  if (filter === 'topRated') {
-    return cloned.sort((left, right) => right.rating - left.rating);
-  }
-
-  if (filter === 'availableNow') {
-    return cloned.sort((left, right) => {
-      if (left.isAvailableNow === right.isAvailableNow) {
-        return right.matchScore - left.matchScore;
-      }
-
-      return left.isAvailableNow ? -1 : 1;
-    });
-  }
-
-  const symptomBoost = context.symptoms.some((symptom) => symptom.toLowerCase().includes('chest')) ? 2 : 0;
-  return cloned
-    .map((doctor) => ({
-      ...doctor,
-      matchScore: doctor.id === 'doctor-paul-grant' ? doctor.matchScore + symptomBoost : doctor.matchScore,
-    }))
-    .sort((left, right) => right.matchScore - left.matchScore);
+  void context;
+  const res = await http.get<DoctorRecommendation[]>('/doctors', { params: { filter } });
+  return res.data;
 }
 
 export async function getDoctorSchedule(_doctorId: string): Promise<DoctorAvailabilitySummary> {
-  await new Promise((resolve) => setTimeout(resolve, 200));
-
-  return {
-    month: buildMonth(2025, 7),
-    timeSlotsByDate: buildTimeSlotsByDate(2025, 7),
-  };
+  const res = await http.get<DoctorAvailabilitySummary>(`/doctors/${_doctorId}/schedule`);
+  return res.data;
 }
 
 export async function createBookedAppointment(
@@ -254,7 +231,18 @@ export async function createBookedAppointment(
   selectedDateIso: string,
   selectedTimeLabel: string,
 ): Promise<BookedAppointment> {
-  await new Promise((resolve) => setTimeout(resolve, 300));
+  const startsAt = parse(
+    `${selectedDateIso} ${selectedTimeLabel}`,
+    'yyyy-MM-dd hh:mm a',
+    new Date(),
+  );
+  const endsAt = addMinutes(startsAt, 30);
+
+  await http.post('/appointments', {
+    doctorId: doctor.id,
+    startsAt: startsAt.toISOString(),
+    endsAt: endsAt.toISOString(),
+  });
 
   return {
     doctorId: doctor.id,

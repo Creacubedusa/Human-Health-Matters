@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePatientStore } from '../store/patient.store';
 import {
   isScenarioForPath,
-  mockVerifyCoverage,
+  verifyCoverage,
 } from '../services/insuranceCoverage.service';
 import type {
   CoverageFlowStep,
@@ -279,7 +279,7 @@ export function useInsuranceCoverageFlow(): UseInsuranceCoverageFlowResult {
         if (verificationRunIdRef.current !== currentRunId) return;
 
         try {
-          const nextResult = await mockVerifyCoverage({
+          const nextResult = await verifyCoverage({
             path,
             insuredForm,
             noInsuranceForm,
