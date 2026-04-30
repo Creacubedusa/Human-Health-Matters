@@ -7,10 +7,19 @@ export default function AppointmentRescheduleDateTimeScreen() {
   const router = useRouter();
   const [successVisible, setSuccessVisible] = useState(false);
 
+  function handleBack() {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace('/(patient)/appointment');
+  }
+
   return (
     <>
       <AppointmentRescheduleDateTimeView
-        onBack={() => router.back()}
+        onBack={handleBack}
         onSuccess={() => setSuccessVisible(true)}
       />
 

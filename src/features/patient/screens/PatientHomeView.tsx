@@ -26,8 +26,9 @@ const NURA_ICON_URI = 'https://www.figma.com/api/mcp/asset/c7be1a2b-b40a-424d-88
 export interface PatientHomeViewProps {
   onCalendar: () => void;
   onNotification: () => void;
+  onProfile: () => void;
   onLanguage: () => void;
-  onViewCarePlan: () => void;
+  onViewCarePlan: (id: string) => void;
   onCheckSymptoms: () => void;
   onBook: () => void;
   onDiagnosis: () => void;
@@ -39,6 +40,7 @@ export interface PatientHomeViewProps {
 export function PatientHomeView({
   onCalendar,
   onNotification,
+  onProfile,
   onLanguage,
   onViewCarePlan,
   onCheckSymptoms,
@@ -87,13 +89,18 @@ export function PatientHomeView({
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-      {/* ── Header: bg-primary-50, h-120px ── */}
-      <View className="bg-primary-50 h-[120px] w-full justify-end">
-        <View className="flex-row items-center justify-between px-4 pb-3 h-[66px]">
+      {/* ── Header ─────────────────────────────────────── */}
+      <View className="bg-primary-50 h-[66px] w-full justify-end">
+        <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
           {/* Avatar circle */}
-          <View className="w-6 h-6 rounded-full overflow-hidden bg-grey-200">
+          <Pressable
+            onPress={onProfile}
+            className="w-6 h-6 rounded-full overflow-hidden bg-grey-200"
+            accessibilityRole="button"
+            accessibilityLabel={t('tabs.profile')}
+          >
             <Image source={{ uri: AVATAR_URI }} style={{ width: 24, height: 24 }} />
-          </View>
+          </Pressable>
 
           {/* "Home" title */}
           <Text className="text-s2 font-semibold font-sans text-grey-900">
@@ -144,10 +151,7 @@ export function PatientHomeView({
 
         {/* [Screen 1] Care In Progress card */}
         {!isNewUser && dashboard.careInProgress != null && (
-          <CareInProgressCard
-            care={dashboard.careInProgress}
-            onViewCarePlan={onViewCarePlan}
-          />
+          <CareInProgressCard care={dashboard.careInProgress} onViewCarePlan={onViewCarePlan} />
         )}
 
         {/* [Screen 2] Check Symptoms with Start button — appears before Quick Actions */}
@@ -197,7 +201,7 @@ export function PatientHomeView({
 
       {/* ── Sticky FAB: Screen 1 only, above bottom nav ── */}
       {!isNewUser && (
-        <View className="absolute bottom-20 left-0 right-0 items-center">
+        <View className="absolute bottom-20 right-4 items-end">
           <Pressable
             onPress={onCheckSymptoms}
             className="bg-primary-500 border-4 border-primary-100 rounded-[32px] px-4 py-3 w-[185px]"

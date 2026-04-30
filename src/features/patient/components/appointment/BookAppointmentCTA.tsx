@@ -13,21 +13,18 @@ export function BookAppointmentCTA({ onPress }: BookAppointmentCTAProps) {
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center bg-white border border-grey-100 rounded-2xl h-[72px] px-4"
+      className="h-[72px] flex-row items-center rounded-2xl bg-primary-500 px-4"
       accessibilityRole="button"
     >
-      {/* Calendar icon in circle */}
-      <View className="w-10 h-10 rounded-full bg-grey-100 items-center justify-center">
+      <View className="h-10 w-10 items-center justify-center rounded-2xl bg-white">
         <Ionicons name="calendar-outline" size={22} color={primitiveColors['primary-500']} />
       </View>
 
-      {/* Label */}
-      <Text className="flex-1 ml-4 text-[16px] font-semibold font-sans text-grey-900">
+      <Text className="ml-4 flex-1 text-[18px] font-semibold font-sans text-white">
         {t('appointmentManagement.bookAppointment')}
       </Text>
 
-      {/* Chevron */}
-      <Ionicons name="chevron-forward" size={20} color={primitiveColors['grey-400']} />
+      <Ionicons name="chevron-forward" size={20} color={primitiveColors.white} />
     </Pressable>
   );
 }

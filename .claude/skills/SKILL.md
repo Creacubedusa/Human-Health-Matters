@@ -1,6 +1,6 @@
 ---
 name: figma-ui-replicator
-description: Analyze a Figma design and generate production-ready React Native + NativeWind code that exactly replicates the layout. Enforces HHM architecture rules: NativeWind-only styling, i18n keys, feature-based folder placement, and four UI states per screen. Use when the user provides a Figma URL, screenshot, or describes a screen to implement for the Human Health Matters app.
+description: "Analyze a Figma design and generate production-ready React Native + NativeWind code that exactly replicates the layout. Enforces HHM architecture rules: NativeWind-only styling, i18n keys, feature-based folder placement, and four UI states per screen. Use when the user provides a Figma URL, screenshot, or describes a screen to implement for the Human Health Matters app."
 ---
 
 # Figma UI Replicator

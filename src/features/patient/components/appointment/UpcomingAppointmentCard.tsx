@@ -2,7 +2,6 @@ import { Image, Pressable, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
-import { Button } from '@shared/components/ui/Button';
 import type { PatientAppointment } from '../../types/appointmentManagement.types';
 
 export interface UpcomingAppointmentCardProps {
@@ -19,51 +18,72 @@ export function UpcomingAppointmentCard({
   const { t } = useTranslation();
 
   return (
-    <View className="bg-white rounded-2xl border border-grey-100 px-4 py-5 gap-4">
-      {/* Section label */}
-      <View className="gap-1">
-        <Text className="text-[14px] font-semibold font-sans text-grey-900">
-          {t('appointmentManagement.upcomingLabel')}
-        </Text>
-        {/* Date/time badge */}
-        <View className="flex-row items-center gap-1.5">
-          <Ionicons name="calendar-outline" size={14} color={primitiveColors['primary-500']} />
-          <Text className="text-[13px] font-sans text-primary-500">
-            {appointment.date} {t('appointmentManagement.atLabel')} {appointment.time}
+    <View className="overflow-hidden rounded-2xl bg-primary-50">
+      <View className="bg-primary-500 px-5 py-4">
+        <View className="gap-2">
+          <Text className="text-b3 font-sans text-white/60">
+            {t('appointmentManagement.upcomingLabel')}
           </Text>
+          <View className="flex-row items-center gap-3">
+            <Ionicons name="time-outline" size={18} color={primitiveColors.white} />
+            <Text className="text-b2 font-semibold font-sans text-white">
+              {appointment.date} {t('appointmentManagement.atLabel')} {appointment.time}
+            </Text>
+          </View>
         </View>
       </View>
 
-      {/* Doctor row */}
-      <View className="flex-row items-center gap-4">
-        <Image
-          source={{ uri: appointment.doctorAvatar }}
-          className="w-12 h-12 rounded-full bg-grey-100"
-        />
-        <View className="gap-0.5">
-          <Text className="text-[16px] font-semibold font-sans text-grey-900">
-            {appointment.doctorName}
-          </Text>
-          <Text className="text-[13px] font-sans text-grey-500">
-            {appointment.specialty}
-          </Text>
+      <View className="gap-8 px-5 py-5">
+        <View className="flex-row items-center gap-5">
+          <View className="h-12 w-12 items-center justify-center rounded-full border border-[#41416e] bg-white">
+            <Image
+              source={{ uri: appointment.doctorAvatar }}
+              className="h-[46px] w-[46px] rounded-full bg-grey-100"
+            />
+          </View>
+          <View className="gap-1">
+            <Text className="text-s2 font-semibold font-sans text-text-primary">
+              {appointment.doctorName.replace(/^Dr\.\s*/i, '')}
+            </Text>
+            <Text className="text-c1 font-sans text-text-secondary">
+              {appointment.specialty}
+            </Text>
+          </View>
         </View>
-      </View>
 
-      {/* Action buttons */}
-      <View className="flex-row gap-4">
-        <Button
-          label={t('appointmentManagement.cancelBtn')}
-          variant="outline"
-          size="small"
-          onPress={() => onCancel(appointment.id)}
-        />
-        <Button
-          label={t('appointmentManagement.rescheduleBtn')}
-          variant="filled"
-          size="small"
-          onPress={() => onReschedule(appointment.id)}
-        />
+        <View className="flex-row items-center justify-between">
+          <View className="w-[120px]">
+            <Pressable
+              className={[
+                'h-10 items-center justify-center rounded-xl border-[1.5px] border-primary-500 bg-white',
+                !appointment.canCancel ? 'opacity-50' : '',
+              ].join(' ')}
+              onPress={!appointment.canCancel ? undefined : () => onCancel(appointment.id)}
+              disabled={!appointment.canCancel}
+              accessibilityRole="button"
+            >
+              <Text className="text-[14px] font-semibold font-sans text-primary-500">
+                {t('appointmentManagement.cancelBtn')}
+              </Text>
+            </Pressable>
+          </View>
+
+          <View className="w-[146px]">
+            <Pressable
+              className={[
+                'h-10 items-center justify-center rounded-xl bg-primary-500',
+                !appointment.canReschedule ? 'opacity-50' : '',
+              ].join(' ')}
+              onPress={!appointment.canReschedule ? undefined : () => onReschedule(appointment.id)}
+              disabled={!appointment.canReschedule}
+              accessibilityRole="button"
+            >
+              <Text className="text-[14px] font-semibold font-sans text-white">
+                {t('appointmentManagement.rescheduleBtn')}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
       </View>
     </View>
   );

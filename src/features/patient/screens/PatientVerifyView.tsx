@@ -52,8 +52,10 @@ export function PatientVerifyView({ onSuccess }: PatientVerifyViewProps) {
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* ── Header ── */}
-      <View className="bg-primary-50 h-[120px] items-center justify-end pb-5">
-        <AppLogo />
+      <View className="bg-primary-50 h-[66px] justify-end">
+        <View className="h-[48px] items-center justify-center pb-3">
+          <AppLogo />
+        </View>
       </View>
 
       {/* ── Body ── */}

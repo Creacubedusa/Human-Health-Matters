@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Alert } from '@shared/components/ui/Alert';
 import { Button } from '@shared/components/ui/Button';
 import { StepProgressBar } from '@shared/components/ui/StepProgressBar';
+import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { primitiveColors } from '@design/tokens';
 import { usePatientProfile } from '../hooks/usePatientProfile';
 import { BasicInfoStep } from '../components/BasicInfoStep';
@@ -119,21 +120,15 @@ export function PatientProfileView({ onComplete }: PatientProfileViewProps) {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* ── Figma header: bg-primary-50, h-[120px] ── */}
-      <View className="bg-primary-50 h-[120px] w-full justify-end">
-        <View className="flex-row items-center justify-between px-4 pb-4 h-[66px]">
+      <View className="bg-primary-50 h-[66px] w-full justify-end">
+        <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
           {/* Back button — bordered square */}
-          <Pressable
+          <HeaderBackButton
             onPress={handleBack}
             disabled={isFirstStep || isLoading}
-            className={[
-              'w-[29px] h-[29px] rounded-[6px] border border-grey-900/10 items-center justify-center',
-              isFirstStep ? 'opacity-0' : '',
-            ].join(' ')}
-            accessibilityRole="button"
+            hidden={isFirstStep}
             accessibilityLabel={t('common.back')}
-          >
-            <Ionicons name="chevron-back" size={18} color={primitiveColors['grey-900']} />
-          </Pressable>
+          />
 
           {/* Centered title */}
           <Text className="text-b2 font-semibold font-sans text-grey-900">

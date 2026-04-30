@@ -21,29 +21,38 @@ export function AppointmentListCard({ appointment, onPress }: AppointmentListCar
   return (
     <Pressable
       onPress={() => onPress?.(appointment.id)}
-      className="flex-row items-center px-4 py-4 gap-4 bg-white rounded-2xl border border-grey-100"
+      className="rounded-lg border border-grey-300 bg-white px-3 py-3"
       accessibilityRole="button"
     >
-      {/* Avatar */}
-      <Image
-        source={{ uri: appointment.doctorAvatar }}
-        className="w-20 h-20 rounded-2xl bg-grey-100"
-      />
+      <View className="flex-row items-end gap-4">
+        <View className="relative h-20 w-20">
+          <View className="h-20 w-20 items-center justify-center rounded-full border border-grey-200 bg-white">
+            <Image
+              source={{ uri: appointment.doctorAvatar }}
+              className="h-[62px] w-[62px] rounded-full bg-grey-100"
+            />
+          </View>
+          <View className="absolute bottom-1 right-1">
+            <View className={['h-3 w-3 rounded-full border-2 border-white', STATUS_DOT[appointment.status]].join(' ')} />
+          </View>
+        </View>
 
-      {/* Info */}
-      <View className="flex-1 gap-1">
-        <Text className="text-[15px] font-semibold font-sans text-grey-900" numberOfLines={1}>
-          {appointment.doctorName}
-        </Text>
-        <Text className="text-[13px] font-sans text-grey-500">
-          {appointment.specialty}
-        </Text>
-        {/* Date/time */}
-        <View className="flex-row items-center gap-1 mt-1">
-          <View className={['w-2 h-2 rounded-full', STATUS_DOT[appointment.status]].join(' ')} />
-          <Text className="text-[12px] font-sans text-grey-500">
-            {appointment.date} {t('appointmentManagement.atLabel')} {appointment.time}
-          </Text>
+        <View className="flex-1 gap-2 pb-1">
+          <View className="gap-1">
+            <Text className="text-s2 font-semibold font-sans text-text-primary" numberOfLines={1}>
+              {appointment.doctorName}
+            </Text>
+            <Text className="text-b3 font-sans text-text-secondary">
+              {appointment.specialty}
+            </Text>
+          </View>
+
+          <View className="flex-row items-center gap-3">
+            <Ionicons name="time-outline" size={18} color={primitiveColors['grey-900']} />
+            <Text className="text-b2 font-medium font-sans text-text-primary">
+              {appointment.date} {t('appointmentManagement.atLabel')} {appointment.time}
+            </Text>
+          </View>
         </View>
       </View>
     </Pressable>

@@ -1,7 +1,6 @@
-import { Pressable, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { primitiveColors } from '@design/tokens';
+import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 
 interface CoverageFlowHeaderProps {
   titleKey: string;
@@ -12,19 +11,18 @@ export function CoverageFlowHeader({ titleKey, onBack }: CoverageFlowHeaderProps
   const { t } = useTranslation();
 
   return (
-    <View className="h-[120px] bg-primary-50 items-center justify-end pb-5">
-      <Pressable
-        onPress={onBack}
-        className="absolute left-4 bottom-5 h-[29px] w-[29px] items-center justify-center rounded-md border border-grey-200"
-        accessibilityRole="button"
-        accessibilityLabel={t('common.back')}
-      >
-        <Ionicons name="chevron-back" size={20} color={primitiveColors['grey-900']} />
-      </Pressable>
+    <View className="h-[66px] bg-primary-50 justify-end">
+      <View className="h-[48px] flex-row items-center justify-center px-4 pb-3">
+        <HeaderBackButton
+          onPress={onBack}
+          accessibilityLabel={t('common.back')}
+          className="absolute left-4 bottom-3"
+        />
 
-      <Text className="text-s2 font-semibold font-sans text-grey-900">
-        {t(titleKey)}
-      </Text>
+        <Text className="text-s2 font-semibold font-sans text-grey-900">
+          {t(titleKey)}
+        </Text>
+      </View>
     </View>
   );
 }

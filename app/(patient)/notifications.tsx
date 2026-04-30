@@ -7,9 +7,13 @@ export default function NotificationsScreen() {
   return (
     <NotificationView
       onBack={() => router.back()}
-      onJoinConsultation={() => {}}
-      onViewReport={() => {}}
-      onCheckOrder={() => {}}
+      onJoinConsultation={() => router.push('/(patient)/consultations')}
+      onViewReport={() =>
+        router.push({ pathname: '/(patient)/profile-record-detail', params: { id: 'support-report' } })
+      }
+      onCheckOrder={(id) =>
+        router.push({ pathname: '/(patient)/order-detail', params: { id } })
+      }
     />
   );
 }

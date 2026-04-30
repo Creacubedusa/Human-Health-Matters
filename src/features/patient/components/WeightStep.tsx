@@ -28,6 +28,7 @@ export function WeightStep({ form, errors, onChange, disabled }: Props) {
       <View className="w-[199px]">
         <StepperInput
           value={form.weight}
+          onChangeValue={(value) => onChange('weight', value)}
           onIncrement={() => onChange('weight', Math.min(maxVal, form.weight + step))}
           onDecrement={() => onChange('weight', Math.max(0, form.weight - step))}
           label={t('patientProfile.weightLabel')}
