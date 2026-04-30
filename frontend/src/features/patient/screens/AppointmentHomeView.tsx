@@ -15,6 +15,7 @@ export interface AppointmentHomeViewProps {
   onBookAppointment: () => void;
   onCancelConfirmed: () => void;
   onRescheduleConfirmed: () => void;
+  onJoinAppointment: (id: string) => void;
   onBack?: () => void;
   onCalendar?: () => void;
 }
@@ -23,6 +24,7 @@ export function AppointmentHomeView({
   onBookAppointment,
   onCancelConfirmed,
   onRescheduleConfirmed,
+  onJoinAppointment,
   onBack,
   onCalendar,
 }: AppointmentHomeViewProps) {
@@ -119,6 +121,7 @@ export function AppointmentHomeView({
                 appointment={upcomingAppointment}
                 onCancel={openCancelModal}
                 onReschedule={openRescheduleModal}
+                onJoin={onJoinAppointment}
               />
             ) : (
               <View className="bg-primary-50 rounded-2xl p-5 items-center">

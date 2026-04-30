@@ -3,9 +3,9 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
-import * as Linking from 'expo-linking';
 import { toast } from '@shared/components/ui/toast';
 import { buildDailyJoinUrl, joinAppointmentVideo } from '@features/patient/services/video.service';
+import { InAppCallWebView } from '@shared/components/ui/InAppCallWebView';
 
 export interface DoctorConsultationViewProps {
   appointmentId: string;
@@ -34,7 +34,6 @@ export function DoctorConsultationView({
       const url = buildDailyJoinUrl(join.roomUrl, join.token);
       setMeetingUrl(url);
       setStatus('ready');
-      await Linking.openURL(url);
     } catch (e: any) {
       const msg = String(e?.response?.data?.message ?? e?.response?.data ?? e?.message ?? '');
       if (msg.includes('too_early_to_join')) {
@@ -51,6 +50,10 @@ export function DoctorConsultationView({
   useEffect(() => {
     void handleJoin();
   }, []);
+
+  if (meetingUrl) {
+    return <InAppCallWebView url={meetingUrl} onBack={onBack} />;
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-black" edges={['top']}>
@@ -72,34 +75,23 @@ export function DoctorConsultationView({
               {t('consultation.preparingCall', { defaultValue: 'Preparing your call…' })}
             </Text>
           </>
-        ) : (
+        ) : status === 'error' ? (
           <>
             <Text className="text-white/80 text-center font-sans">
-              {t('consultation.videoPoweredByDaily', { defaultValue: 'Video call powered by Daily' })}
+              {t('consultation.unableToJoin', { defaultValue: 'Unable to join call.' })}
             </Text>
             <Pressable
-              className="bg-primary-500 rounded-xl px-6 py-3"
-              onPress={() => meetingUrl && void Linking.openURL(meetingUrl)}
+              className="mt-2 border border-white/30 rounded-xl px-6 py-3"
+              onPress={() => void handleJoin()}
               accessibilityRole="button"
-              disabled={!meetingUrl}
-              style={{ opacity: meetingUrl ? 1 : 0.6 }}
             >
-              <Text className="text-white font-semibold font-sans">
-                {t('consultation.openCall', { defaultValue: 'Open call' })}
-              </Text>
+              <Text className="text-white font-semibold font-sans">{t('common.retry')}</Text>
             </Pressable>
-            {status === 'error' && (
-              <Pressable
-                className="mt-2 border border-white/30 rounded-xl px-6 py-3"
-                onPress={() => void handleJoin()}
-                accessibilityRole="button"
-              >
-                <Text className="text-white font-semibold font-sans">
-                  {t('common.retry')}
-                </Text>
-              </Pressable>
-            )}
           </>
+        ) : (
+          <Text className="text-white/80 text-center font-sans">
+            {t('consultation.preparingCall', { defaultValue: 'Preparing your call…' })}
+          </Text>
         )}
       </View>
     </SafeAreaView>

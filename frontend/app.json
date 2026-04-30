@@ -12,15 +12,12 @@
       "resizeMode": "contain",
       "backgroundColor": "#edeffe"
     },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.humanhealthmatters"
-    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "permissions": ["CAMERA", "RECORD_AUDIO", "MODIFY_AUDIO_SETTINGS"],
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.anonymous.humanhealthmatters"
@@ -37,6 +34,14 @@
       "expo-secure-store",
       "expo-font",
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.humanhealthmatters",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow access to your camera for video consultations.",
+        "NSMicrophoneUsageDescription": "Allow access to your microphone for video consultations."
+      }
+    }
   }
 }

@@ -10,7 +10,6 @@ import { useCallTimer } from './useCallTimer';
 import type { ChatMessage } from '../types/consultation.types';
 import { buildDailyJoinUrl, joinAppointmentVideo } from '../services/video.service';
 import { fetchAppointments } from '../services/appointmentManagement.service';
-import * as Linking from 'expo-linking';
 
 function makeId(): string {
   return Math.random().toString(36).slice(2, 9);
@@ -45,10 +44,6 @@ export function useConsultation() {
       const meetingUrl = buildDailyJoinUrl(join.roomUrl, join.token);
       store.setMeetingUrl(meetingUrl);
       store.setCallStatus('active');
-
-      if (!controller.signal.aborted) {
-        void Linking.openURL(meetingUrl);
-      }
     }
 
     void boot();

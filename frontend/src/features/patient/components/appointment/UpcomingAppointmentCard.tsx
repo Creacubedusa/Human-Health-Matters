@@ -8,12 +8,14 @@ export interface UpcomingAppointmentCardProps {
   appointment: PatientAppointment;
   onCancel: (id: string) => void;
   onReschedule: (id: string) => void;
+  onJoin: (id: string) => void;
 }
 
 export function UpcomingAppointmentCard({
   appointment,
   onCancel,
   onReschedule,
+  onJoin,
 }: UpcomingAppointmentCardProps) {
   const { t } = useTranslation();
 
@@ -51,8 +53,8 @@ export function UpcomingAppointmentCard({
           </View>
         </View>
 
-        <View className="flex-row items-center justify-between">
-          <View className="w-[120px]">
+        <View className="flex-row items-center justify-between gap-3">
+          <View className="flex-1">
             <Pressable
               className={[
                 'h-10 items-center justify-center rounded-xl border-[1.5px] border-primary-500 bg-white',
@@ -68,7 +70,7 @@ export function UpcomingAppointmentCard({
             </Pressable>
           </View>
 
-          <View className="w-[146px]">
+          <View className="flex-1">
             <Pressable
               className={[
                 'h-10 items-center justify-center rounded-xl bg-primary-500',
@@ -84,6 +86,16 @@ export function UpcomingAppointmentCard({
             </Pressable>
           </View>
         </View>
+
+        <Pressable
+          className="h-11 items-center justify-center rounded-xl bg-green-600"
+          onPress={() => onJoin(appointment.id)}
+          accessibilityRole="button"
+        >
+          <Text className="text-[14px] font-semibold font-sans text-white">
+            {t('consultation.joinCall', { defaultValue: 'Join call' })}
+          </Text>
+        </Pressable>
       </View>
     </View>
   );

@@ -32,6 +32,7 @@ export default function AppointmentScreen() {
       onBookAppointment={() => router.push('/(patient)/book-appointment')}
       onCancelConfirmed={handleCancelConfirmed}
       onRescheduleConfirmed={handleRescheduleConfirmed}
+      onJoinAppointment={(id) => router.push(`/(patient)/consultations?appointmentId=${id}`)}
     />
   );
 }

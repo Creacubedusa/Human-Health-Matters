@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { useConsultation } from '../hooks/useConsultation';
-import * as Linking from 'expo-linking';
+import { InAppCallWebView } from '@shared/components/ui/InAppCallWebView';
 import { AINoteIndicator } from '../components/consultation/AINoteIndicator';
 import { FloatingDoctorCard } from '../components/consultation/FloatingDoctorCard';
 import { CallControls } from '../components/consultation/CallControls';
@@ -34,6 +34,15 @@ export function ConsultationView() {
     );
   }
 
+  if (consultation.videoOn && consultation.meetingUrl) {
+    return (
+      <InAppCallWebView
+        url={consultation.meetingUrl}
+        onBack={consultation.handleConfirmEndCall}
+      />
+    );
+  }
+
   return (
     <View className="flex-1 bg-black">
 
@@ -44,21 +53,9 @@ export function ConsultationView() {
             <Text className="text-white text-center font-sans">
               {t('consultation.videoPoweredByDaily', { defaultValue: 'Video call powered by Daily' })}
             </Text>
-            {consultation.meetingUrl ? (
-              <Pressable
-                className="bg-primary-500 rounded-xl px-6 py-3"
-                onPress={() => consultation.meetingUrl && void Linking.openURL(consultation.meetingUrl)}
-                accessibilityRole="button"
-              >
-                <Text className="text-white font-semibold font-sans">
-                  {t('consultation.openCall', { defaultValue: 'Open call' })}
-                </Text>
-              </Pressable>
-            ) : (
-              <Text className="text-white/60 text-center font-sans">
-                {t('consultation.preparingCall', { defaultValue: 'Preparing your call…' })}
-              </Text>
-            )}
+            <Text className="text-white/60 text-center font-sans">
+              {t('consultation.preparingCall', { defaultValue: 'Preparing your call…' })}
+            </Text>
           </View>
         ) : (
           <View className="flex-1 bg-black items-center justify-center">
