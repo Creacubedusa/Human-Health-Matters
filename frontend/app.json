@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Human Health Matters",
+    "slug": "human-health-matters",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#edeffe"
+    },
+<<<<<<< HEAD:app.json
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.humanhealthmatters"
+    },
+=======
+>>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/app.json
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": ["CAMERA", "RECORD_AUDIO", "MODIFY_AUDIO_SETTINGS"],
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.humanhealthmatters"
+    },
+    "scheme": "humanhealth",
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-secure-store",
+      "expo-font",
+      "@react-native-community/datetimepicker"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.humanhealthmatters",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Allow access to your camera for video consultations.",
+        "NSMicrophoneUsageDescription": "Allow access to your microphone for video consultations."
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+import { useRouter } from 'expo-router';
+import { CarePlanView } from '@features/patient/screens/CarePlanView';
+
+export default function CareScreen() {
+  const router = useRouter();
+
+  function handleBack() {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace('/(patient)');
+  }
+
+  return (
+    <CarePlanView
+      onBack={handleBack}
+      onViewCarePlan={(id) => router.push({ pathname: '/(patient)/care-plan-detail', params: { id } })}
+    />
+  );
+}
