@@ -41,6 +41,9 @@ export interface InputProps
   size?: InputSize;
   variant?: InputVariant;
   disabled?: boolean;
+  editable?: boolean;
+  inputRef?: React.RefObject<TextInput | null>;
+  onIconRightPress?: () => void;
 }
 
 // ── State maps ────────────────────────────────────────────────────────────
@@ -127,10 +130,14 @@ export function Input({
   size = 'large',
   variant = 'filled',
   disabled = false,
+  editable = true,
+  inputRef: externalInputRef,
+  onIconRightPress,
   onBlur: externalOnBlur,
   ...textInputProps
 }: InputProps) {
-  const inputRef = useRef<TextInput>(null);
+  const internalInputRef = useRef<TextInput>(null);
+  const inputRef = externalInputRef ?? internalInputRef;
   const [focused, setFocused] = useState(false);
   const [hovered, setHovered] = useState(false);
 
@@ -157,8 +164,12 @@ export function Input({
 
       <Pressable
         className={containerClass}
-        onPress={() => inputRef.current?.focus()}
-        onHoverIn={() => setHovered(true)}
+        onPress={() => {
+          if (!disabled && editable) inputRef.current?.focus();
+        }}
+        onHoverIn={() => {
+          if (!disabled) setHovered(true);
+        }}
         onHoverOut={() => setHovered(false)}
         disabled={disabled}
         accessible={false}
@@ -178,15 +189,25 @@ export function Input({
           placeholderTextColor={PLACEHOLDER_TEXT_COLOR}
           onFocus={() => setFocused(true)}
           onBlur={(e) => { setFocused(false); externalOnBlur?.(e); }}
-          editable={!disabled}
+          editable={!disabled && editable}
           accessibilityLabel={label}
           {...textInputProps}
         />
 
         {iconRight != null && (
-          <View className="items-center justify-center w-6 h-6" importantForAccessibility="no-hide-descendants">
-            {iconRight}
-          </View>
+          onIconRightPress ? (
+            <Pressable
+              className="items-center justify-center w-6 h-6"
+              onPress={onIconRightPress}
+              accessibilityRole="button"
+            >
+              {iconRight}
+            </Pressable>
+          ) : (
+            <View className="items-center justify-center w-6 h-6" importantForAccessibility="no-hide-descendants">
+              {iconRight}
+            </View>
+          )
         )}
       </Pressable>
 

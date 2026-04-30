@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  InteractionManager,
   Pressable,
   Text,
   View,
@@ -33,13 +34,13 @@ export function NuraTriageView({
   onViewResult,
 }: NuraTriageViewProps) {
   const { t } = useTranslation();
-  const { messages, isTyping, result, sendMessage, resetSession } = useTriage();
+  const { hasSession, messages, isTyping, result, sendMessage, resetSession } = useTriage();
   const [inputText, setInputText] = useState('');
   const [menuVisible, setMenuVisible] = useState(false);
   const listRef = useRef<FlatList>(null);
 
-  const isLoading = messages.length === 0 && !isTyping;
-  const isEmpty = messages.length === 0 && isTyping === false;
+  const isLoading = !hasSession;
+  const isEmpty = hasSession && messages.length === 0 && isTyping === false;
 
   function handleSend() {
     if (!inputText.trim()) return;
@@ -59,8 +60,13 @@ export function NuraTriageView({
   }
 
   function handleNewChat() {
-    resetSession();
+    setMenuVisible(false);
     setInputText('');
+
+    InteractionManager.runAfterInteractions(() => {
+      resetSession();
+      setTimeout(() => listRef.current?.scrollToOffset({ animated: false, offset: 0 }), 50);
+    });
   }
 
   return (

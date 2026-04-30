@@ -2,6 +2,7 @@ import type { DoctorMatchContext } from './appointmentBooking.types';
 
 export type TriageSeverity = 'emergency' | 'urgent' | 'moderate' | 'low';
 export type MessageRole = 'ai' | 'user';
+export type TriageSessionMode = 'guided' | 'blank';
 
 export interface TurnOption {
   label: string;
@@ -35,12 +36,14 @@ export interface TriageSession {
   messages: TriageMessage[];
   result: TriageResult | null;
   startedAt: number;
+  mode: TriageSessionMode;
 }
 
 export interface TriageHistoryItem {
   id: string;
   title: string;
   description: string;
+  summary: string;
   date: string;
   severity: TriageSeverity | null;
 }

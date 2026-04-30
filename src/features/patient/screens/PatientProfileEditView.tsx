@@ -1,13 +1,15 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
+import { useState } from 'react';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { primitiveColors } from '@design/tokens';
 import { AvatarUpload } from '@shared/components/ui/AvatarUpload';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { SelectInput } from '@shared/components/ui/SelectInput';
 import { usePatientProfileOverview } from '../hooks/usePatientProfileOverview';
+import type { ProfileEditErrors } from '../hooks/usePatientProfileOverview';
 import type { ProfileOverviewForm } from '../types/profileOverview.types';
 import { ProfileHeader } from '../components/profile/ProfileHeader';
 
@@ -18,12 +20,9 @@ export interface PatientProfileEditViewProps {
 
 export function PatientProfileEditView({ onBack, onSaveComplete }: PatientProfileEditViewProps) {
   const { t } = useTranslation();
-  const { status, editForm, saveProfile } = usePatientProfileOverview();
+  const { status, editForm, validateEditForm, saveProfile, retry } = usePatientProfileOverview();
   const [form, setForm] = useState<ProfileOverviewForm | null>(editForm);
-
-  useEffect(() => {
-    if (editForm) setForm(editForm);
-  }, [editForm]);
+  const [errors, setErrors] = useState<ProfileEditErrors>({});
 
   const header = (
     <ProfileHeader
@@ -44,15 +43,46 @@ export function PatientProfileEditView({ onBack, onSaveComplete }: PatientProfil
     );
   }
 
+  if (status === 'error') {
+    return (
+      <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+        {header}
+        <View className="flex-1 items-center justify-center px-4 gap-4">
+          <Input
+            value={t('profileOverview.errorMessage')}
+            disabled
+          />
+          <Button
+            label={t('common.retry')}
+            onPress={retry}
+            variant="outline"
+            size="large"
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   const update = <K extends keyof ProfileOverviewForm>(field: K, value: ProfileOverviewForm[K]) => {
     setForm((prev) => prev ? { ...prev, [field]: value } : prev);
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
   function handleSave() {
     if (!form) return;
+    const validationErrors = validateEditForm(form);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
     saveProfile(form);
     onSaveComplete();
   }
+
+  const calendarIcon = (
+    <Ionicons name="calendar-outline" size={20} color={primitiveColors['grey-400']} />
+  );
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
@@ -75,10 +105,13 @@ export function PatientProfileEditView({ onBack, onSaveComplete }: PatientProfil
           />
 
           <Input
-            label={t('profileOverview.name')}
+            label={t('profileOverview.fullName')}
             value={form.name}
             onChangeText={(value) => update('name', value)}
+            status={errors.name ? 'error' : 'default'}
+            helperText={errors.name ? t(errors.name) : undefined}
           />
+
           <SelectInput
             label={t('profileOverview.gender')}
             value={form.gender.toLowerCase()}
@@ -88,22 +121,34 @@ export function PatientProfileEditView({ onBack, onSaveComplete }: PatientProfil
               { label: t('profileOverview.genderMale'), value: 'male' },
               { label: t('profileOverview.genderOther'), value: 'other' },
             ]}
+            status={errors.gender ? 'error' : 'default'}
+            helperText={errors.gender ? t(errors.gender) : undefined}
           />
-          <Input label={t('profileOverview.height')} value={form.height} onChangeText={(value) => update('height', value)} />
-          <Input label={t('profileOverview.weight')} value={form.weight} onChangeText={(value) => update('weight', value)} />
-          <Input label={t('profileOverview.age')} value={form.age} onChangeText={(value) => update('age', value)} />
-          <Input label={t('profileOverview.phone')} value={form.phone} onChangeText={(value) => update('phone', value)} keyboardType="phone-pad" />
-          <Input label={t('profileOverview.email')} value={form.email} onChangeText={(value) => update('email', value)} keyboardType="email-address" autoCapitalize="none" />
-          <Input label={t('profileOverview.address')} value={form.address} onChangeText={(value) => update('address', value)} />
-          <Input label={t('profileOverview.nationality')} value={form.nationality} onChangeText={(value) => update('nationality', value)} />
-          <SelectInput
-            label={t('profileOverview.language')}
-            value={form.selectedLanguage}
-            onChange={(value) => update('selectedLanguage', value)}
-            options={[
-              { label: 'English', value: 'en' },
-              { label: 'Spanish', value: 'es' },
-            ]}
+
+          <Input
+            label={t('profileOverview.height')}
+            value={form.height}
+            onChangeText={(value) => update('height', value)}
+            status={errors.height ? 'error' : 'default'}
+            helperText={errors.height ? t(errors.height) : undefined}
+          />
+
+          <Input
+            label={t('profileOverview.weight')}
+            value={form.weight}
+            onChangeText={(value) => update('weight', value)}
+            status={errors.weight ? 'error' : 'default'}
+            helperText={errors.weight ? t(errors.weight) : undefined}
+          />
+
+          <Input
+            label={t('profileOverview.dateOfBirth')}
+            value={form.dateOfBirth}
+            onChangeText={(value) => update('dateOfBirth', value)}
+            placeholder={t('profileOverview.dobPlaceholder')}
+            iconLeft={calendarIcon}
+            status={errors.dateOfBirth ? 'error' : 'default'}
+            helperText={errors.dateOfBirth ? t(errors.dateOfBirth) : undefined}
           />
         </ScrollView>
 

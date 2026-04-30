@@ -8,12 +8,7 @@ export default function AppointmentRescheduleDateTimeScreen() {
   const [successVisible, setSuccessVisible] = useState(false);
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)/appointment');
+    router.back();
   }
 
   return (

@@ -5,12 +5,7 @@ export default function PrivacyPolicyScreen() {
   const router = useRouter();
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)/profile');
+    router.back();
   }
 
   return <PrivacyPolicyView onBack={handleBack} />;

@@ -5,12 +5,7 @@ export default function CareScreen() {
   const router = useRouter();
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)');
+    router.back();
   }
 
   return (

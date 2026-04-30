@@ -10,6 +10,7 @@ export async function fetchPatientProfileOverview(): Promise<PatientProfileOverv
     avatarUri: PROFILE_AVATAR_URI,
     name: 'Angela Dairo',
     gender: 'Female',
+    dateOfBirth: '',
     height: '170 cm',
     weight: '65 kg',
     age: '22 years',

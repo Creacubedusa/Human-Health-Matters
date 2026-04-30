@@ -12,18 +12,32 @@ export function useTriage() {
     useTriageStore();
 
   const initialized = useRef(false);
+  const openingPromptSessionId = useRef<string | null>(null);
 
   useEffect(() => {
     if (!initialized.current) {
       initialized.current = true;
-      startSession();
-      // Auto-post opening AI message after a short delay
-      setTimeout(() => {
-        const opening = getMockAiResponse([]);
-        addMessage(opening);
-      }, 400);
+      startSession('guided');
     }
   }, []);
+
+  useEffect(() => {
+    if (!currentSession) return;
+    if (currentSession.mode !== 'guided') return;
+    if (currentSession.messages.length > 0) return;
+    if (openingPromptSessionId.current === currentSession.id) return;
+
+    openingPromptSessionId.current = currentSession.id;
+    setTyping(true);
+
+    const timeoutId = setTimeout(() => {
+      const opening = getMockAiResponse([]);
+      addMessage(opening);
+      setTyping(false);
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [addMessage, currentSession, setTyping]);
 
   const messages = currentSession?.messages ?? [];
   const result = currentSession?.result ?? null;
@@ -59,14 +73,12 @@ export function useTriage() {
 
   function handleReset() {
     initialized.current = false;
-    resetSession();
-    setTimeout(() => {
-      const opening = getMockAiResponse([]);
-      addMessage(opening);
-    }, 400);
+    openingPromptSessionId.current = null;
+    resetSession('blank');
   }
 
   return {
+    hasSession: currentSession != null,
     messages,
     isTyping,
     result,

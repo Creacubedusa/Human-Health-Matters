@@ -174,6 +174,9 @@
     "notification": "Notification",
     "language": "Language",
     "privacyPolicy": "Privacy Policy",
+    "save": "Save",
+    "closeDetailEdit": "Close personal detail edit modal",
+    "editField": "Enable field editing",
     "setupTitle": "Complete Your Health Profile",
     "setupDescription": "Help us understand you better. A few quick details can unlock personalized care, accurate insights, and better health tracking.",
     "cancel": "No, Cancel",
@@ -186,7 +189,124 @@
     "errorMessage": "Failed to load your profile",
     "privacyIntroTitle": "How HHM protects your information",
     "privacyIntroBody": "Human Health Matters uses your profile information to support care access, personalize insights, and help licensed clinicians understand your health context.",
-    "privacyBody": "Your health information is treated as sensitive data. Mock data in this prototype is stored locally only and is not sent to a backend. Future production integrations should use secure APIs, least-privilege access, and consent-aware sharing for clinical workflows."
+    "privacyBody": "Your health information is treated as sensitive data. Mock data in this prototype is stored locally only and is not sent to a backend. Future production integrations should use secure APIs, least-privilege access, and consent-aware sharing for clinical workflows.",
+    "privacyPolicyEffectiveDate": "Effective Date: 4/04/2026",
+    "privacyPolicyIntro": {
+      "effectiveDate": "Effective Date: [Insert Date]",
+      "commitment": "We respect your privacy and are committed to protecting your personal and health information."
+    },
+    "privacyPolicySections": {
+      "collect": {
+        "title": "1. What We Collect",
+        "body": "We may collect:",
+        "bullets": {
+          "personalDetails": "Personal details (name, contact info)",
+          "healthInformation": "Health information (symptoms, medical history, records)",
+          "insuranceAndPayment": "Insurance and payment details",
+          "aiInteractions": "Interactions with our AI assistant",
+          "appUsage": "App usage data"
+        }
+      },
+      "use": {
+        "title": "2. How We Use Your Information",
+        "body": "We use your data to:",
+        "bullets": {
+          "assessments": "Provide AI health assessments and connect you with doctors",
+          "carePlans": "Create care plans and manage consultations",
+          "insuranceVerification": "Verify insurance and estimate costs",
+          "fundingSupport": "Support funding for your care",
+          "serviceImprovement": "Improve our services"
+        }
+      },
+      "share": {
+        "title": "3. How We Share Information",
+        "body": "We only share your data when necessary:",
+        "bullets": {
+          "doctors": "With doctors involved in your care",
+          "insuranceProviders": "With insurance providers (for coverage and claims)",
+          "serviceProviders": "With trusted service providers",
+          "legalRequirement": "When required by law"
+        }
+      },
+      "security": {
+        "title": "4. Your Privacy & Security",
+        "bullets": {
+          "encrypted": "Your data is encrypted and securely stored",
+          "authorizedAccess": "Only authorized professionals can access your information",
+          "control": "You control your data and can update or request deletion"
+        }
+      },
+      "retention": {
+        "title": "5. Data Retention",
+        "body": "We keep your data only as long as needed to provide services and meet legal requirements."
+      },
+      "contact": {
+        "title": "6. Contact Us",
+        "body": "For questions or concerns:",
+        "email": "Email: info@h0hm.ai"
+      },
+      "updates": {
+        "title": "7. Updates",
+        "body": "We may update this policy. You'll be notified of important changes."
+      }
+    },
+    "patientHistory": {
+      "screenTitle": "Patient's History",
+      "chronicDiseases": "Chronic diseases",
+      "familyDiabetesHistory": "Family diabetes history",
+      "generalFamilyHistory": "General Family history",
+      "operation": "Operation",
+      "allergies": "Allergies",
+      "addMore": "Add More",
+      "emptyCategory": "No information added yet.",
+      "closeEditModal": "Close patient history edit modal",
+      "editRow": "Enable row editing",
+      "deleteRow": "Delete history entry",
+      "familyHistoryRequired": "Please select yes or no before saving.",
+      "rowRequired": "Remove or fill in every history entry before saving."
+    },
+    "medication": {
+      "screenTitle": "Medication",
+      "type": "Type",
+      "currentMedications": "Current Medications",
+      "typeModalTitle": "Medication type",
+      "currentMedicationModalTitle": "Current medication",
+      "addMore": "Add More",
+      "emptyCategory": "No medication added yet.",
+      "closeEditModal": "Close medication edit modal",
+      "editRow": "Enable medication row editing",
+      "deleteRow": "Delete medication entry",
+      "rowRequired": "Remove or fill in every medication entry before saving.",
+      "duplicateRow": "Medication entries must be unique before saving."
+    },
+    "fullName": "Full Name",
+    "dateOfBirth": "Date of birth",
+    "dobPlaceholder": "DD/MM/YYYY",
+    "editErrors": {
+      "nameRequired": "Full name is required",
+      "genderRequired": "Please select your gender",
+      "heightRequired": "Height is required",
+      "weightRequired": "Weight is required",
+      "dobRequired": "Date of birth is required"
+    },
+    "detailEditErrors": {
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Please enter a valid phone number",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "addressRequired": "Address is required",
+      "nationalityRequired": "Nationality is required"
+    }
+  },
+  "healthcareSupport": {
+    "title": "Health Care Support",
+    "totalLabel": "Total Community Support Received",
+    "acrossVisits": "Across {{count}} care visits",
+    "recentActivity": "Recent Activity",
+    "statusApplied": "Applied",
+    "statusPending": "Pending",
+    "emptyMessage": "No support activity yet.",
+    "errorMessage": "Failed to load support data."
   },
   "selectRole": {
     "headerTitle": "Select your role",

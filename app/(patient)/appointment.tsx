@@ -17,12 +17,7 @@ export default function AppointmentScreen() {
   }
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)');
+    router.back();
   }
 
   return (

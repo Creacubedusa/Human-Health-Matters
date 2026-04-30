@@ -6,12 +6,7 @@ export default function CarePlanDetailScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)/care');
+    router.back();
   }
 
   return <CarePlanDetailView carePlanId={id ?? ''} onBack={handleBack} />;

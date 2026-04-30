@@ -290,6 +290,7 @@ export default function PatientLayout() {
       <Tabs.Screen name="care-plan-detail"               options={{ href: null }} />
       <Tabs.Screen name="profile-edit"                   options={{ href: null }} />
       <Tabs.Screen name="profile-record-detail"          options={{ href: null }} />
+      <Tabs.Screen name="healthcare-support"             options={{ href: null }} />
       <Tabs.Screen name="privacy-policy"                 options={{ href: null }} />
     </Tabs>
   );

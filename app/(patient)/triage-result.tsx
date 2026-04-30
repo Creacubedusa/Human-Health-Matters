@@ -1,4 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { TriageResultView } from '@features/patient/screens/TriageResultView';
 import { useTriageStore } from '@features/patient/store/triage.store';
 
@@ -8,12 +9,14 @@ export default function TriageResultScreen() {
   const { sessionId } = useLocalSearchParams<{ sessionId: string }>();
 
   const result = currentSession?.result ?? null;
+  const isMissingResult = !result || result.sessionId !== sessionId;
 
-  if (!result || result.sessionId !== sessionId) {
-    // Fallback: go back if result is missing (shouldn't happen in normal flow)
-    router.back();
-    return null;
-  }
+  useEffect(() => {
+    if (!isMissingResult) return;
+    router.replace('/(patient)/triage');
+  }, [isMissingResult, router]);
+
+  if (isMissingResult) return null;
 
   return (
     <TriageResultView

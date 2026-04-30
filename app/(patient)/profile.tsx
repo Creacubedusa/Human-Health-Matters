@@ -6,12 +6,7 @@ export default function PatientProfileScreen() {
   const router = useRouter();
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)');
+    router.back();
   }
 
   return (
@@ -22,6 +17,18 @@ export default function PatientProfileScreen() {
       onLanguage={() => router.push('/(auth)/select-language')}
       onPrivacy={() => router.push('/(patient)/privacy-policy')}
       onRecord={(id: ProfileRecordId | 'support-report') => {
+        if (id === 'support-report') {
+          router.push('/(patient)/healthcare-support');
+          return;
+        }
+        if (id === 'medical-docs') {
+          router.push('/(patient)/care');
+          return;
+        }
+        if (id === 'prescription') {
+          router.push('/(patient)/prescriptions');
+          return;
+        }
         if (id === 'order') {
           router.push('/(patient)/orders');
           return;

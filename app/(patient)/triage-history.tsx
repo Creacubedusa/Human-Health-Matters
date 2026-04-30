@@ -8,7 +8,7 @@ export default function TriageHistoryScreen() {
 
   function handleViewSummary(id: string) {
     const item = history.find((h) => h.id === id);
-    const summary = item ? `${item.title} — ${item.description}` : '';
+    const summary = item?.summary ?? '';
     router.push({ pathname: '/(patient)/triage-summary', params: { summary } });
   }
 

@@ -4,6 +4,7 @@ import type {
   TriageSeverity,
   TriageHistoryItem,
   NextStep,
+  TriageSession,
 } from '../types/triage.types';
 import type { DoctorMatchContext } from '../types/appointmentBooking.types';
 
@@ -163,15 +164,51 @@ export function computeTriageResult(userMessages: string[], sessionId: string): 
   };
 }
 
-export async function fetchTriageHistory(): Promise<TriageHistoryItem[]> {
-  await new Promise((r) => setTimeout(r, 600));
-  return [
-    { id: 'h1', title: 'Chest Pressure', description: 'Based on this symptoms', date: 'Dec 12, 2024', severity: 'emergency' },
-    { id: 'h2', title: 'Cough & Fever', description: 'Based on this symptoms', date: 'Nov 28, 2024', severity: 'moderate' },
-    { id: 'h3', title: 'Mild Headache', description: 'Based on this symptoms', date: 'Nov 10, 2024', severity: 'low' },
-    { id: 'h4', title: 'Chest Pressure', description: 'Based on this symptoms', date: 'Oct 5, 2024', severity: 'emergency' },
-    { id: 'h5', title: 'Sore Throat', description: 'Based on this symptoms', date: 'Sep 18, 2024', severity: 'low' },
-  ];
+function formatHistoryDate(timestamp: number): string {
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date(timestamp));
+}
+
+function normalizeSentence(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+}
+
+function buildHistoryTitle(messages: TriageMessage[]): string {
+  const firstUserMessage = messages.find((message) => message.role === 'user')?.content ?? '';
+  const normalized = normalizeSentence(firstUserMessage);
+
+  if (!normalized) {
+    return 'Triage conversation';
+  }
+
+  return normalized.length > 42
+    ? `${normalized.slice(0, 42).trimEnd()}...`
+    : normalized;
+}
+
+function buildHistoryDescription(result: TriageResult): string {
+  const normalizedSummary = result.summary.trim();
+  if (normalizedSummary.length <= 72) {
+    return normalizedSummary;
+  }
+
+  return `${normalizedSummary.slice(0, 72).trimEnd()}...`;
+}
+
+export function buildTriageHistoryItem(session: TriageSession, result: TriageResult): TriageHistoryItem {
+  return {
+    id: session.id,
+    title: buildHistoryTitle(session.messages),
+    description: buildHistoryDescription(result),
+    summary: result.summary,
+    date: formatHistoryDate(session.startedAt),
+    severity: result.severity,
+  };
 }
 
 export async function saveToWishlist(_result: TriageResult): Promise<void> {

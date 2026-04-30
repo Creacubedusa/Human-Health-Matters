@@ -5,12 +5,7 @@ export default function PatientProfileEditScreen() {
   const router = useRouter();
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)/profile');
+    router.back();
   }
 
   return (

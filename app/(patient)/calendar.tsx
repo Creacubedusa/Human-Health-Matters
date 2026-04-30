@@ -11,12 +11,7 @@ export default function CalendarScreen() {
   const [pendingAction, setPendingAction] = useState<AppointmentActionType | null>(null);
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)');
+    router.back();
   }
 
   function handleOpenAction(id: string, action: AppointmentActionType) {

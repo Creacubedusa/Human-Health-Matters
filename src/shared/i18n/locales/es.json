@@ -174,6 +174,9 @@
     "notification": "Notificación",
     "language": "Idioma",
     "privacyPolicy": "Política de privacidad",
+    "save": "Guardar",
+    "closeDetailEdit": "Cerrar modal de edición de dato personal",
+    "editField": "Habilitar edición del campo",
     "setupTitle": "Completa tu perfil de salud",
     "setupDescription": "Ayúdanos a conocerte mejor. Unos datos rápidos pueden desbloquear atención personalizada, información más precisa y mejor seguimiento de salud.",
     "cancel": "No, cancelar",
@@ -186,7 +189,104 @@
     "errorMessage": "No se pudo cargar tu perfil",
     "privacyIntroTitle": "Cómo HHM protege tu información",
     "privacyIntroBody": "Human Health Matters usa la información de tu perfil para apoyar el acceso a la atención, personalizar recomendaciones y ayudar a médicos autorizados a comprender tu contexto de salud.",
-    "privacyBody": "Tu información de salud se trata como información sensible. Los datos simulados de este prototipo solo se almacenan localmente y no se envían a un backend. Las futuras integraciones de producción deben usar APIs seguras, acceso de mínimo privilegio y uso compartido con consentimiento para flujos clínicos."
+    "privacyBody": "Tu información de salud se trata como información sensible. Los datos simulados de este prototipo solo se almacenan localmente y no se envían a un backend. Las futuras integraciones de producción deben usar APIs seguras, acceso de mínimo privilegio y uso compartido con consentimiento para flujos clínicos.",
+    "privacyPolicyEffectiveDate": "Fecha de vigencia: 4/04/2026",
+    "privacyPolicyIntro": {
+      "effectiveDate": "Fecha de vigencia: [Insertar fecha]",
+      "commitment": "Respetamos tu privacidad y estamos comprometidos a proteger tu información personal y de salud."
+    },
+    "privacyPolicySections": {
+      "collect": {
+        "title": "1. Lo que recopilamos",
+        "body": "Podemos recopilar:",
+        "bullets": {
+          "personalDetails": "Datos personales (nombre, información de contacto)",
+          "healthInformation": "Información de salud (síntomas, historial médico, registros)",
+          "insuranceAndPayment": "Datos de seguro y pago",
+          "aiInteractions": "Interacciones con nuestro asistente de IA",
+          "appUsage": "Datos de uso de la aplicación"
+        }
+      },
+      "use": {
+        "title": "2. Cómo usamos tu información",
+        "body": "Usamos tus datos para:",
+        "bullets": {
+          "assessments": "Brindar evaluaciones de salud con IA y conectarte con médicos",
+          "carePlans": "Crear planes de atención y gestionar consultas",
+          "insuranceVerification": "Verificar el seguro y estimar costos",
+          "fundingSupport": "Respaldar la financiación de tu atención",
+          "serviceImprovement": "Mejorar nuestros servicios"
+        }
+      },
+      "share": {
+        "title": "3. Cómo compartimos la información",
+        "body": "Solo compartimos tus datos cuando es necesario:",
+        "bullets": {
+          "doctors": "Con médicos involucrados en tu atención",
+          "insuranceProviders": "Con proveedores de seguros (para cobertura y reclamos)",
+          "serviceProviders": "Con proveedores de servicios de confianza",
+          "legalRequirement": "Cuando la ley lo exija"
+        }
+      },
+      "security": {
+        "title": "4. Tu privacidad y seguridad",
+        "bullets": {
+          "encrypted": "Tus datos están cifrados y almacenados de forma segura",
+          "authorizedAccess": "Solo profesionales autorizados pueden acceder a tu información",
+          "control": "Tú controlas tus datos y puedes actualizarlos o solicitar su eliminación"
+        }
+      },
+      "retention": {
+        "title": "5. Conservación de datos",
+        "body": "Conservamos tus datos solo el tiempo necesario para prestar servicios y cumplir con los requisitos legales."
+      },
+      "contact": {
+        "title": "6. Contáctanos",
+        "body": "Si tienes preguntas o inquietudes:",
+        "email": "Correo electrónico: info@h0hm.ai"
+      },
+      "updates": {
+        "title": "7. Actualizaciones",
+        "body": "Podemos actualizar esta política. Te notificaremos sobre los cambios importantes."
+      }
+    },
+    "patientHistory": {
+      "screenTitle": "Historial del paciente",
+      "chronicDiseases": "Enfermedades crónicas",
+      "familyDiabetesHistory": "Historial familiar de diabetes",
+      "generalFamilyHistory": "Historial familiar general",
+      "operation": "Operación",
+      "allergies": "Alergias",
+      "addMore": "Agregar más",
+      "emptyCategory": "Aún no se ha agregado información.",
+      "closeEditModal": "Cerrar modal de edición del historial del paciente",
+      "editRow": "Habilitar edición de la fila",
+      "deleteRow": "Eliminar entrada del historial",
+      "familyHistoryRequired": "Selecciona sí o no antes de guardar.",
+      "rowRequired": "Elimina o completa cada entrada del historial antes de guardar."
+    },
+    "medication": {
+      "screenTitle": "Medicacion",
+      "type": "Tipo",
+      "currentMedications": "Medicamentos actuales",
+      "typeModalTitle": "Tipo de medicacion",
+      "currentMedicationModalTitle": "Medicacion actual",
+      "addMore": "Agregar mas",
+      "emptyCategory": "Aun no se ha agregado medicacion.",
+      "closeEditModal": "Cerrar modal de edicion de medicacion",
+      "editRow": "Habilitar edicion de la fila de medicacion",
+      "deleteRow": "Eliminar entrada de medicacion",
+      "rowRequired": "Elimina o completa cada entrada de medicacion antes de guardar.",
+      "duplicateRow": "Las entradas de medicacion deben ser unicas antes de guardar."
+    },
+    "detailEditErrors": {
+      "phoneRequired": "El número de teléfono es obligatorio",
+      "phoneInvalid": "Ingresa un número de teléfono válido",
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailInvalid": "Ingresa un correo válido",
+      "addressRequired": "La dirección es obligatoria",
+      "nationalityRequired": "La nacionalidad es obligatoria"
+    }
   },
   "selectRole": {
     "headerTitle": "Selecciona tu rol",
