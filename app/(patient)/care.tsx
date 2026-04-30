@@ -1,10 +1,22 @@
-import { Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { CarePlanView } from '@features/patient/screens/CarePlanView';
 
 export default function CareScreen() {
+  const router = useRouter();
+
+  function handleBack() {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace('/(patient)');
+  }
+
   return (
-    <SafeAreaView className="flex-1 bg-white items-center justify-center">
-      <Text className="text-s2 font-semibold font-sans text-grey-900">Care</Text>
-    </SafeAreaView>
+    <CarePlanView
+      onBack={handleBack}
+      onViewCarePlan={(id) => router.push({ pathname: '/(patient)/care-plan-detail', params: { id } })}
+    />
   );
 }

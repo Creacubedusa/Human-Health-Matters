@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
+import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { saveToWishlist } from '../services/triage.service';
 import { TriageResultCard } from '../components/TriageResultCard';
 import type { TriageResult } from '../types/triage.types';
@@ -37,27 +38,22 @@ export function TriageResultView({
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* Header */}
-      <View className="h-[66px] flex-row items-center justify-between px-4 border-b border-grey-100">
-        <Pressable
-          onPress={onBack}
-          className="w-[29px] h-[29px] rounded-lg bg-grey-50 items-center justify-center"
-          accessibilityRole="button"
-          accessibilityLabel={t('common.back')}
-        >
-          <Ionicons name="chevron-back" size={20} color={primitiveColors['grey-900']} />
-        </Pressable>
+      <View className="h-[66px] justify-end border-b border-grey-100">
+        <View className="h-[48px] flex-row items-center justify-between px-4 pb-3">
+          <HeaderBackButton onPress={onBack} accessibilityLabel={t('common.back')} />
 
-        <Text className="text-[16px] font-semibold font-sans text-grey-900">
-          {t('nuraAI.triageResultTitle')}
-        </Text>
+          <Text className="text-[16px] font-semibold font-sans text-grey-900">
+            {t('nuraAI.triageResultTitle')}
+          </Text>
 
-        <Pressable
-          onPress={onClose}
-          accessibilityRole="button"
-          accessibilityLabel="Close"
-        >
-          <Ionicons name="close" size={22} color={primitiveColors['grey-700']} />
-        </Pressable>
+          <Pressable
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close"
+          >
+            <Ionicons name="close" size={22} color={primitiveColors['grey-700']} />
+          </Pressable>
+        </View>
       </View>
 
       {/* Scrollable content */}

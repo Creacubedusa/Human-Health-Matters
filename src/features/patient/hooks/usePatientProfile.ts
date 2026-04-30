@@ -29,10 +29,10 @@ interface StepConfig {
 }
 
 const BASE_STEPS: StepConfig[] = [
-  { id: 'basicInfo',             progress: 0,   skippable: false },
-  { id: 'weight',                progress: 20,  skippable: false },
-  { id: 'height',                progress: 20,  skippable: false },
-  { id: 'diabetes',              progress: 40,  skippable: false },
+  { id: 'basicInfo',             progress: 0,   skippable: true  },
+  { id: 'weight',                progress: 20,  skippable: true  },
+  { id: 'height',                progress: 20,  skippable: true  },
+  { id: 'diabetes',              progress: 40,  skippable: true  },
   { id: 'familyHistoryDiabetes', progress: 60,  skippable: true  },
   { id: 'chronicDiseases',       progress: 60,  skippable: true  },
   { id: 'generalFamilyHistory',  progress: 80,  skippable: true  },

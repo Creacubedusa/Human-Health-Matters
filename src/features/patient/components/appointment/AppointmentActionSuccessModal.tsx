@@ -28,10 +28,7 @@ export function AppointmentActionSuccessModal({
       : 'appointmentManagement.rescheduleSuccessMessage';
 
   return (
-    <View
-      className="absolute inset-0 z-50 items-center justify-center px-6"
-      style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-    >
+    <View className="absolute inset-0 z-50 items-center justify-center bg-black/50 px-6">
       <View className="bg-white rounded-2xl w-full overflow-hidden">
         {/* Header with close */}
         <View className="h-9 items-end justify-center px-4">

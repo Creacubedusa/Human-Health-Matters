@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { Button } from '@shared/components/ui/Button';
+import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { AppointmentCalendar } from '../components/booking/AppointmentCalendar';
 import { TimeSlotGrid } from '../components/booking/TimeSlotGrid';
 import { useRescheduleDatetime } from '../hooks/useRescheduleDatetime';
@@ -30,6 +31,7 @@ export function AppointmentRescheduleDateTimeView({
   const { t } = useTranslation();
   const {
     status,
+    hasSelectedAppointment,
     calendarMonth,
     timeSlots,
     selectedDate,
@@ -38,6 +40,7 @@ export function AppointmentRescheduleDateTimeView({
     setSelectedDate,
     setSelectedTimeSlot,
     handleMakeAppointment,
+    retry,
   } = useRescheduleDatetime();
 
   const weekdayLabels = WEEKDAY_KEYS.map((key) => t(key));
@@ -48,11 +51,9 @@ export function AppointmentRescheduleDateTimeView({
   if (status === 'loading') {
     return (
       <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-        <View className="bg-primary-50 h-[120px] justify-end">
-          <View className="flex-row items-center justify-between px-4 h-[66px]">
-            <Pressable onPress={onBack} className="w-[29px] h-[29px] rounded-lg bg-white items-center justify-center border border-grey-200" accessibilityRole="button">
-              <Ionicons name="chevron-back" size={20} color={primitiveColors['grey-900']} />
-            </Pressable>
+        <View className="bg-primary-50 h-[66px] justify-end">
+          <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
+            <HeaderBackButton onPress={onBack} accessibilityLabel={t('common.back')} />
             <Text className="text-[16px] font-semibold font-sans text-grey-900">{t('appointmentManagement.rescheduleHeaderTitle')}</Text>
             <View className="w-[29px]" />
           </View>
@@ -64,19 +65,50 @@ export function AppointmentRescheduleDateTimeView({
     );
   }
 
+  if (status === 'error') {
+    return (
+      <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+        <View className="bg-primary-50 h-[66px] justify-end">
+          <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
+            <HeaderBackButton onPress={onBack} accessibilityLabel={t('common.back')} />
+            <Text className="text-[16px] font-semibold font-sans text-grey-900">
+              {t('appointmentManagement.rescheduleHeaderTitle')}
+            </Text>
+            <View className="w-[29px]" />
+          </View>
+        </View>
+
+        <View className="flex-1 items-center justify-center px-6 gap-4">
+          <Ionicons name="calendar-outline" size={48} color={primitiveColors['grey-300']} />
+          <Text className="text-[15px] font-semibold font-sans text-grey-900 text-center">
+            {t('appointmentManagement.rescheduleDateTimeErrorTitle')}
+          </Text>
+          <Text className="text-[13px] font-sans text-grey-500 text-center leading-5">
+            {hasSelectedAppointment
+              ? t('appointmentManagement.rescheduleDateTimeErrorSubtitle')
+              : t('appointmentManagement.rescheduleDateTimeMissingSelection')}
+          </Text>
+          <Button
+            label={
+              hasSelectedAppointment
+                ? t('common.retry')
+                : t('appointmentManagement.goBack')
+            }
+            variant="filled"
+            size="large"
+            onPress={hasSelectedAppointment ? retry : onBack}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* Header */}
-      <View className="bg-primary-50 h-[120px] justify-end">
-        <View className="flex-row items-center justify-between px-4 h-[66px]">
-          <Pressable
-            onPress={onBack}
-            className="w-[29px] h-[29px] rounded-lg bg-white items-center justify-center border border-grey-200"
-            accessibilityRole="button"
-            accessibilityLabel={t('common.back')}
-          >
-            <Ionicons name="chevron-back" size={20} color={primitiveColors['grey-900']} />
-          </Pressable>
+      <View className="bg-primary-50 h-[66px] justify-end">
+        <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
+          <HeaderBackButton onPress={onBack} accessibilityLabel={t('common.back')} />
 
           <Text className="text-[16px] font-semibold font-sans text-grey-900">
             {t('appointmentManagement.rescheduleHeaderTitle')}

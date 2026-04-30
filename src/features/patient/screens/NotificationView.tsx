@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
+import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { useNotifications } from '../hooks/useNotifications';
 import { NotificationItem } from '../components/NotificationItem';
 import { NotificationTabs } from '../components/NotificationTabs';
@@ -40,22 +41,16 @@ export function NotificationView({
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* Header */}
-      <View className="bg-primary-50 h-[66px] flex-row items-center justify-between px-4">
-        <Pressable
-          onPress={onBack}
-          className="w-[29px] h-[29px] rounded-lg bg-white items-center justify-center border border-grey-900/10"
-          accessibilityRole="button"
-          accessibilityLabel={t('common.back')}
-        >
-          <Ionicons name="chevron-back" size={20} color={primitiveColors['grey-900']} />
-        </Pressable>
+      <View className="bg-primary-50 h-[66px] justify-end">
+        <View className="h-[48px] flex-row items-center justify-between px-4 pb-3">
+          <HeaderBackButton onPress={onBack} accessibilityLabel={t('common.back')} />
 
-        <Text className="text-[16px] font-semibold font-sans text-grey-900">
-          {t('notifications.headerTitle')}
-        </Text>
+          <Text className="text-[16px] font-semibold font-sans text-grey-900">
+            {t('notifications.headerTitle')}
+          </Text>
 
-        {/* Spacer to keep title centered */}
-        <View className="w-[29px]" />
+          <View className="w-[29px]" />
+        </View>
       </View>
 
       {/* Loading */}
