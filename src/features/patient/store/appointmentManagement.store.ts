@@ -5,6 +5,34 @@ import type {
   RescheduleReason,
 } from '../types/appointmentManagement.types';
 
+const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+] as const;
+
+function formatAppointmentDate(isoDate: string) {
+  const [yearText, monthText, dayText] = isoDate.split('-');
+  const year = Number(yearText);
+  const monthIndex = Number(monthText) - 1;
+  const day = Number(dayText);
+
+  if (!year || monthIndex < 0 || monthIndex >= MONTH_NAMES.length || !day) {
+    return isoDate;
+  }
+
+  return `${MONTH_NAMES[monthIndex]} ${day}, ${year}`;
+}
+
 interface AppointmentManagementState {
   appointments: PatientAppointment[];
   selectedId: string | null;
@@ -56,10 +84,12 @@ export const useAppointmentManagementStore = create<AppointmentManagementState>(
       cancelReason: null,
       selectedId: null,
     })),
-  applyReschedule: (_isoDate, _timeSlotId) =>
+  applyReschedule: (isoDate, timeSlotId) =>
     set((state) => ({
       appointments: state.appointments.map((a) =>
-        a.id === state.selectedId ? { ...a, status: 'upcoming' } : a
+        a.id === state.selectedId
+          ? { ...a, status: 'upcoming', date: formatAppointmentDate(isoDate), time: timeSlotId }
+          : a
       ),
       rescheduleModalOpen: false,
       rescheduleReason: null,

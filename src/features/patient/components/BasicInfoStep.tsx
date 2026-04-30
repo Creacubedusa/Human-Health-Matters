@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { Text, View } from 'react-native';
+import { primitiveColors } from '@design/tokens';
 import { AvatarUpload } from '@shared/components/ui/AvatarUpload';
 import { Input } from '@shared/components/ui/Input';
 import { SelectInput } from '@shared/components/ui/SelectInput';
@@ -54,6 +56,13 @@ export function BasicInfoStep({ form, errors, onChange, disabled }: Props) {
           placeholder="DD/MM/YYYY"
           value={form.dateOfBirth ?? ''}
           onChangeText={(v) => onChange('dateOfBirth', v || null)}
+          iconLeft={
+            <Ionicons
+              name="calendar-outline"
+              size={20}
+              color={primitiveColors['grey-900']}
+            />
+          }
           status={errors.dateOfBirth ? 'error' : 'default'}
           helperText={errors.dateOfBirth ? t(errors.dateOfBirth) : undefined}
           keyboardType="numbers-and-punctuation"

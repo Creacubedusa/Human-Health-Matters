@@ -13,7 +13,8 @@
       "backgroundColor": "#edeffe"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.humanhealthmatters"
     },
     "android": {
       "adaptiveIcon": {

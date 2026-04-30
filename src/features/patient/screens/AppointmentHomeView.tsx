@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
+import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { useAppointmentManagement } from '../hooks/useAppointmentManagement';
 import { UpcomingAppointmentCard } from '../components/appointment/UpcomingAppointmentCard';
 import { AppointmentListCard } from '../components/appointment/AppointmentListCard';
@@ -14,12 +15,16 @@ export interface AppointmentHomeViewProps {
   onBookAppointment: () => void;
   onCancelConfirmed: () => void;
   onRescheduleConfirmed: () => void;
+  onBack?: () => void;
+  onCalendar?: () => void;
 }
 
 export function AppointmentHomeView({
   onBookAppointment,
   onCancelConfirmed,
   onRescheduleConfirmed,
+  onBack,
+  onCalendar,
 }: AppointmentHomeViewProps) {
   const { t } = useTranslation();
   const {
@@ -31,23 +36,39 @@ export function AppointmentHomeView({
     openCancelModal,
     openRescheduleModal,
     closeModals,
-    handleConfirmCancel,
     retry,
   } = useAppointmentManagement();
 
-  async function handleCancel() {
-    await handleConfirmCancel();
-  }
+  const header = (
+    <View className="bg-primary-50 h-[66px] justify-end">
+      <View className="flex-row items-center justify-between px-5 pb-3 h-[48px]">
+        <HeaderBackButton
+          onPress={onBack}
+          disabled={!onBack}
+          accessibilityLabel={t('common.back')}
+        />
+
+        <Text className="text-[16px] font-semibold font-sans text-grey-900">
+          {t('appointmentManagement.headerTitle')}
+        </Text>
+
+        <Pressable
+          onPress={onCalendar}
+          className="w-[29px] h-[29px] items-end justify-center"
+          accessibilityRole="button"
+          accessibilityLabel={t('calendar.title', { defaultValue: 'Calendar' })}
+        >
+          <Ionicons name="calendar-outline" size={22} color={primitiveColors['grey-900']} />
+        </Pressable>
+      </View>
+    </View>
+  );
 
   // ── Loading ───────────────────────────────────────────────────────────────
   if (status === 'loading') {
     return (
       <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-        <View className="bg-primary-50 h-[120px] justify-end pb-4 px-5">
-          <Text className="text-[16px] font-semibold font-sans text-grey-900 text-center">
-            {t('appointmentManagement.headerTitle')}
-          </Text>
-        </View>
+        {header}
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
         </View>
@@ -59,11 +80,7 @@ export function AppointmentHomeView({
   if (status === 'error') {
     return (
       <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-        <View className="bg-primary-50 h-[120px] justify-end pb-4 px-5">
-          <Text className="text-[16px] font-semibold font-sans text-grey-900 text-center">
-            {t('appointmentManagement.headerTitle')}
-          </Text>
-        </View>
+        {header}
         <View className="flex-1 items-center justify-center px-6 gap-4">
           <Text className="text-[15px] font-sans text-grey-700 text-center">
             {t('appointmentManagement.errorMessage')}
@@ -85,17 +102,7 @@ export function AppointmentHomeView({
   return (
     <SafeAreaView className="flex-1 bg-grey-50" edges={['top']}>
       {/* Header */}
-      <View className="bg-primary-50 h-[120px] justify-end">
-        <View className="flex-row items-center justify-between px-4 h-[66px]">
-          <View className="w-[29px] h-[29px]" />
-          <Text className="text-[16px] font-semibold font-sans text-grey-900">
-            {t('appointmentManagement.headerTitle')}
-          </Text>
-          <Pressable accessibilityRole="button">
-            <Ionicons name="calendar-outline" size={22} color={primitiveColors['grey-900']} />
-          </Pressable>
-        </View>
-      </View>
+      {header}
 
       {/* Content */}
       <FlatList

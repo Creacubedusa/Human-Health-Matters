@@ -98,6 +98,7 @@ export interface FundActivity {
 export type Activity = ConsultationActivity | SymptomActivity | FundActivity;
 
 export interface CareInProgress {
+  id: string;
   title: string;
   doctorName: string;
   specialty: string;

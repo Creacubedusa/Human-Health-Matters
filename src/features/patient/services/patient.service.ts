@@ -21,6 +21,7 @@ export async function fetchPatientDashboard(): Promise<PatientHomeDashboard> {
     patientName: 'Angela',
     isNewUser: false,
     careInProgress: {
+      id: 'care-active-1',
       title: 'Difficulty in Breathing Assessment',
       doctorName: 'Doctor Paul Grant',
       specialty: 'Cardiologist',

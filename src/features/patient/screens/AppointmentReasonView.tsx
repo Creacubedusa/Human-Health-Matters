@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { Button } from '@shared/components/ui/Button';
 import { RadioGroup } from '@shared/components/ui/RadioGroup';
+import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { useAppointmentManagementStore } from '../store/appointmentManagement.store';
 import type { AppointmentActionType, CancelReason, RescheduleReason } from '../types/appointmentManagement.types';
 
@@ -61,16 +62,9 @@ export function AppointmentReasonView({ type, onBack, onNext }: AppointmentReaso
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* Header */}
-      <View className="bg-primary-50 h-[120px] justify-end">
-        <View className="flex-row items-center justify-between px-4 h-[66px]">
-          <Pressable
-            onPress={onBack}
-            className="w-[29px] h-[29px] rounded-lg bg-white items-center justify-center border border-grey-200"
-            accessibilityRole="button"
-            accessibilityLabel={t('common.back')}
-          >
-            <Ionicons name="chevron-back" size={20} color={primitiveColors['grey-900']} />
-          </Pressable>
+      <View className="bg-primary-50 h-[66px] justify-end">
+        <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
+          <HeaderBackButton onPress={onBack} accessibilityLabel={t('common.back')} />
 
           <Text className="text-[16px] font-semibold font-sans text-grey-900">
             {t(headerTitleKey)}

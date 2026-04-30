@@ -5,7 +5,7 @@ import type { CareInProgress } from '../types/patient.types';
 
 interface Props {
   care: CareInProgress;
-  onViewCarePlan: () => void;
+  onViewCarePlan: (id: string) => void;
 }
 
 // Figma: bg-primary-50, rounded-2xl, Active badge + date, title+doctor, View Care Plan button
@@ -41,7 +41,7 @@ export function CareInProgressCard({ care, onViewCarePlan }: Props) {
         {/* View Care Plan button */}
         <Button
           label={t('patientHome.viewCarePlan')}
-          onPress={onViewCarePlan}
+          onPress={() => onViewCarePlan(care.id)}
           variant="filled"
           size="medium"
           fullWidth

@@ -31,6 +31,7 @@ export function HeightStep({ form, errors, onChange, disabled }: Props) {
         {form.heightUnit === 'cm' ? (
           <StepperInput
             value={form.heightCm}
+            onChangeValue={(value) => onChange('heightCm', value)}
             onIncrement={() => onChange('heightCm', Math.min(300, form.heightCm + 1))}
             onDecrement={() => onChange('heightCm', Math.max(0, form.heightCm - 1))}
             label={t('patientProfile.unitCm')}
@@ -43,6 +44,7 @@ export function HeightStep({ form, errors, onChange, disabled }: Props) {
           <>
             <StepperInput
               value={form.heightFeet}
+              onChangeValue={(value) => onChange('heightFeet', value)}
               onIncrement={() => onChange('heightFeet', Math.min(9, form.heightFeet + 1))}
               onDecrement={() => onChange('heightFeet', Math.max(0, form.heightFeet - 1))}
               label={t('patientProfile.unitFeet')}
@@ -53,6 +55,7 @@ export function HeightStep({ form, errors, onChange, disabled }: Props) {
             />
             <StepperInput
               value={form.heightInches}
+              onChangeValue={(value) => onChange('heightInches', value)}
               onIncrement={() => onChange('heightInches', Math.min(11, form.heightInches + 1))}
               onDecrement={() => onChange('heightInches', Math.max(0, form.heightInches - 1))}
               label={t('patientProfile.unitInches')}

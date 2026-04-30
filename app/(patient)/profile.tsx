@@ -1,12 +1,37 @@
-import { useTranslation } from 'react-i18next';
-import { Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { PatientProfileOverviewView } from '@features/patient/screens/PatientProfileOverviewView';
+import type { ProfileRecordId } from '@features/patient/types/profileOverview.types';
 
 export default function PatientProfileScreen() {
-  const { t } = useTranslation();
+  const router = useRouter();
+
+  function handleBack() {
+    if (router.canGoBack()) {
+      router.back();
+      return;
+    }
+
+    router.replace('/(patient)');
+  }
+
   return (
-    <SafeAreaView className="flex-1 bg-bg-default items-center justify-center">
-      <Text className="text-s2 text-text-primary">{t('tabs.profile')}</Text>
-    </SafeAreaView>
+    <PatientProfileOverviewView
+      onBack={handleBack}
+      onEdit={() => router.push('/(patient)/profile-edit')}
+      onCompleteProfile={() => router.push('/(auth)/patient-profile')}
+      onLanguage={() => router.push('/(auth)/select-language')}
+      onPrivacy={() => router.push('/(patient)/privacy-policy')}
+      onRecord={(id: ProfileRecordId | 'support-report') => {
+        if (id === 'order') {
+          router.push('/(patient)/orders');
+          return;
+        }
+        if (id === 'tests') {
+          router.push('/(patient)/tests');
+          return;
+        }
+        router.push({ pathname: '/(patient)/profile-record-detail', params: { id } });
+      }}
+    />
   );
 }
