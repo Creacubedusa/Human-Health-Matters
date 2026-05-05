@@ -204,6 +204,31 @@
       "amountExceedsBalance": "Withdrawal amount cannot be more than your available balance"
     }
   },
+  "doctorClaims": {
+    "title": "Insurance Claims",
+    "subtitle": "Review insurance details for patients you have consulted and file their claims outside HHM.",
+    "detailSubtitle": "Review the patient insurance information needed for external claim filing.",
+    "postSessionTitle": "Patient Insurance",
+    "postSessionSubtitle": "Use these insurance details to complete external insurance filing after this consultation.",
+    "claimEssentialsTitle": "Claim Essentials",
+    "patientName": "Patient Name",
+    "provider": "Insurance Provider",
+    "memberId": "Member ID",
+    "groupNumber": "Group Number",
+    "planType": "Plan Type",
+    "scheduleFollowUp": "Schedule follow up",
+    "markCompleted": "Mark as completed",
+    "completeSuccess": "Appointment marked as completed.",
+    "followUpTitle": "Follow up with {{patientName}}",
+    "emptyTitle": "No insurance claims yet",
+    "emptySubtitle": "Once you complete insured consultations, the patient insurance details will appear here.",
+    "unknownPatient": "Unknown patient",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "inconclusive": "Inconclusive"
+    }
+  },
   "doctorPatients": {
     "headerTitle": "Patient",
     "listTitle": "Patients List",

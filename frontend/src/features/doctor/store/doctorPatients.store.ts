@@ -1,5 +1,8 @@
 import { create } from 'zustand';
+import { getMockCoverageResultForScenario } from '@features/patient/services/insuranceCoverage.service';
+import type { CoverageScenarioId } from '@features/patient/types/insuranceCoverage.types';
 import type {
+  DoctorInsuranceClaimRecord,
   DoctorOrderDraft,
   DoctorPatientProfile,
   DoctorPrescriptionDraft,
@@ -8,7 +11,17 @@ import type {
 
 interface DoctorPatientsState {
   patients: DoctorPatientProfile[];
+  insuranceClaims: DoctorInsuranceClaimRecord[];
+  selectedInsuranceClaimId: string | null;
   successByPatientId: Record<string, string | null>;
+  setSelectedInsuranceClaimId: (claimId: string | null) => void;
+  recordInsuranceClaim: (payload: {
+    patientId: string;
+    appointmentId: string;
+    consultationDate: string;
+    consultationTime?: string;
+    consultationDuration: string;
+  }) => DoctorInsuranceClaimRecord | null;
   addPrescription: (patientId: string, draft: DoctorPrescriptionDraft) => void;
   addOrder: (patientId: string, draft: DoctorOrderDraft) => void;
   addCarePlanSummary: (patientId: string, plan: { id: string; status: 'active' | 'inactive'; title: string; doctorName: string; specialty: string; date: string }) => void;
@@ -30,6 +43,48 @@ function fileNameFromUri(uri: string | null) {
   return parts[parts.length - 1] ?? 'Medical-report.jpg';
 }
 
+function buildClaimId(appointmentId: string, consultationDate: string, consultationTime: string) {
+  const dateKey = consultationDate.replace(/[^a-zA-Z0-9]/g, '-');
+  const timeKey = consultationTime.replace(/[^a-zA-Z0-9]/g, '-');
+  return `claim-${appointmentId}-${dateKey}-${timeKey}`;
+}
+
+function buildInsuranceClaimRecord(
+  patient: DoctorPatientProfile,
+  scenarioId: CoverageScenarioId,
+  payload: {
+    appointmentId: string;
+    consultationDate: string;
+    consultationTime?: string;
+    consultationDuration: string;
+  },
+): DoctorInsuranceClaimRecord {
+  const coverageResult = getMockCoverageResultForScenario(scenarioId, {
+    patientName: patient.name,
+  });
+
+  return {
+    id: buildClaimId(
+      payload.appointmentId,
+      payload.consultationDate,
+      payload.consultationTime ?? patient.appointmentTime,
+    ),
+    patientId: patient.id,
+    patientName: patient.name,
+    appointmentId: payload.appointmentId,
+    consultationDate: payload.consultationDate,
+    consultationTime: payload.consultationTime ?? patient.appointmentTime,
+    consultationDuration: payload.consultationDuration,
+    insuranceStatus: coverageResult.insuranceStatus,
+    coverageOutcome: coverageResult.outcome,
+    carrierLabel: coverageResult.carrierLabel,
+    memberId: coverageResult.memberId,
+    groupNumber: coverageResult.groupNumber,
+    planType: coverageResult.planType,
+    chiefComplaint: patient.symptoms[0] ?? patient.aiSummary.summary,
+  };
+}
+
 const INITIAL_PATIENTS: DoctorPatientProfile[] = [
   {
     id: '1',
@@ -49,6 +104,7 @@ const INITIAL_PATIENTS: DoctorPatientProfile[] = [
     email: 'angela.dairo@example.com',
     address: '12 Admiralty Way, Lekki, Lagos',
     nationality: 'Nigerian',
+    insuranceScenarioId: 'insured_full',
     medicalRecords: {
       patientHistory: [
         'History of hypertension and intermittent chest discomfort.',
@@ -148,6 +204,7 @@ const INITIAL_PATIENTS: DoctorPatientProfile[] = [
     email: 'david.hassan@example.com',
     address: '7 GRA Phase 2, Port Harcourt',
     nationality: 'Nigerian',
+    insuranceScenarioId: 'insured_partial_with_donor',
     medicalRecords: {
       patientHistory: ['Known Type 2 diabetic.', 'Complains of unstable sugar control over the last month.'],
       medication: ['Metformin 500mg twice daily'],
@@ -187,6 +244,7 @@ const INITIAL_PATIENTS: DoctorPatientProfile[] = [
     email: 'halima.yusuf@example.com',
     address: '19 Aminu Kano Crescent, Abuja',
     nationality: 'Nigerian',
+    insuranceScenarioId: 'no_insurance_donor_approved',
     medicalRecords: {
       patientHistory: ['No significant chronic disease history.', 'Symptoms appear stress-related.'],
       medication: ['Paracetamol as needed'],
@@ -226,6 +284,7 @@ const INITIAL_PATIENTS: DoctorPatientProfile[] = [
     email: 'moses.etim@example.com',
     address: '44 Ewet Housing, Uyo',
     nationality: 'Nigerian',
+    insuranceScenarioId: 'insured_inactive',
     medicalRecords: {
       patientHistory: ['Recent travel history noted.', 'No surgery history reported.'],
       medication: ['Omeprazole 20mg once daily'],
@@ -265,6 +324,7 @@ const INITIAL_PATIENTS: DoctorPatientProfile[] = [
     email: 'tosin.adeyemi@example.com',
     address: '21 Bodija Estate, Ibadan',
     nationality: 'Nigerian',
+    insuranceScenarioId: 'insured_inconclusive',
     medicalRecords: {
       patientHistory: ['Recurring lower back pain over the last 6 months.'],
       medication: ['Ibuprofen as needed'],
@@ -288,9 +348,66 @@ const INITIAL_PATIENTS: DoctorPatientProfile[] = [
   },
 ];
 
+const INITIAL_INSURANCE_CLAIMS: DoctorInsuranceClaimRecord[] = [
+  buildInsuranceClaimRecord(INITIAL_PATIENTS[0], 'insured_full', {
+    appointmentId: 'consultation-angela-1',
+    consultationDate: 'May 4, 2026',
+    consultationTime: '8:00 AM',
+    consultationDuration: '35 mins',
+  }),
+  buildInsuranceClaimRecord(INITIAL_PATIENTS[1], 'insured_partial_with_donor', {
+    appointmentId: 'consultation-david-1',
+    consultationDate: 'May 3, 2026',
+    consultationTime: '10:15 AM',
+    consultationDuration: '42 mins',
+  }),
+  buildInsuranceClaimRecord(INITIAL_PATIENTS[3], 'insured_partial_no_donor', {
+    appointmentId: 'consultation-moses-1',
+    consultationDate: 'May 1, 2026',
+    consultationTime: '1:10 PM',
+    consultationDuration: '29 mins',
+  }),
+  buildInsuranceClaimRecord(INITIAL_PATIENTS[3], 'insured_inactive', {
+    appointmentId: 'consultation-moses-2',
+    consultationDate: 'Apr 26, 2026',
+    consultationTime: '2:00 PM',
+    consultationDuration: '31 mins',
+  }),
+  buildInsuranceClaimRecord(INITIAL_PATIENTS[4], 'insured_inconclusive', {
+    appointmentId: 'consultation-tosin-1',
+    consultationDate: 'Apr 20, 2026',
+    consultationTime: '4:20 PM',
+    consultationDuration: '26 mins',
+  }),
+];
+
 export const useDoctorPatientsStore = create<DoctorPatientsState>((set) => ({
   patients: INITIAL_PATIENTS,
+  insuranceClaims: INITIAL_INSURANCE_CLAIMS,
+  selectedInsuranceClaimId: null,
   successByPatientId: {},
+  setSelectedInsuranceClaimId: (claimId) => set({ selectedInsuranceClaimId: claimId }),
+  recordInsuranceClaim: (payload) => {
+    const patient = useDoctorPatientsStore
+      .getState()
+      .patients.find((item) => item.id === payload.patientId);
+
+    if (!patient?.insuranceScenarioId || !patient.insuranceScenarioId.startsWith('insured_')) {
+      return null;
+    }
+
+    const claim = buildInsuranceClaimRecord(patient, patient.insuranceScenarioId, payload);
+
+    set((state) => ({
+      insuranceClaims: [
+        claim,
+        ...state.insuranceClaims.filter((item) => item.id !== claim.id),
+      ],
+      selectedInsuranceClaimId: claim.id,
+    }));
+
+    return claim;
+  },
 
   addPrescription: (patientId, draft) =>
     set((state) => ({

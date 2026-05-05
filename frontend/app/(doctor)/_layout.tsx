@@ -116,6 +116,7 @@ export default function DoctorLayout() {
       <Tabs.Screen name="earning-transactions" options={{ href: null }} />
       <Tabs.Screen name="earning-withdraw" options={{ href: null }} />
       <Tabs.Screen name="earning-claims-tracker" options={{ href: null }} />
+      <Tabs.Screen name="insurance-claim/[claimId]" options={{ href: null }} />
       <Tabs.Screen name="earning-payout-history" options={{ href: null }} />
       <Tabs.Screen name="earning-receipt/[transactionId]" options={{ href: null }} />
       <Tabs.Screen name="earning-transaction/[transactionId]" options={{ href: null }} />
@@ -128,6 +129,7 @@ export default function DoctorLayout() {
       <Tabs.Screen name="appointment-reschedule-datetime" options={{ href: null }} />
       <Tabs.Screen name="soap-note" options={{ href: null }} />
       <Tabs.Screen name="post-session-care-plan" options={{ href: null }} />
+      <Tabs.Screen name="post-session-insurance-details" options={{ href: null }} />
       <Tabs.Screen name="post-session-care-plan-soap-edit" options={{ href: null }} />
       <Tabs.Screen name="post-session-care-plan-diagnoses-edit" options={{ href: null }} />
       <Tabs.Screen name="post-session-care-plan-recommended-tests-edit" options={{ href: null }} />

@@ -1,3 +1,9 @@
+import type {
+  CoverageOutcome,
+  CoverageScenarioId,
+  InsuranceStatus,
+} from '@features/patient/types/insuranceCoverage.types';
+
 export type OnboardingStatus = 'complete' | 'incomplete';
 
 export interface DoctorRegisterPayload {
@@ -195,7 +201,25 @@ export interface DoctorPatientProfile extends DoctorPatientListItem {
   email: string;
   address: string;
   nationality: string;
+  insuranceScenarioId?: CoverageScenarioId;
   medicalRecords: DoctorPatientMedicalRecords;
+}
+
+export interface DoctorInsuranceClaimRecord {
+  id: string;
+  patientId: string;
+  patientName: string;
+  appointmentId: string;
+  consultationDate: string;
+  consultationTime: string;
+  consultationDuration: string;
+  insuranceStatus: InsuranceStatus;
+  coverageOutcome: CoverageOutcome;
+  carrierLabel: string;
+  memberId: string;
+  groupNumber: string;
+  planType: string;
+  chiefComplaint: string;
 }
 
 export interface DoctorPrescriptionDraft {

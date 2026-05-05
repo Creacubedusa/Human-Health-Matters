@@ -20,6 +20,7 @@ export default function DoctorPostSessionCarePlanScreen() {
   const setSoapSubmitting = useDoctorConsultationStore((state) => state.setSoapSubmitting);
   const setPostSessionDraft = useDoctorConsultationStore((state) => state.setPostSessionDraft);
   const addCarePlanSummary = useDoctorPatientsStore((state) => state.addCarePlanSummary);
+  const recordInsuranceClaim = useDoctorPatientsStore((state) => state.recordInsuranceClaim);
   const completeAppointment = useDoctorAppointmentsStore((state) => state.completeAppointment);
   const addCarePlan = useCarePlanStore((state) => state.addCarePlan);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
@@ -54,8 +55,18 @@ export default function DoctorPostSessionCarePlanScreen() {
         date: carePlan.consultationDate,
       });
       setCarePlanSaved(true);
-      setCompletionModalOpen(true);
+      const claim = recordInsuranceClaim({
+        patientId: activeDraft.patientId,
+        appointmentId: activeDraft.appointmentId,
+        consultationDate: activeDraft.consultationDate,
+        consultationDuration: activeDraft.duration,
+      });
       toast.success('Care plan created successfully.');
+      if (claim) {
+        router.push('/(doctor)/post-session-insurance-details');
+        return;
+      }
+      setCompletionModalOpen(true);
     } catch {
       toast.error('Unable to save care plan. Please try again.');
     } finally {

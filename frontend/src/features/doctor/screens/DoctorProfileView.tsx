@@ -112,7 +112,9 @@ function SettingNavRow({ icon, label, onPress }: SettingNavRowProps) {
       accessibilityRole="button"
     >
       <View className="flex-row items-center gap-4">
-        {icon}
+        <View className="w-4 items-center justify-center">
+          {icon}
+        </View>
         <Text className="text-[14px] font-sans text-grey-900">{label}</Text>
       </View>
       <Ionicons name="chevron-forward" size={16} color={primitiveColors['grey-500']} />
@@ -131,7 +133,9 @@ function SettingToggleRow({ icon, label, value, onValueChange }: SettingToggleRo
   return (
     <View className="flex-row items-center justify-between h-[35px]">
       <View className="flex-row items-center gap-4">
-        {icon}
+        <View className="w-4 items-center justify-center">
+          {icon}
+        </View>
         <Text className="text-[14px] font-sans text-grey-900">{label}</Text>
       </View>
       <Switch
@@ -594,33 +598,63 @@ export function DoctorProfileView() {
           </Text>
 
           <SettingToggleRow
-            icon={<Ionicons name="notifications-outline" size={16} color={primitiveColors['grey-700']} />}
+            icon={
+              <Ionicons
+                name="notifications-outline"
+                size={16}
+                color={primitiveColors['primary-500']}
+              />
+            }
             label={t('doctorProfile.settingNotifications')}
             value={notificationsOn}
             onValueChange={setNotificationsOn}
           />
 
           <SettingToggleRow
-            icon={<MaterialCommunityIcons name="robot-outline" size={16} color={primitiveColors['grey-700']} />}
+            icon={
+              <Ionicons
+                name="sparkles-outline"
+                size={16}
+                color={primitiveColors['primary-500']}
+              />
+            }
             label={t('doctorProfile.settingAIAssistance')}
             value={aiAssistanceOn}
             onValueChange={setAiAssistanceOn}
           />
 
           <SettingNavRow
-            icon={<Ionicons name="calendar-outline" size={16} color={primitiveColors['grey-700']} />}
+            icon={
+              <Ionicons
+                name="calendar-clear-outline"
+                size={16}
+                color={primitiveColors['primary-500']}
+              />
+            }
             label={t('doctorProfile.settingAvailability')}
             onPress={() => router.push('/(doctor)/availability')}
           />
 
           <SettingNavRow
-            icon={<Ionicons name="language-outline" size={16} color={primitiveColors['grey-700']} />}
+            icon={
+              <MaterialCommunityIcons
+                name="translate"
+                size={16}
+                color={primitiveColors['primary-500']}
+              />
+            }
             label={t('doctorProfile.settingLanguage')}
             onPress={() => router.push('/(auth)/select-language')}
           />
 
           <SettingNavRow
-            icon={<Ionicons name="shield-checkmark-outline" size={16} color={primitiveColors['grey-700']} />}
+            icon={
+              <Ionicons
+                name="document-text-outline"
+                size={16}
+                color={primitiveColors['primary-500']}
+              />
+            }
             label={t('doctorProfile.settingPrivacyPolicy')}
             onPress={() => router.push('/(doctor)/privacy-policy')}
           />

@@ -181,6 +181,31 @@
       "amountExceedsBalance": "El monto del retiro no puede ser mayor que tu saldo disponible"
     }
   },
+  "doctorClaims": {
+    "title": "Reclamos de seguro",
+    "subtitle": "Revisa los detalles del seguro de los pacientes que has consultado y presenta sus reclamos fuera de HHM.",
+    "detailSubtitle": "Revisa la información del seguro del paciente necesaria para la presentación externa del reclamo.",
+    "postSessionTitle": "Seguro del paciente",
+    "postSessionSubtitle": "Usa estos detalles del seguro para completar la presentación externa del reclamo después de esta consulta.",
+    "claimEssentialsTitle": "Datos clave del reclamo",
+    "patientName": "Nombre del paciente",
+    "provider": "Proveedor de seguro",
+    "memberId": "ID de miembro",
+    "groupNumber": "Número de grupo",
+    "planType": "Tipo de plan",
+    "scheduleFollowUp": "Programar seguimiento",
+    "markCompleted": "Marcar como completada",
+    "completeSuccess": "La cita fue marcada como completada.",
+    "followUpTitle": "Seguimiento con {{patientName}}",
+    "emptyTitle": "Aún no hay reclamos de seguro",
+    "emptySubtitle": "Cuando completes consultas aseguradas, los detalles del seguro del paciente aparecerán aquí.",
+    "unknownPatient": "Paciente desconocido",
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "inconclusive": "No concluyente"
+    }
+  },
   "doctorPatients": {
     "title": "Pacientes",
     "subtitle": "Pacientes con los que has consultado",

@@ -106,6 +106,15 @@ export function DoctorEarningDashboardView() {
               onPress={() => router.push('/(doctor)/earning-withdraw')}
             />
             <EarningQuickActionCard
+              label={t('doctorEarnings.claimsTracker')}
+              icon={
+                <View className="bg-red-500 rounded-2xl size-8 items-center justify-center">
+                  <Ionicons name="time-outline" size={16} color={primitiveColors.white} />
+                </View>
+              }
+              onPress={() => router.push('/(doctor)/earning-claims-tracker')}
+            />
+            <EarningQuickActionCard
               label={t('doctorEarnings.payoutHistory')}
               icon={
                 <View className="bg-green-500 rounded-2xl size-8 items-center justify-center">
