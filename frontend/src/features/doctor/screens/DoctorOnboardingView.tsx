@@ -1,139 +1,85 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { AvatarUpload } from '@shared/components/ui/AvatarUpload';
-import { Button } from '@shared/components/ui/Button';
-import { TagInput } from '@shared/components/ui/TagInput';
-import { uploadImageToCloudinary } from '@shared/api/cloudinary';
-import { fetchDoctorProfile, setupDoctorProfile } from '../services/doctor.service';
-import { useAuthStore } from '@shared/store/auth.store';
+import React, { useCallback } from 'react';
+import { Dimensions, FlatList, type ImageSourcePropType, type ListRenderItemInfo, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { OnboardingSlide } from '@shared/components/ui/OnboardingSlide';
+import { useOnboardingCarousel } from '@shared/hooks/useOnboardingCarousel';
+
+const SW = Dimensions.get('window').width;
+
+interface SlideData {
+  key: string;
+  image: ImageSourcePropType;
+  imagePositionClassName: string;
+  titleKey: string;
+  subtitleKey: string;
+}
+
+const SLIDES: SlideData[] = [
+  {
+    key: 'slide1',
+    image: require('../../../../assets/images/doctor-onboarding-slide-1.png'),
+    imagePositionClassName: 'top-[71px]',
+    titleKey: 'doctorOnboarding.slide1Title',
+    subtitleKey: 'doctorOnboarding.slide1Subtitle',
+  },
+  {
+    key: 'slide2',
+    image: require('../../../../assets/images/doctor-onboarding-slide-2.png'),
+    imagePositionClassName: 'top-[92px]',
+    titleKey: 'doctorOnboarding.slide2Title',
+    subtitleKey: 'doctorOnboarding.slide2Subtitle',
+  },
+  {
+    key: 'slide3',
+    image: require('../../../../assets/images/doctor-onboarding-slide-3.png'),
+    imagePositionClassName: 'top-[92px]',
+    titleKey: 'doctorOnboarding.slide3Title',
+    subtitleKey: 'doctorOnboarding.slide3Subtitle',
+  },
+];
 
 export interface DoctorOnboardingViewProps {
-  onComplete: () => void;
+  onGetStarted: () => void;
 }
 
-function initialsFromName(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  const first = parts[0]?.[0] ?? '';
-  const last = parts.length > 1 ? parts[parts.length - 1]?.[0] ?? '' : '';
-  return (first + last).toUpperCase() || '?';
-}
+export function DoctorOnboardingView({ onGetStarted }: DoctorOnboardingViewProps) {
+  const { t } = useTranslation();
+  const { activeIndex, flatListRef, onMomentumScrollEnd } = useOnboardingCarousel(SLIDES.length);
+  const buttonLabel = t('doctorOnboarding.getStarted');
 
-export function DoctorOnboardingView({ onComplete }: DoctorOnboardingViewProps) {
-  const role = useAuthStore((s) => s.role);
-  const [avatarUri, setAvatarUri] = useState<string | null>(null);
-  const [specialties, setSpecialties] = useState<string[]>([]);
-  const [bio, setBio] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const [isPrefilling, setIsPrefilling] = useState(true);
-
-  const initials = useMemo(() => initialsFromName('Doctor'), []);
-  const canSave = specialties.length > 0 && role === 'doctor' && !isSaving && !isPrefilling;
-
-  useEffect(() => {
-    let mounted = true;
-    async function prefill() {
-      try {
-        const res = await fetchDoctorProfile();
-        if (!mounted) return;
-        setAvatarUri(res.profile?.avatarUri ?? null);
-        setSpecialties(res.profile?.specialties ?? []);
-        setBio(res.profile?.bio ?? '');
-      } finally {
-        if (mounted) setIsPrefilling(false);
-      }
-    }
-    void prefill();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  async function handleSave() {
-    if (!canSave) return;
-    setIsSaving(true);
-    try {
-      let uploadedAvatarUri = avatarUri ?? undefined;
-      if (uploadedAvatarUri && uploadedAvatarUri.startsWith('file://')) {
-        const result = await uploadImageToCloudinary({ uri: uploadedAvatarUri });
-        uploadedAvatarUri = result.secureUrl;
-      }
-
-      await setupDoctorProfile({
-        specialties,
-        bio: bio.trim() ? bio.trim() : undefined,
-        avatarUri: uploadedAvatarUri,
-      });
-
-      onComplete();
-    } catch (e) {
-      Alert.alert('Error', 'Unable to save doctor profile. Please try again.');
-    } finally {
-      setIsSaving(false);
-    }
-  }
+  const renderSlide = useCallback(
+    ({ item }: ListRenderItemInfo<SlideData>) => (
+      <OnboardingSlide
+        image={item.image}
+        imagePositionClassName={item.imagePositionClassName}
+        title={t(item.titleKey)}
+        subtitle={t(item.subtitleKey)}
+        buttonLabel={buttonLabel}
+        activeIndex={activeIndex}
+        totalSlides={SLIDES.length}
+        onGetStarted={onGetStarted}
+      />
+    ),
+    [activeIndex, buttonLabel, onGetStarted, t],
+  );
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 24 }}>
-        <View className="pt-6 pb-2">
-          <Text className="text-h4 font-semibold font-sans text-grey-900">
-            Doctor profile setup
-          </Text>
-          <Text className="text-b2 font-sans text-grey-500 mt-1">
-            Add your specialty and a short bio to help patients understand how you can help.
-          </Text>
-        </View>
-
-        <View className="mt-6 items-center">
-          <AvatarUpload
-            uri={avatarUri}
-            onSelect={setAvatarUri}
-            initials={initials}
-            disabled={isSaving || isPrefilling}
-            testID="doctor-avatar-upload"
-          />
-        </View>
-
-        <View className="mt-8 gap-6">
-          <TagInput
-            label="Specialties"
-            values={specialties}
-            onChange={setSpecialties}
-            placeholder="e.g. Cardiology"
-            disabled={isSaving || isPrefilling}
-            testID="doctor-specialties"
-          />
-
-          <View className="gap-2 w-full">
-            <Text className="text-b2 text-grey-900 font-sans">Bio</Text>
-            <View className="bg-grey-50 border-2 border-grey-200 rounded-md p-3">
-              <TextInput
-                value={bio}
-                onChangeText={setBio}
-                placeholder="Write a short bio..."
-                className="text-b1 font-sans text-grey-900 p-0"
-                multiline
-                editable={!isSaving && !isPrefilling}
-              />
-            </View>
-          </View>
-        </View>
-
-        <View className="mt-10">
-          <Button
-            label="Save and continue"
-            onPress={handleSave}
-            variant="filled"
-            size="large"
-            fullWidth
-            disabled={!canSave}
-            iconLeft={isSaving || isPrefilling ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
-            testID="doctor-onboarding-save"
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <View className="flex-1 bg-white">
+      <FlatList
+        ref={flatListRef}
+        data={SLIDES}
+        horizontal
+        pagingEnabled
+        renderItem={renderSlide}
+        keyExtractor={(item) => item.key}
+        getItemLayout={(_, index) => ({ length: SW, offset: SW * index, index })}
+        scrollEventThrottle={16}
+        showsHorizontalScrollIndicator={false}
+        onMomentumScrollEnd={onMomentumScrollEnd}
+        bounces={false}
+        className="flex-1"
+      />
+    </View>
   );
 }
 

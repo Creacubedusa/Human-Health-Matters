@@ -6,7 +6,7 @@ interface ProfileDetailsSectionProps {
   title: string;
   profile: PatientProfileOverview;
   labels: Record<ProfileDetailItem['id'], string>;
-  onEdit: () => void;
+  onEdit: (field: ProfileDetailItem['id']) => void;
 }
 
 export function ProfileDetailsSection({ title, profile, labels, onEdit }: ProfileDetailsSectionProps) {
@@ -26,7 +26,7 @@ export function ProfileDetailsSection({ title, profile, labels, onEdit }: Profil
             key={item.id}
             title={item.label}
             subtitle={item.value}
-            onPress={onEdit}
+            onPress={() => onEdit(item.id)}
           />
         ))}
       </View>

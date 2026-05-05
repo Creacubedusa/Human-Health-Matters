@@ -1,40 +1,34 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { DoctorHomeView } from '@features/doctor/screens/DoctorHomeView';
 import { fetchDoctorProfile } from '@features/doctor/services/doctor.service';
+import { kvDelete, kvGet } from '@shared/storage/kv';
+
+const DOCTOR_PROFILE_SETUP_REQUIRED_KEY = 'doctor_profile_setup_required';
 
 export default function DoctorHomeScreen() {
   const router = useRouter();
-  const [status, setStatus] = useState<'loading' | 'ready'>('loading');
 
   useEffect(() => {
-    let isMounted = true;
     async function run() {
       try {
         const res = await fetchDoctorProfile();
         const completed = Boolean(res.profile?.onboardingCompletedAt);
-        if (!completed) router.replace('/(auth)/doctor-onboarding');
-      } finally {
-        if (isMounted) setStatus('ready');
+
+        if (completed) {
+          await kvDelete(DOCTOR_PROFILE_SETUP_REQUIRED_KEY);
+        } else {
+          const requiresProfileSetup = await kvGet(DOCTOR_PROFILE_SETUP_REQUIRED_KEY);
+          if (requiresProfileSetup === '1') {
+            router.replace('/(auth)/doctor-profile-setup');
+          }
+        }
+      } catch (error) {
+        console.warn('Doctor home profile bootstrap failed', error);
       }
     }
     void run();
-    return () => {
-      isMounted = false;
-    };
   }, [router]);
-
-  if (status === 'loading') {
-    return (
-      <SafeAreaView className="flex-1 bg-bg-default items-center justify-center">
-        <View className="items-center gap-3">
-          <ActivityIndicator size="large" color="#4E61F6" />
-        </View>
-      </SafeAreaView>
-    );
-  }
 
   return <DoctorHomeView />;
 }

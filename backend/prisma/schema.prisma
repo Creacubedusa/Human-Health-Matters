@@ -117,6 +117,10 @@ model DoctorProfile {
   specialties String[] @default([])
   bio        String?
   avatarUri  String?
+  medicalCertificate String?
+  boardCertificate String?
+  deaRegistration String?
+  malpracticeInsurance String?
   onboardingCompletedAt DateTime?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

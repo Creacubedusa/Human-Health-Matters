@@ -32,8 +32,8 @@ export default function SelectRoleScreen() {
   async function onContinue() {
     await handleContinue();
     if (selectedRole === 'patient') router.replace('/(auth)/patient-get-started');
-    else if (selectedRole === 'doctor') router.replace('/(auth)/patient-get-started');
-    else if (selectedRole === 'donor') router.replace('/(donor)');
+    else if (selectedRole === 'doctor') router.replace('/(auth)/doctor-get-started');
+    else if (selectedRole === 'donor') router.replace('/(auth)/donor-get-started');
   }
 
   function onBack() {

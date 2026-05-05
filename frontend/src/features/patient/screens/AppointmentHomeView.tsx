@@ -15,10 +15,7 @@ export interface AppointmentHomeViewProps {
   onBookAppointment: () => void;
   onCancelConfirmed: () => void;
   onRescheduleConfirmed: () => void;
-<<<<<<< HEAD:src/features/patient/screens/AppointmentHomeView.tsx
-=======
   onJoinAppointment: (id: string) => void;
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/AppointmentHomeView.tsx
   onBack?: () => void;
   onCalendar?: () => void;
 }
@@ -27,10 +24,7 @@ export function AppointmentHomeView({
   onBookAppointment,
   onCancelConfirmed,
   onRescheduleConfirmed,
-<<<<<<< HEAD:src/features/patient/screens/AppointmentHomeView.tsx
-=======
   onJoinAppointment,
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/AppointmentHomeView.tsx
   onBack,
   onCalendar,
 }: AppointmentHomeViewProps) {

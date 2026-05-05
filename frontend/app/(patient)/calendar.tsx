@@ -11,16 +11,12 @@ export default function CalendarScreen() {
   const [pendingAction, setPendingAction] = useState<AppointmentActionType | null>(null);
 
   function handleBack() {
-<<<<<<< HEAD:app/(patient)/calendar.tsx
-    router.back();
-=======
     if (router.canGoBack()) {
       router.back();
       return;
     }
 
     router.replace('/(patient)');
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/app/(patient)/calendar.tsx
   }
 
   function handleOpenAction(id: string, action: AppointmentActionType) {

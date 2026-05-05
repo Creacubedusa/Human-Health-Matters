@@ -8,7 +8,7 @@ export default function PatientVerifyScreen() {
     <PatientVerifyView
       onSuccess={() => {
         const role = useAuthStore.getState().role;
-        if (role === 'doctor') router.push('/(auth)/doctor-onboarding');
+        if (role === 'doctor') router.push('/(auth)/doctor-profile-setup');
         else router.push('/(auth)/patient-profile');
       }}
     />

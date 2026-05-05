@@ -1,17 +1,10 @@
 import { useState } from 'react';
-<<<<<<< HEAD:src/features/patient/screens/ConsultationView.tsx
 import { ActivityIndicator, Text, View } from 'react-native';
-=======
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/ConsultationView.tsx
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
-import { useConsultation } from '../hooks/useConsultation';
-<<<<<<< HEAD:src/features/patient/screens/ConsultationView.tsx
-=======
 import { InAppCallWebView } from '@shared/components/ui/InAppCallWebView';
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/ConsultationView.tsx
+import { useConsultation } from '../hooks/useConsultation';
 import { AINoteIndicator } from '../components/consultation/AINoteIndicator';
 import { FloatingDoctorCard } from '../components/consultation/FloatingDoctorCard';
 import { CallControls } from '../components/consultation/CallControls';
@@ -27,8 +20,6 @@ const PATIENT_INITIALS = 'A';
 export function ConsultationView() {
   const { t } = useTranslation();
   const consultation = useConsultation();
-
-  // Card drawer state — hoisted here so ConsultationView owns it
   const [cardExpanded, setCardExpanded] = useState(false);
   const [cardTab, setCardTab] = useState<'language' | 'transcription'>('language');
 
@@ -41,8 +32,6 @@ export function ConsultationView() {
     );
   }
 
-<<<<<<< HEAD:src/features/patient/screens/ConsultationView.tsx
-=======
   if (consultation.videoOn && consultation.meetingUrl) {
     return (
       <InAppCallWebView
@@ -52,16 +41,10 @@ export function ConsultationView() {
     );
   }
 
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/ConsultationView.tsx
   return (
     <View className="flex-1 bg-black">
-
-      {/* ── Video area ─────────────────────────────────── */}
       <View className="flex-1 relative">
         {consultation.videoOn ? (
-<<<<<<< HEAD:src/features/patient/screens/ConsultationView.tsx
-          <View className="flex-1 bg-black" />
-=======
           <View className="flex-1 bg-black items-center justify-center px-6 gap-4">
             <Text className="text-white text-center font-sans">
               {t('consultation.videoPoweredByDaily', { defaultValue: 'Video call powered by Daily' })}
@@ -70,7 +53,6 @@ export function ConsultationView() {
               {t('consultation.preparingCall', { defaultValue: 'Preparing your call…' })}
             </Text>
           </View>
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/ConsultationView.tsx
         ) : (
           <View className="flex-1 bg-black items-center justify-center">
             <View className="w-44 h-44 rounded-full bg-[#814eff] items-center justify-center">
@@ -81,10 +63,8 @@ export function ConsultationView() {
           </View>
         )}
 
-        {/* AI note indicator (top-left) */}
         <AINoteIndicator active={consultation.aiNoteActive} />
 
-        {/* Floating doctor card (top-right) */}
         {consultation.doctor && (
           <FloatingDoctorCard
             doctorName={consultation.doctor.name}
@@ -93,7 +73,6 @@ export function ConsultationView() {
           />
         )}
 
-        {/* Patient name + timer — centered */}
         <View className="absolute bottom-[72px] left-0 right-0 items-center gap-2">
           <Text className="text-white text-[24px] font-semibold font-sans leading-7">
             {PATIENT_NAME}
@@ -103,7 +82,6 @@ export function ConsultationView() {
           </Text>
         </View>
 
-        {/* Call controls — centred at bottom of video */}
         <View className="absolute bottom-6 left-0 right-0">
           <CallControls
             muted={consultation.muted}
@@ -117,7 +95,6 @@ export function ConsultationView() {
         </View>
       </View>
 
-      {/* ── Language / Transcription card ──────────────── */}
       <View className="bg-black">
         <LanguageTranscriptionCard
           selectedLanguage={consultation.selectedLanguage}
@@ -133,7 +110,6 @@ export function ConsultationView() {
         <SafeAreaView edges={['bottom']} className="bg-black" />
       </View>
 
-      {/* ── Modals ─────────────────────────────────────── */}
       <AudioDeviceModal
         visible={consultation.audioModalOpen}
         muted={consultation.muted}
@@ -148,7 +124,6 @@ export function ConsultationView() {
         onCancel={() => consultation.setEndCallModalOpen(false)}
       />
 
-      {/* ── Full-screen chat panels (Modals) ───────────── */}
       <DoctorChatPanel
         visible={consultation.activePanel === 'doctorChat'}
         messages={consultation.doctorMessages}

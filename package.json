@@ -1,0 +1,22 @@
+{
+  "name": "human-health-matters",
+  "private": true,
+  "scripts": {
+    "start": "node scripts/run-workspace.mjs frontend start",
+    "start:clear": "node scripts/run-workspace.mjs frontend start --clear",
+    "android": "node scripts/run-workspace.mjs frontend android",
+    "ios": "node scripts/run-workspace.mjs frontend ios",
+    "web": "node scripts/run-workspace.mjs frontend web",
+    "dev": "node scripts/dev.mjs",
+    "frontend": "node scripts/run-workspace.mjs frontend start",
+    "frontend:clear": "node scripts/run-workspace.mjs frontend start --clear",
+    "frontend:android": "node scripts/run-workspace.mjs frontend android",
+    "frontend:ios": "node scripts/run-workspace.mjs frontend ios",
+    "frontend:web": "node scripts/run-workspace.mjs frontend web",
+    "backend": "node scripts/run-workspace.mjs backend start:dev",
+    "backend:start": "node scripts/run-workspace.mjs backend start",
+    "install:frontend": "node scripts/install-workspace.mjs frontend",
+    "install:backend": "node scripts/install-workspace.mjs backend",
+    "install:all": "node scripts/install-workspace.mjs frontend && node scripts/install-workspace.mjs backend"
+  }
+}

@@ -1,80 +1,86 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { primitiveColors } from '@design/tokens';
-import { fetchDoctorPatients, type DoctorPatientListItem } from '../services/doctor.service';
+import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { useDoctorPatients } from '../hooks/useDoctorPatients';
+import { DoctorPatientCard } from '../components/patients/DoctorPatientCard';
+import { DoctorPatientEmptyState } from '../components/patients/DoctorPatientEmptyState';
 
 export function DoctorPatientsView() {
   const { t } = useTranslation();
-  const [status, setStatus] = useState<'loading' | 'error' | 'success'>('loading');
-  const [patients, setPatients] = useState<DoctorPatientListItem[]>([]);
-
-  async function load() {
-    setStatus('loading');
-    try {
-      const data = await fetchDoctorPatients();
-      setPatients(data);
-      setStatus('success');
-    } catch {
-      setStatus('error');
-    }
-  }
-
-  useEffect(() => {
-    void load();
-  }, []);
+  const router = useRouter();
+  const { status, query, setQuery, patients } = useDoctorPatients();
 
   if (status === 'loading') {
     return (
-      <SafeAreaView className="flex-1 bg-bg-default items-center justify-center">
+      <SafeAreaView className="flex-1 bg-white items-center justify-center">
         <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
       </SafeAreaView>
     );
   }
 
-  if (status === 'error') {
-    return (
-      <SafeAreaView className="flex-1 bg-bg-default items-center justify-center px-6">
-        <Text className="text-s2 text-text-primary text-center">{t('doctorPatients.error')}</Text>
-        <Pressable
-          className="mt-4 bg-action-primary rounded-lg px-6 py-3"
-          onPress={load}
-          accessibilityRole="button"
-        >
-          <Text className="text-btn-medium text-white">{t('common.retry')}</Text>
-        </Pressable>
-      </SafeAreaView>
-    );
-  }
+  const hasResults = patients.length > 0;
 
   return (
-    <SafeAreaView className="flex-1 bg-bg-default">
-      <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 24 }}>
-        <View className="pt-6 pb-4">
-          <Text className="text-h5 text-text-primary">{t('doctorPatients.title')}</Text>
-          <Text className="text-b3 text-text-secondary mt-1">{t('doctorPatients.subtitle')}</Text>
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+      <View className="bg-primary-50 px-4 pb-4 pt-2">
+        <View className="flex-row items-center justify-between h-[29px]">
+          <HeaderBackButton
+            onPress={() => {
+              if (router.canGoBack()) {
+                router.back();
+                return;
+              }
+
+              router.replace('/(doctor)');
+            }}
+            accessibilityLabel={t('common.back')}
+          />
+          <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
+            {t('doctorPatients.headerTitle')}
+          </Text>
+          <View className="w-[29px]" />
+        </View>
+      </View>
+
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="px-4 pt-6 pb-24 gap-4"
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="flex-row items-center gap-3 rounded-xl border-[1.5px] border-grey-200 bg-white px-3 py-3">
+          <Ionicons name="search" size={22} color={primitiveColors['grey-500']} />
+          <TextInput
+            value={query}
+            onChangeText={setQuery}
+            placeholder={t('doctorPatients.searchPlaceholder')}
+            placeholderTextColor={primitiveColors['grey-400']}
+            className="flex-1 p-0 text-b1 font-sans text-grey-900"
+          />
         </View>
 
-        {patients.length === 0 ? (
-          <View className="items-center py-12">
-            <Text className="text-b1 text-text-secondary">{t('doctorPatients.empty')}</Text>
-          </View>
-        ) : (
-          patients.map((p) => (
-            <View
-              key={p.id}
-              className="bg-bg-surface border border-border-default rounded-xl p-4 mb-3"
-            >
-              <Text className="text-b2 text-text-primary">{p.name || t('doctorPatients.nameFallback')}</Text>
-              <Text className="text-c1 text-text-tertiary mt-1">
-                {t('doctorPatients.lastVisit', { date: p.lastVisit })}
-              </Text>
-            </View>
+        <View>
+          <Text className="text-s2 font-semibold font-sans text-grey-900">
+            {t('doctorPatients.listTitle')}
+          </Text>
+        </View>
+
+        {hasResults ? (
+          patients.map((patient, index) => (
+            <DoctorPatientCard
+              key={patient.id}
+              patient={patient}
+              onViewPatient={(patientId) => router.push(`/(doctor)/patients/${patientId}`)}
+              showSummary={index < 2}
+            />
           ))
+        ) : (
+          <DoctorPatientEmptyState searching={query.trim().length > 0} />
         )}
       </ScrollView>
     </SafeAreaView>
   );
 }
-

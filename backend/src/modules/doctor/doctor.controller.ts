@@ -6,6 +6,7 @@ import { Roles } from '../../common/auth/roles.decorator';
 import type { JwtPayload } from '../../common/auth/auth.types';
 import { PrismaService } from '../../prisma/prisma.service';
 import { DoctorProfileSetupDto } from './dto/doctor-profile-setup.dto';
+import { UpdateDoctorProfileDto } from './dto/update-doctor-profile.dto';
 
 @ApiTags('doctor')
 @Controller('doctor')
@@ -174,11 +175,55 @@ export class DoctorController {
         specialties: true,
         bio: true,
         avatarUri: true,
+        medicalCertificate: true,
+        boardCertificate: true,
+        deaRegistration: true,
+        malpracticeInsurance: true,
         onboardingCompletedAt: true,
       },
     });
 
     return { user, profile };
+  }
+
+  @Patch('profile')
+  @UseGuards(JwtAuthGuard)
+  @Roles('DOCTOR')
+  async updateProfile(
+    @Req() req: Request & { user?: JwtPayload },
+    @Body() body: UpdateDoctorProfileDto,
+  ) {
+    const doctorId = req.user?.sub;
+    if (!doctorId) throw new Error('missing_user');
+
+    const profile = await this.prisma.doctorProfile.update({
+      where: { userId: doctorId },
+      data: {
+        specialties: body.specialties,
+        bio: body.bio === undefined ? undefined : body.bio ?? null,
+        avatarUri: body.avatarUri === undefined ? undefined : body.avatarUri ?? null,
+        medicalCertificate:
+          body.medicalCertificate === undefined ? undefined : body.medicalCertificate ?? null,
+        boardCertificate:
+          body.boardCertificate === undefined ? undefined : body.boardCertificate ?? null,
+        deaRegistration:
+          body.deaRegistration === undefined ? undefined : body.deaRegistration ?? null,
+        malpracticeInsurance:
+          body.malpracticeInsurance === undefined ? undefined : body.malpracticeInsurance ?? null,
+      },
+      select: {
+        specialties: true,
+        bio: true,
+        avatarUri: true,
+        medicalCertificate: true,
+        boardCertificate: true,
+        deaRegistration: true,
+        malpracticeInsurance: true,
+        onboardingCompletedAt: true,
+      },
+    });
+
+    return { profile };
   }
 
   @Patch('profile/setup')
@@ -203,6 +248,10 @@ export class DoctorController {
         specialties: true,
         bio: true,
         avatarUri: true,
+        medicalCertificate: true,
+        boardCertificate: true,
+        deaRegistration: true,
+        malpracticeInsurance: true,
         onboardingCompletedAt: true,
       },
     });

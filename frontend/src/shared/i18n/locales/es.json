@@ -44,7 +44,56 @@
     "error": "No se pudo cargar tu perfil. Inténtalo de nuevo.",
     "nameFallback": "Doctor",
     "specialtiesEmpty": "Agrega tus especialidades",
-    "initialsFallback": "Doctor"
+    "initialsFallback": "Doctor",
+    "licensedBadge": "Médico con licencia",
+    "incompleteTitle": "Completa tu perfil",
+    "incompleteSubtitle": "Toca para terminar tu registro y poder facturar",
+    "personalInfoTitle": "Información personal",
+    "fullNameLabel": "Nombre completo",
+    "genderLabel": "Género",
+    "phoneLabel": "Número de teléfono",
+    "emailLabel": "Correo electrónico",
+    "earningTitle": "Tus ganancias",
+    "earningSubtitle": "Puedes ver y retirar tus ganancias aquí",
+    "professionalInfoTitle": "Información profesional",
+    "npiLabel": "Número NPI",
+    "stateLicenseLabel": "Licencia médica estatal",
+    "deaLabel": "Número DEA",
+    "specialtyLabel": "Especialidad médica (Taxonomía)",
+    "experienceLabel": "Años de experiencia",
+    "biographyLabel": "Biografía",
+    "hospitalLabel": "Hospital",
+    "officeAddressLabel": "Dirección del consultorio",
+    "consultationFeeLabel": "Tarifa base de consulta",
+    "certificationsTitle": "Certificaciones",
+    "medicalCertLabel": "Certificado médico",
+    "medicalCertFile": "Certificado médico en cardiología",
+    "medicalCertModalTitle": "Certificación médica",
+    "boardCertLabel": "Certificado de consejo",
+    "boardCertFile": "Certificado de consejo en cardiología",
+    "boardCertModalTitle": "Certificación del consejo",
+    "deaRegLabel": "Registro DEA",
+    "deaRegFile": "Certificado de registro DEA",
+    "deaModalTitle": "Registro DEA",
+    "deaRegModalTitle": "Registro DEA",
+    "malpracticeLabel": "Seguro por mala praxis",
+    "malpracticeFile": "Certificado de seguro por mala praxis",
+    "malpracticeModalTitle": "Seguro por mala praxis",
+    "uploadPlaceholder": "subir",
+    "settingsTitle": "Configuración",
+    "settingNotifications": "Notificaciones",
+    "settingAIAssistance": "Asistencia IA",
+    "settingAvailability": "Gestionar disponibilidad",
+    "settingLanguage": "Idioma",
+    "settingPrivacyPolicy": "Política de privacidad",
+    "editFullNameLabel": "Nombre completo",
+    "editGenderLabel": "Género",
+    "editPhoneLabel": "Número de teléfono",
+    "editEmailLabel": "Correo electrónico",
+    "editSaveBtn": "Guardar",
+    "editGenderMale": "Masculino",
+    "editGenderFemale": "Femenino",
+    "editGenderOther": "Otro"
   },
   "doctorPatients": {
     "title": "Pacientes",
@@ -79,6 +128,46 @@
     "signUp": "Registrarse",
     "logIn": "Iniciar sesión"
   },
+  "doctorGetStarted": {
+    "title": "Comienza como médico",
+    "subtitle": "Brinda atención, revisa información de IA y gestiona tus pacientes en un solo lugar",
+    "signUp": "Registrarse",
+    "logIn": "Iniciar sesión"
+  },
+  "doctorSignUp": {
+    "title": "Crear una cuenta",
+    "subtitle": "Por favor completa los datos a continuación",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "phone": "Número de teléfono",
+    "password": "Contraseña",
+    "passwordStrengthTitle": "La contraseña debe contener:",
+    "passwordRule8Chars": "Al menos 8 caracteres",
+    "passwordRule1Number": "Al menos 1 número",
+    "passwordRule1Special": "Al menos 1 carácter especial",
+    "passwordRule1Upper": "Al menos 1 letra mayúscula",
+    "passwordRule1Lower": "Al menos 1 letra minúscula",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "termsPrefix": "Al registrarte aceptas nuestros",
+    "terms": "Términos",
+    "signUp": "Registrarse",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "signIn": "Iniciar sesión",
+    "errors": {
+      "firstNameRequired": "El nombre es obligatorio",
+      "lastNameRequired": "El apellido es obligatorio",
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailInvalid": "Por favor ingresa un correo válido",
+      "phoneRequired": "El número de teléfono es obligatorio",
+      "phoneInvalid": "Por favor ingresa un número de teléfono válido",
+      "passwordRequired": "La contraseña es obligatoria",
+      "passwordWeak": "La contraseña no cumple los requisitos anteriores",
+      "submitFailedTitle": "Registro fallido",
+      "submitFailed": "Algo salió mal. Por favor intenta de nuevo."
+    }
+  },
   "patientOnboarding": {
     "getStarted": "Comenzar",
     "slide1Title": "Salud más inteligente, hecha para ti",
@@ -87,6 +176,15 @@
     "slide2Subtitle": "Habla con un médico certificado mientras la IA escucha, captura tu historia y asegura que nada importante se pase por alto.",
     "slide3Title": "Salud sin fronteras ni barreras.",
     "slide3Subtitle": "Si tu seguro no cubre todo, puedes recibir apoyo para el costo restante—para que nada te separe de la atención."
+  },
+  "doctorOnboarding": {
+    "getStarted": "Comenzar",
+    "slide1Title": "Una forma más inteligente de brindar atención",
+    "slide1Subtitle": "Evalúa a tus pacientes más rápido con apoyo de IA y automatiza la documentación para enfocarte en mejores resultados, no en la administración.",
+    "slide2Title": "Menos papeleo. Mejor atención.",
+    "slide2Subtitle": "HHMS usa IA para capturar notas, resaltar información clave y optimizar tu flujo de trabajo, dándote más tiempo para tus pacientes.",
+    "slide3Title": "Un solo sistema para una atención completa",
+    "slide3Subtitle": "HHMS combina IA, atención clínica y herramientas de apoyo financiero para ayudarte a tratar a más pacientes de forma eficaz y asequible"
   },
   "patientSignUp": {
     "title": "Crear una cuenta",
@@ -125,6 +223,17 @@
     "title": "Verificación Requerida",
     "subtitlePrefix": "Enviamos un código de 6 dígitos a",
     "timerLabel": "{{minutes}}:{{seconds}}",
+    "verify": "Verificar",
+    "resendCode": "Reenviar Código",
+    "errors": {
+      "invalidCode": "Código incorrecto. Por favor intenta de nuevo.",
+      "submitFailed": "Algo salió mal. Por favor intenta de nuevo.",
+      "resendFailed": "No se pudo reenviar el código. Por favor intenta de nuevo."
+    }
+  },
+  "doctorVerify": {
+    "title": "Verificación Requerida",
+    "subtitlePrefix": "Enviamos un código de 6 dígitos a",
     "verify": "Verificar",
     "resendCode": "Reenviar Código",
     "errors": {
@@ -227,12 +336,9 @@
     "notification": "Notificación",
     "language": "Idioma",
     "privacyPolicy": "Política de privacidad",
-<<<<<<< HEAD:src/shared/i18n/locales/es.json
     "save": "Guardar",
     "closeDetailEdit": "Cerrar modal de edición de dato personal",
     "editField": "Habilitar edición del campo",
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/shared/i18n/locales/es.json
     "setupTitle": "Completa tu perfil de salud",
     "setupDescription": "Ayúdanos a conocerte mejor. Unos datos rápidos pueden desbloquear atención personalizada, información más precisa y mejor seguimiento de salud.",
     "cancel": "No, cancelar",
@@ -245,7 +351,6 @@
     "errorMessage": "No se pudo cargar tu perfil",
     "privacyIntroTitle": "Cómo HHM protege tu información",
     "privacyIntroBody": "Human Health Matters usa la información de tu perfil para apoyar el acceso a la atención, personalizar recomendaciones y ayudar a médicos autorizados a comprender tu contexto de salud.",
-<<<<<<< HEAD:src/shared/i18n/locales/es.json
     "privacyBody": "Tu información de salud se trata como información sensible. Los datos simulados de este prototipo solo se almacenan localmente y no se envían a un backend. Las futuras integraciones de producción deben usar APIs seguras, acceso de mínimo privilegio y uso compartido con consentimiento para flujos clínicos.",
     "privacyPolicyEffectiveDate": "Fecha de vigencia: 4/04/2026",
     "privacyPolicyIntro": {
@@ -344,9 +449,6 @@
       "addressRequired": "La dirección es obligatoria",
       "nationalityRequired": "La nacionalidad es obligatoria"
     }
-=======
-    "privacyBody": "Tu información de salud se trata como información sensible. Los datos simulados de este prototipo solo se almacenan localmente y no se envían a un backend. Las futuras integraciones de producción deben usar APIs seguras, acceso de mínimo privilegio y uso compartido con consentimiento para flujos clínicos."
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/shared/i18n/locales/es.json
   },
   "selectRole": {
     "headerTitle": "Selecciona tu rol",
@@ -477,6 +579,12 @@
     "ctaViewReport": "Ver reporte",
     "ctaCheck": "Verificar",
     "errorMessage": "No se pudieron cargar las notificaciones"
+  },
+  "doctorNotifications": {
+    "ctaJoin": "Unirse",
+    "ctaViewPatient": "Ver paciente",
+    "ctaReviewSummary": "Revisar resumen",
+    "ctaCheckRecord": "Ver registro"
   },
   "patientHome": {
     "headerTitle": "Inicio",

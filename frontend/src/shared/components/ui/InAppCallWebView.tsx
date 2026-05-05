@@ -42,7 +42,6 @@ export function InAppCallWebView({ url, onBack }: InAppCallWebViewProps) {
         allowsInlineMediaPlayback
         mediaPlaybackRequiresUserAction={false}
         mediaCapturePermissionGrantType={mediaCapturePermissionGrantType}
-        onPermissionRequest={(request) => request.grant()}
         javaScriptEnabled
         domStorageEnabled
         originWhitelist={['*']}

@@ -4,7 +4,7 @@ import { DoctorOnboardingView } from '@features/doctor/screens/DoctorOnboardingV
 export default function DoctorOnboardingScreen() {
   const router = useRouter();
   return (
-    <DoctorOnboardingView onComplete={() => router.replace('/(doctor)')} />
+    <DoctorOnboardingView onGetStarted={() => router.push('/(auth)/doctor-signup')} />
   );
 }
 

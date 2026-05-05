@@ -1,24 +1,15 @@
-<<<<<<< HEAD:src/features/patient/screens/PatientProfileOverviewView.tsx
 import { useEffect, useMemo, useRef } from 'react';
 import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
-=======
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PatientProfileOverviewView.tsx
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { Button } from '@shared/components/ui/Button';
 import { usePatientProfileOverview } from '../hooks/usePatientProfileOverview';
-<<<<<<< HEAD:src/features/patient/screens/PatientProfileOverviewView.tsx
 import type { ProfileDetailItem, ProfileRecordId } from '../types/profileOverview.types';
 import { HealthcareSupportCard } from '../components/profile/HealthcareSupportCard';
-import { ProfileDetailEditModal } from '../components/profile/ProfileDetailEditModal';
-=======
-import type { ProfileRecordId } from '../types/profileOverview.types';
-import { HealthcareSupportCard } from '../components/profile/HealthcareSupportCard';
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PatientProfileOverviewView.tsx
 import { MedicalRecordsSection } from '../components/profile/MedicalRecordsSection';
 import { ProfileCard } from '../components/profile/ProfileCard';
+import { ProfileDetailEditModal } from '../components/profile/ProfileDetailEditModal';
 import { ProfileDetailsSection } from '../components/profile/ProfileDetailsSection';
 import { ProfileHeader } from '../components/profile/ProfileHeader';
 import { ProfileSetupModal } from '../components/profile/ProfileSetupModal';
@@ -31,10 +22,7 @@ export interface PatientProfileOverviewViewProps {
   onLanguage: () => void;
   onPrivacy: () => void;
   onRecord: (id: ProfileRecordId | 'support-report') => void;
-<<<<<<< HEAD:src/features/patient/screens/PatientProfileOverviewView.tsx
-=======
   onLogout: () => void;
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PatientProfileOverviewView.tsx
 }
 
 export function PatientProfileOverviewView({
@@ -44,17 +32,13 @@ export function PatientProfileOverviewView({
   onLanguage,
   onPrivacy,
   onRecord,
-<<<<<<< HEAD:src/features/patient/screens/PatientProfileOverviewView.tsx
-=======
   onLogout,
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PatientProfileOverviewView.tsx
 }: PatientProfileOverviewViewProps) {
   const { t } = useTranslation();
   const {
     status,
     profile,
     isSetupModalVisible,
-<<<<<<< HEAD:src/features/patient/screens/PatientProfileOverviewView.tsx
     selectedField,
     isDetailModalVisible,
     isEditingDetail,
@@ -90,12 +74,6 @@ export function PatientProfileOverviewView({
     if (!selectedField) return '';
     return t(`profileOverview.${selectedField}`);
   }, [selectedField, t]);
-=======
-    dismissSetupModal,
-    setNotificationEnabled,
-    retry,
-  } = usePatientProfileOverview();
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PatientProfileOverviewView.tsx
 
   const header = (
     <ProfileHeader
@@ -184,7 +162,6 @@ export function PatientProfileOverviewView({
             address: t('profileOverview.address'),
             nationality: t('profileOverview.nationality'),
           }}
-<<<<<<< HEAD:src/features/patient/screens/PatientProfileOverviewView.tsx
           onEdit={openDetailModal}
         />
 
@@ -206,9 +183,6 @@ export function PatientProfileOverviewView({
           onSave={() => {
             void saveDetailValue();
           }}
-=======
-          onEdit={onEdit}
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PatientProfileOverviewView.tsx
         />
 
         <HealthcareSupportCard
@@ -232,13 +206,15 @@ export function PatientProfileOverviewView({
           onLanguagePress={onLanguage}
           onPrivacyPress={onPrivacy}
         />
-<<<<<<< HEAD:src/features/patient/screens/PatientProfileOverviewView.tsx
-=======
 
         <View className="pt-2">
-          <Button label={t('common.logout', { defaultValue: 'Logout' })} onPress={onLogout} variant="outline" size="large" />
+          <Button
+            label={t('common.logout', { defaultValue: 'Logout' })}
+            onPress={onLogout}
+            variant="outline"
+            size="large"
+          />
         </View>
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PatientProfileOverviewView.tsx
       </ScrollView>
     </SafeAreaView>
   );

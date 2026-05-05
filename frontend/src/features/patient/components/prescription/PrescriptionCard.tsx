@@ -9,7 +9,7 @@ export interface PrescriptionCardProps {
     refillLeft: string;
     noRefillLeft: string;
   };
-  onPress: (id: string) => void;
+  onPress?: (id: string) => void;
 }
 
 export function PrescriptionCard({ item, labels, onPress }: PrescriptionCardProps) {
@@ -29,9 +29,9 @@ export function PrescriptionCard({ item, labels, onPress }: PrescriptionCardProp
 
   return (
     <Pressable
-      onPress={() => onPress(item.id)}
+      onPress={onPress ? () => onPress(item.id) : undefined}
       className="bg-white rounded-2xl overflow-hidden shadow-200"
-      accessibilityRole="button"
+      accessibilityRole={onPress ? 'button' : undefined}
     >
       {/* Blue header */}
       <View className="bg-primary-500 px-4 pt-3.5 pb-4">

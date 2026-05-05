@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
-import { fetchPatientProfileOverview } from '../services/profileOverview.service';
+import {
+  fetchPatientProfileOverview,
+  updatePatientProfileOverview,
+} from '../services/profileOverview.service';
 import { usePatientStore } from '../store/patient.store';
 import type {
   PatientProfileOverview,
@@ -55,36 +57,20 @@ const DETAIL_FIELD_CONFIG: Record<ProfileOverviewDetailField, DetailFieldConfig>
   },
 };
 
-=======
-import { fetchPatientProfileOverview, updatePatientProfileOverview } from '../services/profileOverview.service';
-import { usePatientStore } from '../store/patient.store';
-import type {
-  PatientProfileOverview,
-  ProfileOverviewForm,
-  ProfileRecordId,
-} from '../types/profileOverview.types';
-
-type ProfileOverviewStatus = 'loading' | 'error' | 'empty' | 'success';
-
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
 export interface UsePatientProfileOverviewResult {
   status: ProfileOverviewStatus;
   profile: PatientProfileOverview | null;
   isSetupModalVisible: boolean;
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
   selectedField: ProfileOverviewDetailField | null;
   isDetailModalVisible: boolean;
   isEditingDetail: boolean;
   detailFieldValue: string;
   detailValidationError: string | null;
   isSavingDetail: boolean;
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
   editForm: ProfileOverviewForm | null;
   selectedRecord: (id: ProfileRecordId) => PatientProfileOverview['medicalRecords'][number] | undefined;
   retry: () => void;
   dismissSetupModal: () => void;
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
   openDetailModal: (field: ProfileOverviewDetailField) => void;
   closeDetailModal: () => void;
   enableDetailEditing: () => void;
@@ -93,12 +79,12 @@ export interface UsePatientProfileOverviewResult {
   setNotificationEnabled: (enabled: boolean) => void;
   setSelectedLanguage: (language: string) => void;
   validateEditForm: (form: ProfileOverviewForm) => ProfileEditErrors;
-  saveProfile: (form: ProfileOverviewForm) => void;
+  saveProfile: (form: ProfileOverviewForm) => Promise<void>;
 }
 
 function deriveAgeFromDob(dob: string): string {
   if (!dob) return '';
-  // Accepts ISO (YYYY-MM-DD) or display (DD/MM/YYYY)
+
   let date: Date;
   if (dob.includes('/')) {
     const [day, month, year] = dob.split('/').map(Number);
@@ -106,38 +92,35 @@ function deriveAgeFromDob(dob: string): string {
   } else {
     date = new Date(dob);
   }
-  if (isNaN(date.getTime())) return '';
+
+  if (Number.isNaN(date.getTime())) return '';
+
   const today = new Date();
   let age = today.getFullYear() - date.getFullYear();
   const hasBirthdayPassed =
     today.getMonth() > date.getMonth() ||
     (today.getMonth() === date.getMonth() && today.getDate() >= date.getDate());
+
   if (!hasBirthdayPassed) age -= 1;
   return age > 0 ? `${age} years` : '';
 }
 
 export function validateProfileEditForm(form: ProfileOverviewForm): ProfileEditErrors {
   const errors: ProfileEditErrors = {};
+
   if (!form.name.trim()) errors.name = 'profileOverview.editErrors.nameRequired';
   if (!form.gender) errors.gender = 'profileOverview.editErrors.genderRequired';
   if (!form.height.trim()) errors.height = 'profileOverview.editErrors.heightRequired';
   if (!form.weight.trim()) errors.weight = 'profileOverview.editErrors.weightRequired';
   if (!form.dateOfBirth.trim()) errors.dateOfBirth = 'profileOverview.editErrors.dobRequired';
+
   return errors;
-=======
-  setNotificationEnabled: (enabled: boolean) => void;
-  setSelectedLanguage: (language: string) => void;
-  saveProfile: (form: ProfileOverviewForm) => Promise<void>;
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
 }
 
 export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
   const {
     profileOverview,
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
     profile,
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
     setupProfile,
     setProfileOverview,
     updateProfileOverview,
@@ -145,15 +128,12 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
 
   const [status, setStatus] = useState<ProfileOverviewStatus>(profileOverview ? 'success' : 'loading');
   const [isSetupModalVisible, setSetupModalVisible] = useState(false);
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
   const [selectedField, setSelectedField] = useState<ProfileOverviewDetailField | null>(null);
   const [isDetailModalVisible, setDetailModalVisible] = useState(false);
   const [isEditingDetail, setIsEditingDetail] = useState(false);
   const [detailFieldValue, setDetailFieldValue] = useState('');
   const [detailValidationError, setDetailValidationError] = useState<string | null>(null);
   const [isSavingDetail, setIsSavingDetail] = useState(false);
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
 
   const load = useCallback(async () => {
     setStatus('loading');
@@ -161,7 +141,6 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     try {
       const data = profileOverview ?? await fetchPatientProfileOverview();
       const isComplete = setupProfile != null ? true : data.isProfileComplete;
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
       const nextProfile: PatientProfileOverview = { ...data, isProfileComplete: isComplete };
       const historySource = profile ?? setupProfile;
 
@@ -185,9 +164,6 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
         );
         nextProfile.medicalRecords = syncMedicationMedicalRecord(syncedHistoryRecords, historySource);
       }
-=======
-      const nextProfile = { ...data, isProfileComplete: isComplete };
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
 
       setProfileOverview(nextProfile);
       setSetupModalVisible(!nextProfile.isProfileComplete);
@@ -195,15 +171,11 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     } catch {
       setStatus('error');
     }
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
   }, [profileOverview, profile, setProfileOverview, setupProfile]);
-=======
-  }, [profileOverview, setProfileOverview, setupProfile]);
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
 
   useEffect(() => {
     if (!profileOverview) {
-      load();
+      void load();
       return;
     }
 
@@ -217,10 +189,7 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
       avatarUri: profileOverview.avatarUri,
       name: profileOverview.name,
       gender: profileOverview.gender,
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
       dateOfBirth: profileOverview.dateOfBirth,
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
       height: profileOverview.height,
       weight: profileOverview.weight,
       age: profileOverview.age,
@@ -237,7 +206,6 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     [profileOverview],
   );
 
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
   const resetDetailModalState = useCallback(() => {
     setSelectedField(null);
     setDetailModalVisible(false);
@@ -249,6 +217,7 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
 
   const openDetailModal = useCallback((field: ProfileOverviewDetailField) => {
     if (!profileOverview) return;
+
     setSelectedField(field);
     setDetailFieldValue(profileOverview[field]);
     setDetailValidationError(null);
@@ -306,25 +275,20 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     updateProfileOverview,
   ]);
 
-  const saveProfile = useCallback((form: ProfileOverviewForm) => {
+  const saveProfile = useCallback(async (form: ProfileOverviewForm) => {
     const age = deriveAgeFromDob(form.dateOfBirth);
-    updateProfileOverview({
+    const nextForm = {
       ...form,
       age: age || profileOverview?.age || '',
-      isProfileComplete: true,
-    });
-    setSetupModalVisible(false);
-  }, [updateProfileOverview, profileOverview?.age]);
-=======
-  const saveProfile = useCallback(async (form: ProfileOverviewForm) => {
-    await updatePatientProfileOverview(form);
+    };
+
+    await updatePatientProfileOverview(nextForm);
     updateProfileOverview({
-      ...form,
+      ...nextForm,
       isProfileComplete: true,
     });
     setSetupModalVisible(false);
-  }, [updateProfileOverview]);
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
+  }, [profileOverview?.age, updateProfileOverview]);
 
   const setNotificationEnabled = useCallback((enabled: boolean) => {
     updateProfileOverview({ notificationEnabled: enabled });
@@ -338,20 +302,16 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     status,
     profile: profileOverview,
     isSetupModalVisible,
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
     selectedField,
     isDetailModalVisible,
     isEditingDetail,
     detailFieldValue,
     detailValidationError,
     isSavingDetail,
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
     editForm,
     selectedRecord,
     retry: load,
     dismissSetupModal: () => setSetupModalVisible(false),
-<<<<<<< HEAD:src/features/patient/hooks/usePatientProfileOverview.ts
     openDetailModal,
     closeDetailModal,
     enableDetailEditing,
@@ -360,10 +320,6 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     setNotificationEnabled,
     setSelectedLanguage,
     validateEditForm: validateProfileEditForm,
-=======
-    setNotificationEnabled,
-    setSelectedLanguage,
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/hooks/usePatientProfileOverview.ts
     saveProfile,
   };
 }

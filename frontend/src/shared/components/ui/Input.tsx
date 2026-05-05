@@ -28,7 +28,9 @@ export interface InputProps
     | 'returnKeyType'
     | 'onSubmitEditing'
     | 'onBlur'
-    | 'testID'
+    | 'multiline'
+    | 'numberOfLines'
+  | 'testID'
   > {
   label?: string;
   placeholder?: string;

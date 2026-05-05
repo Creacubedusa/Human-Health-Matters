@@ -40,11 +40,8 @@ export function AppointmentRescheduleDateTimeView({
     setSelectedDate,
     setSelectedTimeSlot,
     handleMakeAppointment,
-<<<<<<< HEAD:src/features/patient/screens/AppointmentRescheduleDateTimeView.tsx
-=======
     handlePrevMonth,
     handleNextMonth,
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/AppointmentRescheduleDateTimeView.tsx
     retry,
   } = useRescheduleDatetime();
 

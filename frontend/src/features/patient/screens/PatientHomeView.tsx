@@ -100,11 +100,7 @@ export function PatientHomeView({
             accessibilityRole="button"
             accessibilityLabel={t('tabs.profile')}
           >
-<<<<<<< HEAD:src/features/patient/screens/PatientHomeView.tsx
-            <Image source={{ uri: AVATAR_URI }} style={{ width: 24, height: 24 }} />
-=======
             <Image source={{ uri: avatarUri }} style={{ width: 24, height: 24 }} />
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PatientHomeView.tsx
           </Pressable>
 
           {/* "Home" title */}

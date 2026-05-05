@@ -1,17 +1,13 @@
 import { ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { ProfileHeader } from '../components/profile/ProfileHeader';
-<<<<<<< HEAD:src/features/patient/screens/PrivacyPolicyView.tsx
 import { LegalDocumentSection } from '@shared/components/ui/LegalDocumentSection';
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PrivacyPolicyView.tsx
+import { ProfileHeader } from '../components/profile/ProfileHeader';
 
 export interface PrivacyPolicyViewProps {
   onBack: () => void;
 }
 
-<<<<<<< HEAD:src/features/patient/screens/PrivacyPolicyView.tsx
 interface PrivacyPolicySectionConfig {
   title: string;
   paragraphs?: string[];
@@ -76,11 +72,7 @@ export function PrivacyPolicyView({ onBack }: PrivacyPolicyViewProps) {
       title: 'profileOverview.privacyPolicySections.updates.title',
       paragraphs: ['profileOverview.privacyPolicySections.updates.body'],
     },
-  ] as const;
-=======
-export function PrivacyPolicyView({ onBack }: PrivacyPolicyViewProps) {
-  const { t } = useTranslation();
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PrivacyPolicyView.tsx
+  ];
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
@@ -91,7 +83,6 @@ export function PrivacyPolicyView({ onBack }: PrivacyPolicyViewProps) {
       />
       <ScrollView
         className="flex-1"
-<<<<<<< HEAD:src/features/patient/screens/PrivacyPolicyView.tsx
         contentContainerClassName="px-5 pt-7 pb-12"
         showsVerticalScrollIndicator={false}
       >
@@ -120,22 +111,6 @@ export function PrivacyPolicyView({ onBack }: PrivacyPolicyViewProps) {
             bullets={section.bullets?.map((key) => t(key))}
           />
         ))}
-=======
-        contentContainerClassName="px-4 pt-6 pb-10"
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="bg-white border border-grey-200 rounded-2xl p-4 gap-4">
-          <Text className="text-s2 font-semibold font-sans text-grey-900">
-            {t('profileOverview.privacyIntroTitle')}
-          </Text>
-          <Text className="text-b3 font-sans text-grey-700">
-            {t('profileOverview.privacyIntroBody')}
-          </Text>
-          <Text className="text-b3 font-sans text-grey-700">
-            {t('profileOverview.privacyBody')}
-          </Text>
-        </View>
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/screens/PrivacyPolicyView.tsx
       </ScrollView>
     </SafeAreaView>
   );

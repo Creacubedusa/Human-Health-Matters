@@ -32,7 +32,6 @@ export interface HealthcareSupport {
   report: string[];
 }
 
-<<<<<<< HEAD:src/features/patient/types/profileOverview.types.ts
 export type SupportActivityStatus = 'applied' | 'pending';
 
 export interface SupportActivity {
@@ -49,17 +48,12 @@ export interface HealthcareSupportData {
   supportActivityList: SupportActivity[];
 }
 
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/types/profileOverview.types.ts
 export interface PatientProfileOverview {
   isProfileComplete: boolean;
   avatarUri: string;
   name: string;
   gender: string;
-<<<<<<< HEAD:src/features/patient/types/profileOverview.types.ts
   dateOfBirth: string;
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/types/profileOverview.types.ts
   height: string;
   weight: string;
   age: string;
@@ -77,10 +71,7 @@ export interface ProfileOverviewForm {
   avatarUri: string;
   name: string;
   gender: string;
-<<<<<<< HEAD:src/features/patient/types/profileOverview.types.ts
   dateOfBirth: string;
-=======
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/types/profileOverview.types.ts
   height: string;
   weight: string;
   age: string;

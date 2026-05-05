@@ -11,52 +11,31 @@ import type {
 } from '../types/consultation.types';
 
 interface ConsultationState {
-  // Session
   doctor: MockDoctor | null;
   callStatus: CallStatus;
-<<<<<<< HEAD:src/features/patient/store/consultation.store.ts
-=======
   meetingUrl: string | null;
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/store/consultation.store.ts
-
-  // Media
   videoOn: boolean;
   muted: boolean;
   audioRoute: AudioRoute;
   audioModalOpen: boolean;
   aiNoteActive: boolean;
-
-  // Panels
   activePanel: ActivePanel;
   endCallModalOpen: boolean;
-
-  // Doctor chat
   doctorMessages: ChatMessage[];
   doctorInput: string;
-
-  // AI chat
   aiMessages: ChatMessage[];
   aiInput: string;
   aiTyping: boolean;
-
-  // Transcription
   transcriptionStatus: TranscriptionStatus;
   transcript: TranscriptEntry[];
   selectedLanguage: Language;
-
-  // Review
   rating: number;
   reviewText: string;
   wouldRecommend: boolean | null;
   reviewSubmitting: boolean;
-
-  // Actions
   setDoctor: (doctor: MockDoctor) => void;
   setCallStatus: (status: CallStatus) => void;
-<<<<<<< HEAD:src/features/patient/store/consultation.store.ts
-=======
   setMeetingUrl: (url: string | null) => void;
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/store/consultation.store.ts
   toggleVideo: () => void;
   toggleMute: () => void;
   setAudioRoute: (route: AudioRoute) => void;
@@ -99,55 +78,42 @@ const INITIAL_AI_MESSAGES: ChatMessage[] = [
 export const useConsultationStore = create<ConsultationState>((set) => ({
   doctor: null,
   callStatus: 'connecting',
-<<<<<<< HEAD:src/features/patient/store/consultation.store.ts
-=======
   meetingUrl: null,
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/store/consultation.store.ts
-
   videoOn: true,
   muted: false,
   audioRoute: 'speaker',
   audioModalOpen: false,
   aiNoteActive: true,
-
   activePanel: 'none',
   endCallModalOpen: false,
-
   doctorMessages: INITIAL_DOCTOR_MESSAGES,
   doctorInput: '',
-
   aiMessages: INITIAL_AI_MESSAGES,
   aiInput: '',
   aiTyping: false,
-
   transcriptionStatus: 'idle',
   transcript: [],
   selectedLanguage: 'en',
-
   rating: 0,
   reviewText: '',
   wouldRecommend: null,
   reviewSubmitting: false,
-
   setDoctor: (doctor) => set({ doctor }),
   setCallStatus: (callStatus) => set({ callStatus }),
-<<<<<<< HEAD:src/features/patient/store/consultation.store.ts
-=======
   setMeetingUrl: (meetingUrl) => set({ meetingUrl }),
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/store/consultation.store.ts
-  toggleVideo: () => set((s) => ({ videoOn: !s.videoOn })),
-  toggleMute: () => set((s) => ({ muted: !s.muted })),
+  toggleVideo: () => set((state) => ({ videoOn: !state.videoOn })),
+  toggleMute: () => set((state) => ({ muted: !state.muted })),
   setAudioRoute: (audioRoute) => set({ audioRoute, audioModalOpen: false }),
   setAudioModalOpen: (audioModalOpen) => set({ audioModalOpen }),
   setActivePanel: (activePanel) => set({ activePanel }),
   setEndCallModalOpen: (endCallModalOpen) => set({ endCallModalOpen }),
   setDoctorInput: (doctorInput) => set({ doctorInput }),
-  addDoctorMessage: (msg) => set((s) => ({ doctorMessages: [...s.doctorMessages, msg] })),
+  addDoctorMessage: (message) => set((state) => ({ doctorMessages: [...state.doctorMessages, message] })),
   setAiInput: (aiInput) => set({ aiInput }),
   setAiTyping: (aiTyping) => set({ aiTyping }),
-  addAiMessage: (msg) => set((s) => ({ aiMessages: [...s.aiMessages, msg] })),
+  addAiMessage: (message) => set((state) => ({ aiMessages: [...state.aiMessages, message] })),
   setTranscriptionStatus: (transcriptionStatus) => set({ transcriptionStatus }),
-  addTranscriptEntry: (entry) => set((s) => ({ transcript: [...s.transcript, entry] })),
+  addTranscriptEntry: (entry) => set((state) => ({ transcript: [...state.transcript, entry] })),
   setLanguage: (selectedLanguage) => set({ selectedLanguage }),
   setRating: (rating) => set({ rating }),
   setReviewText: (reviewText) => set({ reviewText }),
@@ -157,10 +123,7 @@ export const useConsultationStore = create<ConsultationState>((set) => ({
     set({
       doctor: null,
       callStatus: 'connecting',
-<<<<<<< HEAD:src/features/patient/store/consultation.store.ts
-=======
       meetingUrl: null,
->>>>>>> 290025c34b3930e6341a697d4a0c37e6f2562012:frontend/src/features/patient/store/consultation.store.ts
       videoOn: true,
       muted: false,
       audioRoute: 'speaker',
