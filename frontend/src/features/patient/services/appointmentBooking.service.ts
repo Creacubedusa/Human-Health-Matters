@@ -38,7 +38,7 @@ const DEFAULT_CONTEXT: DoctorMatchContext = {
   donorFund: 'available',
 };
 
-const DOCTORS: DoctorRecommendation[] = [
+export const MOCK_DOCTOR_RECOMMENDATIONS: DoctorRecommendation[] = [
   {
     id: 'doctor-paul-grant',
     name: 'Dr. Paul Grant',

@@ -1,103 +1,236 @@
-import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
+import { primitiveColors } from '@design/tokens';
+import { Button } from '@shared/components/ui/Button';
 import { useDonorHome } from '../hooks/useDonorHome';
-import type { DonationActivity } from '../types/donor.types';
+import type { DonorLiveActivity } from '../types/donor.types';
+
+function initialsFromName(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  return (parts[0]?.[0] ?? '').toUpperCase();
+}
 
 export function DonorHomeView() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { status, dashboard, retry } = useDonorHome();
 
+  // ── Loading ──────────────────────────────────────────────────────────────
   if (status === 'loading') {
     return (
-      <SafeAreaView className="flex-1 bg-bg-default items-center justify-center">
-        <ActivityIndicator size="large" color="#4E61F6" />
-        <Text className="text-b3 text-text-secondary mt-3">{t('common.loading')}</Text>
+      <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+        <View className="bg-primary-50 h-[66px]" />
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
+          <Text className="text-[14px] font-sans text-grey-500 mt-3">{t('common.loading')}</Text>
+        </View>
       </SafeAreaView>
     );
   }
 
+  // ── Error ────────────────────────────────────────────────────────────────
   if (status === 'error') {
     return (
-      <SafeAreaView className="flex-1 bg-bg-default items-center justify-center px-6">
-        <Text className="text-s2 text-text-primary text-center">{t('donorHome.errorMessage')}</Text>
-        <TouchableOpacity
-          className="mt-4 bg-action-primary rounded-lg px-6 py-3"
-          onPress={retry}
-          accessibilityRole="button"
-        >
-          <Text className="text-btn-medium text-white">{t('common.retry')}</Text>
-        </TouchableOpacity>
+      <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+        <View className="bg-primary-50 h-[66px]" />
+        <View className="flex-1 items-center justify-center px-6 gap-4">
+          <Text className="text-[16px] font-semibold font-sans text-grey-900 text-center">
+            {t('donorHome.errorMessage')}
+          </Text>
+          <Pressable
+            className="bg-primary-500 rounded-xl px-6 py-3"
+            onPress={retry}
+            accessibilityRole="button"
+          >
+            <Text className="text-[14px] font-semibold font-sans text-white">{t('common.retry')}</Text>
+          </Pressable>
+        </View>
       </SafeAreaView>
     );
   }
 
   if (!dashboard) return null;
 
-  const hasActivity = dashboard.recentActivity.length > 0;
-  const greeting = dashboard.donorName
-    ? t('donorHome.greeting', { name: dashboard.donorName })
-    : t('donorHome.greetingFallback');
+  const initials = initialsFromName(dashboard.donorName);
+  const poolFillPct = Math.min(Math.max(dashboard.poolProgress * 100, 0), 100);
 
+  // ── Success ──────────────────────────────────────────────────────────────
   return (
-    <SafeAreaView className="flex-1 bg-bg-default">
-      <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
-        {/* Header */}
-        <View className="pt-6 pb-4">
-          <Text className="text-h5 text-text-primary">{greeting}</Text>
-        </View>
-
-        {/* Impact card */}
-        <View className="bg-green-500 rounded-xl p-5 mb-4 flex-row">
-          <View className="flex-1 items-center">
-            <Text className="text-h4 text-white">${dashboard.totalDonated}</Text>
-            <Text className="text-c2 text-white opacity-80 mt-1">{t('donorHome.impactCard.totalDonated')}</Text>
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+      {/* Header */}
+      <View className="bg-primary-50 h-[66px] justify-end">
+        <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
+          {/* Avatar */}
+          <View className="w-[30px] h-[30px] rounded-full bg-primary-100 items-center justify-center">
+            <Text className="text-[12px] font-semibold font-sans text-primary-500">{initials}</Text>
           </View>
-          <View className="w-px bg-white opacity-30 mx-4" />
-          <View className="flex-1 items-center">
-            <Text className="text-h4 text-white">{dashboard.patientsHelped}</Text>
-            <Text className="text-c2 text-white opacity-80 mt-1">{t('donorHome.impactCard.patientsHelped')}</Text>
-          </View>
-        </View>
 
-        {/* Pool balance card */}
-        <View className="bg-bg-surface border border-border-default rounded-xl p-5 mb-6">
-          <Text className="text-b4 text-text-secondary mb-1">{t('donorHome.poolCard.balance')}</Text>
-          <Text className="text-h4 text-text-primary mb-4">${dashboard.poolBalance}</Text>
-          <TouchableOpacity
-            className="bg-action-primary rounded-lg py-3 items-center"
-            accessibilityRole="button"
-          >
-            <Text className="text-btn-medium text-white">{t('donorHome.poolCard.donateNow')}</Text>
-          </TouchableOpacity>
-        </View>
+          {/* Title */}
+          <Text className="text-[16px] font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
+            {t('donorHome.title')}
+          </Text>
 
-        {/* Recent activity */}
-        <Text className="text-s2 text-text-primary mb-3">{t('donorHome.recentActivity')}</Text>
-
-        {!hasActivity ? (
-          <View className="items-center py-10">
-            <Text className="text-b1 text-text-secondary">{t('donorHome.noActivity')}</Text>
-            <Text className="text-b3 text-text-tertiary mt-1">{t('donorHome.noActivityHint')}</Text>
-          </View>
-        ) : (
-          dashboard.recentActivity.map((a: DonationActivity) => (
-            <View
-              key={a.id}
-              className="bg-bg-surface border border-border-default rounded-xl p-4 mb-3 flex-row items-center justify-between"
-            >
-              <View>
-                {a.patientInitials && (
-                  <Text className="text-b2 text-text-primary">{a.patientInitials}</Text>
-                )}
-                <Text className="text-c1 text-text-tertiary">{a.date}</Text>
-              </View>
-              <Text className="text-s2 text-green-500">${a.amount}</Text>
+          {/* Right: flag badge + bell */}
+          <View className="flex-row items-center gap-3">
+            <View className="flex-row items-center gap-1 bg-grey-50 border border-grey-300 rounded-md px-2.5 py-0.5 h-6">
+              <Text className="text-[12px]">🇺🇸</Text>
+              <Ionicons name="chevron-down" size={12} color={primitiveColors['grey-500']} />
             </View>
-          ))
-        )}
+            <Pressable accessibilityRole="button" accessibilityLabel={t('donorHome.notifications')}>
+              <Ionicons name="notifications" size={22} color={primitiveColors['grey-900']} />
+            </Pressable>
+          </View>
+        </View>
+      </View>
 
-        <View className="h-8" />
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="px-4 pt-6 pb-32 gap-6"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Greeting */}
+        <View className="gap-1">
+          <Text className="text-[12px] font-semibold font-sans text-grey-500">
+            {t('donorHome.welcomeLabel')}
+          </Text>
+          <View className="flex-row items-center gap-2">
+            <Text className="text-[16px] font-semibold font-sans text-grey-900">
+              {t('donorHome.greeting', { name: dashboard.donorName })}
+            </Text>
+            <Text className="text-[16px]">👋</Text>
+          </View>
+        </View>
+
+        {/* Care Funding Card */}
+        <View className="bg-white border border-grey-200 rounded-2xl px-4 py-[17px] gap-[22px]">
+          <View className="flex-row items-start justify-between">
+            <View className="gap-2">
+              <Text className="text-[12px] font-sans text-grey-500">
+                {t('donorHome.careFundingLabel')}
+              </Text>
+              <Text className="text-[32px] font-semibold font-sans text-grey-900">
+                ${dashboard.careFunding.toLocaleString()}
+              </Text>
+            </View>
+            <Ionicons name="trending-up-outline" size={24} color={primitiveColors['green-500']} />
+          </View>
+
+          {/* Stat boxes */}
+          <View className="flex-row gap-4">
+            <View className="flex-1 bg-grey-50 border border-grey-200 rounded-2xl p-4 h-[110px] items-center justify-center gap-4">
+              <Text className="text-[40px] font-semibold font-sans text-primary-500 leading-[48px]">
+                {dashboard.patientsHelped}
+              </Text>
+              <Text className="text-[12px] font-sans text-grey-500 text-center">
+                {t('donorHome.patientsHelpedLabel')}
+              </Text>
+            </View>
+            <View className="flex-1 bg-grey-50 border border-grey-200 rounded-2xl p-4 h-[110px] items-center justify-center gap-4">
+              <Text className="text-[40px] font-semibold font-sans text-green-500 leading-[48px]">
+                {dashboard.impactRate}%
+              </Text>
+              <Text className="text-[12px] font-sans text-grey-500 text-center">
+                {t('donorHome.impactRateLabel')}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Fund Pool Status Card */}
+        <View className="bg-white border border-grey-200 rounded-2xl p-4 gap-4">
+          <View className="flex-row items-start justify-between">
+            <View className="gap-2">
+              <Text className="text-[12px] font-sans text-grey-500">
+                {t('donorHome.poolStatusLabel')}
+              </Text>
+              <Text className="text-[32px] font-semibold font-sans text-grey-900">
+                ${dashboard.poolBalance.toLocaleString()}
+              </Text>
+            </View>
+            {/* Live badge */}
+            <View className="flex-row items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg">
+              <View className="w-2 h-2 rounded-full bg-green-500" />
+              <Text className="text-[12px] font-semibold font-sans text-green-500">
+                {t('donorHome.poolLiveBadge')}
+              </Text>
+            </View>
+          </View>
+
+          {/* Progress bar */}
+          <View className="gap-2">
+            <View className="w-full h-2 bg-grey-100 rounded-full overflow-hidden">
+              <View
+                className="h-full bg-primary-500 rounded-full"
+                style={{ width: `${poolFillPct}%` }}
+              />
+            </View>
+            <Text className="text-[14px] font-medium font-sans text-grey-900">
+              {t('donorHome.poolStatusCaption')}
+            </Text>
+          </View>
+        </View>
+
+        {/* Donate to pool button */}
+        <Button
+          label={t('donorHome.donateBtn')}
+          variant="filled"
+          size="large"
+          fullWidth
+          iconRight={<Ionicons name="add" size={20} color={primitiveColors.white} />}
+          onPress={() => router.push('/(donor)/donate')}
+        />
+
+        {/* Live Activity */}
+        <View className="gap-4">
+          <Text className="text-[16px] font-semibold font-sans text-grey-900">
+            {t('donorHome.liveActivityTitle')}
+          </Text>
+
+          {dashboard.liveActivity.length === 0 ? (
+            <View className="items-center py-10 gap-2">
+              <Text className="text-[16px] font-sans text-grey-500">
+                {t('donorHome.emptyActivity')}
+              </Text>
+              <Text className="text-[14px] font-sans text-grey-400 text-center">
+                {t('donorHome.emptyActivityHint')}
+              </Text>
+            </View>
+          ) : (
+            <View className="gap-2">
+              {dashboard.liveActivity.map((item: DonorLiveActivity) => (
+                <View
+                  key={item.id}
+                  className="bg-white border border-grey-300 rounded-lg p-4 flex-row items-center justify-between"
+                >
+                  <View className="flex-row items-center gap-3 flex-1">
+                    <View className="w-10 h-10 rounded-full bg-primary-50 items-center justify-center">
+                      <Ionicons name="heart" size={20} color={primitiveColors['primary-500']} />
+                    </View>
+                    <View className="flex-1 gap-2">
+                      <Text className="text-[14px] font-medium font-sans text-grey-900" numberOfLines={1}>
+                        {item.diagnosis}
+                      </Text>
+                      <Text className="text-[12px] font-sans text-grey-500" numberOfLines={1}>
+                        {item.patientType}
+                      </Text>
+                    </View>
+                  </View>
+                  <View className="items-end gap-3">
+                    <Text className="text-[16px] font-semibold font-sans text-green-500">
+                      ${item.amount}
+                    </Text>
+                    <Text className="text-[10px] font-medium font-sans text-grey-500">
+                      {item.timeLabel}
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

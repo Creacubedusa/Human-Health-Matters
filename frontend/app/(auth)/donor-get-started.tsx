@@ -8,7 +8,7 @@ export default function DonorGetStartedScreen() {
     <DonorGetStartedView
       onSignUp={() => router.push('/(auth)/donor-signup')}
       onLogin={() => router.push('/(auth)/donor-login')}
-      onGuestDonate={() => router.push('/(donor)/donate')}
+      onGuestDonate={() => router.push('/(auth)/guest-donate')}
     />
   );
 }

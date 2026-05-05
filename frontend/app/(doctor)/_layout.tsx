@@ -112,7 +112,15 @@ export default function DoctorLayout() {
       <Tabs.Screen name="calendar" options={{ href: null }} />
       <Tabs.Screen name="appointment-create" options={{ href: null }} />
       <Tabs.Screen name="availability" options={{ href: null }} />
+      <Tabs.Screen name="earning" options={{ href: null }} />
+      <Tabs.Screen name="earning-transactions" options={{ href: null }} />
+      <Tabs.Screen name="earning-withdraw" options={{ href: null }} />
+      <Tabs.Screen name="earning-claims-tracker" options={{ href: null }} />
+      <Tabs.Screen name="earning-payout-history" options={{ href: null }} />
+      <Tabs.Screen name="earning-receipt/[transactionId]" options={{ href: null }} />
+      <Tabs.Screen name="earning-transaction/[transactionId]" options={{ href: null }} />
       <Tabs.Screen name="language" options={{ href: null }} />
+      <Tabs.Screen name="privacy-policy" options={{ href: null }} />
       <Tabs.Screen name="notifications" options={{ href: null }} />
       <Tabs.Screen name="create-order-wizard" options={{ href: null }} />
       <Tabs.Screen name="appointment-policy" options={{ href: null }} />

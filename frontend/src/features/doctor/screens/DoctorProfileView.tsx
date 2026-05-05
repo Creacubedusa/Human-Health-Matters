@@ -229,9 +229,10 @@ export function DoctorProfileView() {
           malpracticeInsurance: res.profile?.malpracticeInsurance ?? null,
         });
         setOnboardingDone(!!res.profile?.onboardingCompletedAt);
-        setStatus('success');
       } catch {
-        if (mounted) setStatus('error');
+        if (!mounted) return;
+      } finally {
+        if (mounted) setStatus('success');
       }
     }
     void load();
@@ -488,6 +489,7 @@ export function DoctorProfileView() {
         {/* ── Your Earning ────────────────────────────────────────── */}
         <Pressable
           className="bg-primary-50 rounded-2xl p-4 flex-row items-center gap-3"
+          onPress={() => router.push('/(doctor)/earning')}
           accessibilityRole="button"
         >
           <View className="w-8 h-8 items-center justify-center">
@@ -608,16 +610,19 @@ export function DoctorProfileView() {
           <SettingNavRow
             icon={<Ionicons name="calendar-outline" size={16} color={primitiveColors['grey-700']} />}
             label={t('doctorProfile.settingAvailability')}
+            onPress={() => router.push('/(doctor)/availability')}
           />
 
           <SettingNavRow
             icon={<Ionicons name="language-outline" size={16} color={primitiveColors['grey-700']} />}
             label={t('doctorProfile.settingLanguage')}
+            onPress={() => router.push('/(auth)/select-language')}
           />
 
           <SettingNavRow
             icon={<Ionicons name="shield-checkmark-outline" size={16} color={primitiveColors['grey-700']} />}
             label={t('doctorProfile.settingPrivacyPolicy')}
+            onPress={() => router.push('/(doctor)/privacy-policy')}
           />
         </View>
 

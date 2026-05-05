@@ -1,12 +1,17 @@
-import { useTranslation } from 'react-i18next';
-import { Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { DonorProfileView } from '@features/donor/screens/DonorProfileView';
 
 export default function DonorProfileScreen() {
-  const { t } = useTranslation();
+  const router = useRouter();
   return (
-    <SafeAreaView className="flex-1 bg-bg-default items-center justify-center">
-      <Text className="text-s2 text-text-primary">{t('tabs.profile')}</Text>
-    </SafeAreaView>
+    <DonorProfileView
+      onEditCard={(cardId) =>
+        router.push({ pathname: '/(donor)/profile-edit-card', params: { cardId } })
+      }
+      onEditFrequency={() => router.push('/(donor)/profile-frequency')}
+      onAddMethod={() => router.push('/(donor)/profile-add-method')}
+      onLanguage={() => {}}
+      onPrivacyPolicy={() => {}}
+    />
   );
 }
