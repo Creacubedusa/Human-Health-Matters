@@ -104,6 +104,11 @@ export function AppointmentCalendar({
                             className={['h-1 w-1 rounded-full', DOT_TONE_CLASS[dotTone]].join(' ')}
                           />
                         ))}
+                        {day.appointmentCountLabel ? (
+                          <Text className="text-[8px] font-medium font-sans text-grey-500">
+                            {day.appointmentCountLabel}
+                          </Text>
+                        ) : null}
                       </View>
                     </View>
                   </Pressable>

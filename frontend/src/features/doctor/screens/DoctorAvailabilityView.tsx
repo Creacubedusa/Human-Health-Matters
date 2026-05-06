@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   Modal,
   Platform,
@@ -20,11 +20,16 @@ import { SelectInput } from '@shared/components/ui/SelectInput';
 import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { toast } from '@shared/components/ui/toast';
 import {
+  createDefaultDoctorAvailabilitySettings,
   type DoctorAvailabilityDay,
   type DoctorAvailabilitySettings,
   type DoctorAvailabilitySlot,
   useDoctorAvailabilityStore,
 } from '../store/doctorAvailability.store';
+import {
+  fetchDoctorAvailability,
+  updateDoctorAvailability,
+} from '../services/doctor.service';
 
 export interface DoctorAvailabilityViewProps {
   onBack: () => void;
@@ -230,15 +235,45 @@ function updateDay(
 export function DoctorAvailabilityView({ onBack }: DoctorAvailabilityViewProps) {
   const { t } = useTranslation();
   const savedSettings = useDoctorAvailabilityStore((state) => state.settings);
+  const hydrateAvailability = useDoctorAvailabilityStore((state) => state.hydrate);
   const setSavedSettings = useDoctorAvailabilityStore((state) => state.setSettings);
 
   const [settings, setSettings] = useState<DoctorAvailabilitySettings>(savedSettings);
+  const [loading, setLoading] = useState(true);
   const [bookingLimitExpanded, setBookingLimitExpanded] = useState(false);
   const [pickerTarget, setPickerTarget] = useState<PickerTarget | null>(null);
   const [iosPickerValue, setIosPickerValue] = useState<Date>(new Date());
   const [dateRangeError, setDateRangeError] = useState<string | null>(null);
   const [slotErrors, setSlotErrors] = useState<Record<string, string>>({});
   const [dailyLimitError, setDailyLimitError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadAvailability = async () => {
+      try {
+        const response = await fetchDoctorAvailability();
+        if (!active) return;
+
+        const nextSettings =
+          response.settings ?? createDefaultDoctorAvailabilitySettings();
+        hydrateAvailability(nextSettings, response.hasAvailability);
+        setSettings(nextSettings);
+      } catch {
+        if (active) {
+          setSettings(savedSettings);
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    void loadAvailability();
+
+    return () => {
+      active = false;
+    };
+  }, [hydrateAvailability, savedSettings]);
 
   const datePickerValue = useMemo(() => {
     if (!pickerTarget || pickerTarget.type !== 'date') return new Date();
@@ -381,9 +416,16 @@ export function DoctorAvailabilityView({ onBack }: DoctorAvailabilityViewProps) 
       return;
     }
 
-    setSavedSettings(settings);
-    toast.success('Availability settings saved successfully.');
-    onBack();
+    void (async () => {
+      try {
+        const response = await updateDoctorAvailability(settings);
+        setSavedSettings(response.settings ?? settings);
+        toast.success('Availability settings saved successfully.');
+        onBack();
+      } catch {
+        // Toast handled by HTTP interceptor.
+      }
+    })();
   }
 
   const pickerMode = pickerTarget?.type === 'time' ? 'time' : 'date';
@@ -407,6 +449,12 @@ export function DoctorAvailabilityView({ onBack }: DoctorAvailabilityViewProps) 
           contentContainerClassName="px-4 pt-8 pb-36"
           showsVerticalScrollIndicator={false}
         >
+          {loading ? (
+            <Text className="text-b2 font-sans text-grey-500">
+              {t('common.loading')}
+            </Text>
+          ) : null}
+
           <Text className="text-h4 font-semibold font-sans text-grey-900">
             {t('calendar.setAvailability', { defaultValue: 'Set Availability' })}
           </Text>

@@ -3,9 +3,12 @@ export type DoctorAppointmentActionType = 'cancel' | 'reschedule';
 
 export interface DoctorManagedAppointment {
   id: string;
+  patientId?: string;
   patientName: string;
   patientAvatar: string;
   specialty: string;
+  startsAt: string;
+  endsAt: string;
   date: string;
   time: string;
   status: DoctorAppointmentStatus;
@@ -37,6 +40,7 @@ export interface DoctorCalendarDayAvailability {
   isCurrentMonth: boolean;
   isAvailable: boolean;
   availabilityDots: AvailabilityDotTone[];
+  appointmentCountLabel: string | null;
 }
 
 export interface DoctorAppointmentCalendarMonth {
@@ -52,6 +56,7 @@ export interface DoctorAppointmentTimeSlot {
 }
 
 export interface DoctorAvailabilitySummary {
+  hasAvailability: boolean;
   month: DoctorAppointmentCalendarMonth;
   timeSlotsByDate: Record<string, DoctorAppointmentTimeSlot[]>;
 }

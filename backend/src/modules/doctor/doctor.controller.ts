@@ -1,17 +1,55 @@
-import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Prisma } from '@prisma/client';
 import type { Request } from 'express';
 import { JwtAuthGuard } from '../../common/auth/jwt-auth.guard';
 import { Roles } from '../../common/auth/roles.decorator';
 import type { JwtPayload } from '../../common/auth/auth.types';
 import { PrismaService } from '../../prisma/prisma.service';
 import { DoctorProfileSetupDto } from './dto/doctor-profile-setup.dto';
+import { UpdateDoctorAvailabilityDto } from './dto/update-doctor-availability.dto';
 import { UpdateDoctorProfileDto } from './dto/update-doctor-profile.dto';
 
 @ApiTags('doctor')
 @Controller('doctor')
 export class DoctorController {
   constructor(private readonly prisma: PrismaService) {}
+
+  private validateAvailabilityPayload(body: UpdateDoctorAvailabilityDto) {
+    if (body.toDate < body.fromDate) {
+      throw new BadRequestException('availability_invalid_date_range');
+    }
+
+    const allowedDurations = new Set([15, 30, 45, 60]);
+    if (!allowedDurations.has(body.appointmentDurationMinutes)) {
+      throw new BadRequestException('availability_invalid_duration');
+    }
+
+    const seenDays = new Set<string>();
+    for (const day of body.days) {
+      if (seenDays.has(day.key)) {
+        throw new BadRequestException('availability_duplicate_day');
+      }
+      seenDays.add(day.key);
+
+      const ordered = [...day.slots].sort((left, right) =>
+        left.startTime.localeCompare(right.startTime),
+      );
+
+      for (let index = 0; index < ordered.length; index += 1) {
+        const slot = ordered[index];
+        if (!/^\d{2}:\d{2}$/.test(slot.startTime) || !/^\d{2}:\d{2}$/.test(slot.endTime)) {
+          throw new BadRequestException('availability_invalid_time_format');
+        }
+        if (slot.endTime <= slot.startTime) {
+          throw new BadRequestException('availability_invalid_time_range');
+        }
+        if (index > 0 && ordered[index - 1].endTime > slot.startTime) {
+          throw new BadRequestException('availability_overlapping_slots');
+        }
+      }
+    }
+  }
 
   @Get('dashboard')
   @UseGuards(JwtAuthGuard)
@@ -175,6 +213,8 @@ export class DoctorController {
         specialties: true,
         bio: true,
         avatarUri: true,
+        availabilitySettings: true,
+        availabilitySetAt: true,
         medicalCertificate: true,
         boardCertificate: true,
         deaRegistration: true,
@@ -184,6 +224,58 @@ export class DoctorController {
     });
 
     return { user, profile };
+  }
+
+  @Get('availability')
+  @UseGuards(JwtAuthGuard)
+  @Roles('DOCTOR')
+  async availability(@Req() req: Request & { user?: JwtPayload }) {
+    const doctorId = req.user?.sub;
+    if (!doctorId) throw new Error('missing_user');
+
+    const profile = await this.prisma.doctorProfile.findUnique({
+      where: { userId: doctorId },
+      select: {
+        availabilitySettings: true,
+        availabilitySetAt: true,
+      },
+    });
+
+    return {
+      settings: profile?.availabilitySettings ?? null,
+      hasAvailability: Boolean(profile?.availabilitySetAt),
+      availabilitySetAt: profile?.availabilitySetAt ?? null,
+    };
+  }
+
+  @Patch('availability')
+  @UseGuards(JwtAuthGuard)
+  @Roles('DOCTOR')
+  async updateAvailability(
+    @Req() req: Request & { user?: JwtPayload },
+    @Body() body: UpdateDoctorAvailabilityDto,
+  ) {
+    const doctorId = req.user?.sub;
+    if (!doctorId) throw new Error('missing_user');
+    this.validateAvailabilityPayload(body);
+
+    const profile = await this.prisma.doctorProfile.update({
+      where: { userId: doctorId },
+      data: {
+        availabilitySettings: body as unknown as Prisma.InputJsonValue,
+        availabilitySetAt: new Date(),
+      },
+      select: {
+        availabilitySettings: true,
+        availabilitySetAt: true,
+      },
+    });
+
+    return {
+      settings: profile.availabilitySettings,
+      hasAvailability: Boolean(profile.availabilitySetAt),
+      availabilitySetAt: profile.availabilitySetAt,
+    };
   }
 
   @Patch('profile')
@@ -215,6 +307,8 @@ export class DoctorController {
         specialties: true,
         bio: true,
         avatarUri: true,
+        availabilitySettings: true,
+        availabilitySetAt: true,
         medicalCertificate: true,
         boardCertificate: true,
         deaRegistration: true,
@@ -248,6 +342,8 @@ export class DoctorController {
         specialties: true,
         bio: true,
         avatarUri: true,
+        availabilitySettings: true,
+        availabilitySetAt: true,
         medicalCertificate: true,
         boardCertificate: true,
         deaRegistration: true,

@@ -55,6 +55,7 @@ export const MOCK_DOCTOR_RECOMMENDATIONS: DoctorRecommendation[] = [
     about:
       'MBBS, Ph.D., Fellow, International College of Surgeons. Ex- Professor & Head of Department Department of Cardiology Harvard University',
     availabilityRange: '9 AM - 9 PM',
+    hasAvailability: true,
   },
   {
     id: 'doctor-amina-osei',
@@ -72,6 +73,7 @@ export const MOCK_DOCTOR_RECOMMENDATIONS: DoctorRecommendation[] = [
     about:
       'MBChB, MSc Family Medicine. Community-first clinician with broad acute-care experience and a focus on same-day follow-up for urgent triage cases.',
     availabilityRange: '9 AM - 7 PM',
+    hasAvailability: true,
   },
   {
     id: 'doctor-daniel-cole',
@@ -89,6 +91,7 @@ export const MOCK_DOCTOR_RECOMMENDATIONS: DoctorRecommendation[] = [
     about:
       'MD, FACP. Internal medicine consultant with deep experience in hypertension management, fatigue workups, and complex symptom review.',
     availabilityRange: '10 AM - 8 PM',
+    hasAvailability: true,
   },
 ];
 
@@ -154,6 +157,7 @@ function buildMonth(year: number, monthIndex: number): AppointmentCalendarMonth 
       isCurrentMonth: true,
       isAvailable: Boolean(AUGUST_2025_DOTS[day]),
       availabilityDots: AUGUST_2025_DOTS[day] ?? [],
+      appointmentCountLabel: null,
     });
   }
 

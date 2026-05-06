@@ -24,6 +24,7 @@ export interface DoctorAvailabilityDay {
 export interface DoctorAvailabilitySettings {
   fromDate: string;
   toDate: string;
+  timeZone: string;
   appointmentDurationMinutes: 15 | 30 | 45 | 60;
   days: DoctorAvailabilityDay[];
   bookingLimits: {
@@ -63,9 +64,11 @@ function createSlot(id: string, startTime: string, endTime: string): DoctorAvail
 
 export function createDefaultDoctorAvailabilitySettings(): DoctorAvailabilitySettings {
   const today = new Date();
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
   return {
     fromDate: toIsoDate(today),
     toDate: toIsoDate(addDays(today, 180)),
+    timeZone,
     appointmentDurationMinutes: 30,
     days: [
       { key: 'sun', label: DAY_LABELS.sun, slots: [] },
@@ -87,12 +90,20 @@ export function createDefaultDoctorAvailabilitySettings(): DoctorAvailabilitySet
 
 interface DoctorAvailabilityState {
   settings: DoctorAvailabilitySettings;
+  hasSavedAvailability: boolean;
   setSettings: (settings: DoctorAvailabilitySettings) => void;
+  hydrate: (settings: DoctorAvailabilitySettings, hasSavedAvailability: boolean) => void;
   reset: () => void;
 }
 
 export const useDoctorAvailabilityStore = create<DoctorAvailabilityState>((set) => ({
   settings: createDefaultDoctorAvailabilitySettings(),
-  setSettings: (settings) => set({ settings }),
-  reset: () => set({ settings: createDefaultDoctorAvailabilitySettings() }),
+  hasSavedAvailability: false,
+  setSettings: (settings) => set({ settings, hasSavedAvailability: true }),
+  hydrate: (settings, hasSavedAvailability) => set({ settings, hasSavedAvailability }),
+  reset: () =>
+    set({
+      settings: createDefaultDoctorAvailabilitySettings(),
+      hasSavedAvailability: false,
+    }),
 }));

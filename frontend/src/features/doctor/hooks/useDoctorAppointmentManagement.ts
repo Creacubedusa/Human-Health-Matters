@@ -14,8 +14,10 @@ export function useDoctorAppointmentManagement() {
   const upcomingAppointment =
     store.appointments.find((a) => a.status === 'upcoming') ?? null;
 
-  async function load() {
-    setStatus('loading');
+  async function load(options?: { silent?: boolean }) {
+    if (!options?.silent) {
+      setStatus('loading');
+    }
     try {
       const data = await fetchDoctorManagedAppointments();
       store.setAppointments(data);
@@ -26,7 +28,7 @@ export function useDoctorAppointmentManagement() {
   }
 
   useEffect(() => {
-    if (store.appointments.length === 0) void load();
+    void load({ silent: store.appointments.length > 0 });
   }, []);
 
   return {
@@ -43,6 +45,8 @@ export function useDoctorAppointmentManagement() {
     closeModals: store.closeModals,
     setCancelReason: (r: DoctorCancelReason) => store.setCancelReason(r),
     setRescheduleReason: (r: DoctorRescheduleReason) => store.setRescheduleReason(r),
-    retry: load,
+    retry: () => {
+      void load();
+    },
   };
 }

@@ -20,10 +20,6 @@ export async function saveCardToProfile(_card: Omit<DonorProfilePaymentCard, 'id
   await new Promise((r) => setTimeout(r, 600));
   return {
     id: `card-${Date.now()}`,
-    brand: 'visa',
-    last4: '0000',
-    expiry: '01/30',
-    isDefault: false,
     ..._card,
   };
 }

@@ -55,6 +55,7 @@ function buildCalendarMonth(year: number, month: number): DoctorAppointmentCalen
       isCurrentMonth: true,
       isAvailable,
       availabilityDots: dots,
+      appointmentCountLabel: null,
     });
   }
 

@@ -973,6 +973,8 @@
     "cancel": "Cancelar",
     "description": "Consulta con {{name}}",
     "errorMessage": "No pudimos cargar tu calendario. Inténtalo de nuevo.",
+    "setAvailability": "Configurar disponibilidad",
+    "setTimezones": "Configurar zonas horarias",
     "views": {
       "day": "Día",
       "week": "Semana",
@@ -1081,6 +1083,11 @@
     },
     "dateTime": {
       "availableTimeSlotTitle": "Horario disponible"
+    },
+    "availabilityAlert": {
+      "title": "Se requiere disponibilidad del doctor",
+      "description": "Este doctor debe configurar su disponibilidad antes de que los pacientes puedan reservar una cita. Elige otro doctor o inténtalo más tarde.",
+      "cta": "Entendido"
     },
     "success": {
       "messagePrefix": "Has reservado correctamente una cita con"

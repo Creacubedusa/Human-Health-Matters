@@ -3,6 +3,7 @@ import { toast } from '@shared/components/ui/toast';
 import type { DoctorDashboard } from '../types/doctor.types';
 import type { DoctorAvailabilitySummary, DoctorManagedAppointment } from '../types/doctorAppointments.types';
 import { http } from '@shared/api/http';
+import type { DoctorAvailabilitySettings } from '../store/doctorAvailability.store';
 
 export async function fetchDoctorDashboard(): Promise<DoctorDashboard> {
   const res = await http.get<DoctorDashboard>('/doctor/dashboard');
@@ -48,9 +49,12 @@ export async function fetchDoctorManagedAppointments(): Promise<DoctorManagedApp
           : 'upcoming';
     return {
       id: a.id,
+      patientId: a.patient?.id,
       patientName,
       patientAvatar: `https://i.pravatar.cc/150?u=${a.patient?.id ?? a.id}`,
       specialty: '',
+      startsAt: a.startsAt,
+      endsAt: a.endsAt,
       date: format(startsAt, 'MMMM d, yyyy'),
       time: format(startsAt, 'h:mm a'),
       status,
@@ -174,6 +178,27 @@ export async function updateDoctorProfile(payload: UpdateDoctorProfilePayload) {
   const res = await http.patch<{ profile: DoctorProfileResponse['profile'] }>(
     '/doctor/profile',
     payload,
+  );
+  return res.data;
+}
+
+export interface DoctorAvailabilityResponse {
+  settings: DoctorAvailabilitySettings | null;
+  hasAvailability: boolean;
+  availabilitySetAt: string | null;
+}
+
+export async function fetchDoctorAvailability(): Promise<DoctorAvailabilityResponse> {
+  const res = await http.get<DoctorAvailabilityResponse>('/doctor/availability');
+  return res.data;
+}
+
+export async function updateDoctorAvailability(
+  settings: DoctorAvailabilitySettings,
+): Promise<DoctorAvailabilityResponse> {
+  const res = await http.patch<DoctorAvailabilityResponse>(
+    '/doctor/availability',
+    settings,
   );
   return res.data;
 }

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { addMinutes, isValid, parse } from 'date-fns';
 import type {
   DoctorCancelReason,
   DoctorManagedAppointment,
@@ -17,6 +18,18 @@ function formatAppointmentDate(isoDate: string) {
   const day = Number(dayText);
   if (!year || monthIndex < 0 || monthIndex >= MONTH_NAMES.length || !day) return isoDate;
   return `${MONTH_NAMES[monthIndex]} ${day}, ${year}`;
+}
+
+function buildRescheduledDateTime(isoDate: string, timeSlotId: string) {
+  const startsAt = parse(`${isoDate} ${timeSlotId}`, 'yyyy-MM-dd hh:mm a', new Date());
+  if (!isValid(startsAt)) {
+    return null;
+  }
+
+  return {
+    startsAt: startsAt.toISOString(),
+    endsAt: addMinutes(startsAt, 30).toISOString(),
+  };
 }
 
 interface DoctorAppointmentsState {
@@ -74,18 +87,28 @@ export const useDoctorAppointmentsStore = create<DoctorAppointmentsState>((set) 
       selectedId: null,
     })),
   applyReschedule: (isoDate, timeSlotId) =>
-    set((state) => ({
-      appointments: state.appointments.map((a) =>
-        a.id === state.selectedId
-          ? { ...a, status: 'upcoming', date: formatAppointmentDate(isoDate), time: timeSlotId }
-          : a,
-      ),
-      rescheduleModalOpen: false,
-      rescheduleReason: null,
-      selectedDate: null,
-      selectedTimeSlotId: null,
-      selectedId: null,
-    })),
+    set((state) => {
+      const nextDateTime = buildRescheduledDateTime(isoDate, timeSlotId);
+      return {
+        appointments: state.appointments.map((a) =>
+          a.id === state.selectedId
+            ? {
+                ...a,
+                status: 'upcoming',
+                date: formatAppointmentDate(isoDate),
+                time: timeSlotId,
+                startsAt: nextDateTime?.startsAt ?? a.startsAt,
+                endsAt: nextDateTime?.endsAt ?? a.endsAt,
+              }
+            : a,
+        ),
+        rescheduleModalOpen: false,
+        rescheduleReason: null,
+        selectedDate: null,
+        selectedTimeSlotId: null,
+        selectedId: null,
+      };
+    }),
   completeAppointment: (id) =>
     set((state) => ({
       appointments: state.appointments.map((appointment) =>

@@ -3,8 +3,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { NotificationEmptyState } from '@shared/components/ui/NotificationEmptyState';
 import { NotificationTabs } from '@features/patient/components/NotificationTabs';
-import { NotificationEmptyState } from '@features/patient/components/NotificationEmptyState';
 import { useDoctorNotifications } from '../hooks/useDoctorNotifications';
 import { DoctorNotificationItem } from '../components/notifications/DoctorNotificationItem';
 import type { DoctorNotification } from '../types/doctorNotification.types';
@@ -25,7 +25,7 @@ export function DoctorNotificationsView({
   onCheckRecord,
 }: DoctorNotificationsViewProps) {
   const { t } = useTranslation();
-  const { status, filteredNotifications, activeFilter, setFilter, handlePress, retry } =
+  const { status, hasNotifications, filteredNotifications, activeFilter, setFilter, handlePress, retry } =
     useDoctorNotifications();
 
   function handleAction(notification: DoctorNotification) {
@@ -90,9 +90,11 @@ export function DoctorNotificationsView({
 
       {status === 'success' && (
         <View className="flex-1">
-          <View className="pb-4 pt-6">
-            <NotificationTabs activeFilter={activeFilter} onFilterChange={setFilter} />
-          </View>
+          {hasNotifications ? (
+            <View className="pb-4 pt-6">
+              <NotificationTabs activeFilter={activeFilter} onFilterChange={setFilter} />
+            </View>
+          ) : null}
 
           {filteredNotifications.length === 0 ? (
             <NotificationEmptyState />

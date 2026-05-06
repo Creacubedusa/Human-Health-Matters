@@ -4,10 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { NotificationEmptyState } from '@shared/components/ui/NotificationEmptyState';
 import { useNotifications } from '../hooks/useNotifications';
 import { NotificationItem } from '../components/NotificationItem';
 import { NotificationTabs } from '../components/NotificationTabs';
-import { NotificationEmptyState } from '../components/NotificationEmptyState';
 import type { Notification } from '../types/notification.types';
 
 export interface NotificationViewProps {
@@ -24,7 +24,7 @@ export function NotificationView({
   onCheckOrder,
 }: NotificationViewProps) {
   const { t } = useTranslation();
-  const { status, filteredNotifications, activeFilter, setFilter, handlePress, retry } =
+  const { status, hasNotifications, filteredNotifications, activeFilter, setFilter, handlePress, retry } =
     useNotifications();
 
   function handleAction(notification: Notification) {
@@ -81,12 +81,12 @@ export function NotificationView({
       {/* Success */}
       {status === 'success' && (
         <View className="flex-1">
-          {/* Filter tabs */}
-          <View className="pt-6 pb-4">
-            <NotificationTabs activeFilter={activeFilter} onFilterChange={setFilter} />
-          </View>
+          {hasNotifications ? (
+            <View className="pt-6 pb-4">
+              <NotificationTabs activeFilter={activeFilter} onFilterChange={setFilter} />
+            </View>
+          ) : null}
 
-          {/* Empty filtered state */}
           {filteredNotifications.length === 0 ? (
             <NotificationEmptyState />
           ) : (

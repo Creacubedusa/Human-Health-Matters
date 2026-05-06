@@ -1293,6 +1293,8 @@
     "cancel": "Cancel",
     "description": "Consultation with {{name}}",
     "errorMessage": "We couldn't load your calendar. Please try again.",
+    "setAvailability": "Set Availability",
+    "setTimezones": "Set Timezones",
     "views": {
       "day": "Day",
       "week": "Week",
@@ -1401,6 +1403,11 @@
     },
     "dateTime": {
       "availableTimeSlotTitle": "Available Time Slot"
+    },
+    "availabilityAlert": {
+      "title": "Doctor availability required",
+      "description": "This doctor must set availability before patients can book an appointment. Please choose another doctor or try again later.",
+      "cta": "Okay"
     },
     "success": {
       "messagePrefix": "You have successfully booked an appointment with"

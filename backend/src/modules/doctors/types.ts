@@ -15,4 +15,5 @@ export type DoctorRecommendation = {
   experienceLabel: string;
   about: string;
   availabilityRange: string;
+  hasAvailability: boolean;
 };

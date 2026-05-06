@@ -13,6 +13,7 @@ type Status = 'loading' | 'error' | 'success';
 
 interface UseDoctorNotificationsResult {
   status: Status;
+  hasNotifications: boolean;
   filteredNotifications: DoctorNotification[];
   activeFilter: DoctorNotificationFilter;
   setFilter: (filter: DoctorNotificationFilter) => void;
@@ -56,6 +57,7 @@ export function useDoctorNotifications(): UseDoctorNotificationsResult {
 
   return {
     status,
+    hasNotifications: notifications.length > 0,
     filteredNotifications,
     activeFilter,
     setFilter,

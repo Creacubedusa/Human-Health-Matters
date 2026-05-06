@@ -178,7 +178,9 @@ export function useCalendar() {
 
   const appointments = useMemo<DisplayCalendarAppointment[]>(
     () =>
-      store.appointments.map((appointment) => {
+      store.appointments
+        .filter((appointment) => appointment.status === 'upcoming')
+        .map((appointment) => {
         const displayDateKey = getDateKeyInTimeZone(appointment.startsAtUtc, selectedTimeZone.id);
         const displayDateLabel = formatDateLabel(displayDateKey);
         const displayTimeLabel = formatTimeLabel(appointment.startsAtUtc, selectedTimeZone.id);

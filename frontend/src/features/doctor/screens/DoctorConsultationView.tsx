@@ -18,12 +18,23 @@ import { DoctorEndCallModal } from '../components/consultation/DoctorEndCallModa
 import { DoctorPatientChatPanel } from '../components/consultation/DoctorPatientChatPanel';
 import { buildDoctorConsultationAISummary } from '../utils/consultationAiSummary';
 
+function normalizeName(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
 export function DoctorConsultationView() {
   const { t } = useTranslation();
   const consultation = useDoctorConsultation();
-  const activePatient = useDoctorPatientsStore((state) =>
-    state.patients.find((patient) => patient.id === consultation.appointmentId) ?? null,
-  );
+  const activePatient = useDoctorPatientsStore((state) => {
+    const directMatch =
+      state.patients.find((patient) => patient.id === consultation.appointmentId) ?? null;
+    if (directMatch) {
+      return directMatch;
+    }
+
+    const targetName = normalizeName(consultation.patientName);
+    return state.patients.find((patient) => normalizeName(patient.name) === targetName) ?? null;
+  });
   const aiSummary = buildDoctorConsultationAISummary(activePatient);
   const [cardExpanded, setCardExpanded] = useState(false);
   const [cardTab, setCardTab] = useState<'language' | 'transcription'>('language');

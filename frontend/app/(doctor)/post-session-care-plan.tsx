@@ -43,7 +43,7 @@ export default function DoctorPostSessionCarePlanScreen() {
 
     setSoapSubmitting(true);
     try {
-      await upsertDoctorSoapNote(activeDraft.patientId, activeDraft.soap);
+      await upsertDoctorSoapNote(activeDraft.appointmentId, activeDraft.soap);
       const carePlan = createPatientCarePlanFromDraft(activeDraft, DOCTOR_NAME, DOCTOR_SPECIALTY);
       addCarePlan(carePlan);
       addCarePlanSummary(activeDraft.patientId, {

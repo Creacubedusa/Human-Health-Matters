@@ -3,10 +3,12 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { toast } from '@shared/components/ui/toast';
 import { useDoctorConsultationStore } from '../store/doctorConsultation.store';
 import { useDoctorNuraAIStore } from '../store/doctorNuraAI.store';
+import { useDoctorAppointmentsStore } from '../store/doctorAppointments.store';
 import { useDoctorPatientsStore } from '../store/doctorPatients.store';
 import { buildDailyJoinUrl, joinDoctorAppointmentVideo, upsertDoctorSoapNote } from '../services/doctor.service';
 import { useDoctorCallTimer } from './useDoctorCallTimer';
-import type { DoctorChatMessage } from '../types/doctorConsultation.types';
+import type { DoctorChatMessage, DoctorPostSessionCarePlanDraft } from '../types/doctorConsultation.types';
+import type { DoctorPatientProfile } from '../types/doctor.types';
 import { buildHistoryItem, formatHistoryDate, getPatientCondition, truncateText } from '../utils/nuraHistory';
 import { buildDoctorConsultationAISummary } from '../utils/consultationAiSummary';
 import { buildPostSessionCarePlanDraft } from '../utils/postSessionCarePlan';
@@ -28,6 +30,86 @@ function formatConsultationDate() {
     day: 'numeric',
     year: 'numeric',
   }).format(new Date());
+}
+
+function normalizeName(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function findConsultationPatient(
+  appointmentId: string,
+  fallbackPatientName?: string,
+): DoctorPatientProfile | null {
+  if (!appointmentId) return null;
+
+  const { patients } = useDoctorPatientsStore.getState();
+  const directMatch = patients.find((item) => item.id === appointmentId);
+  if (directMatch) {
+    return directMatch;
+  }
+
+  const appointment = useDoctorAppointmentsStore
+    .getState()
+    .appointments.find((item) => item.id === appointmentId);
+  const candidateNames = [fallbackPatientName, appointment?.patientName]
+    .filter((value): value is string => Boolean(value?.trim()))
+    .map(normalizeName);
+
+  if (candidateNames.length === 0) {
+    return null;
+  }
+
+  return (
+    patients.find((item) => candidateNames.includes(normalizeName(item.name))) ?? null
+  );
+}
+
+function buildFallbackPostSessionDraft(
+  appointmentId: string,
+  patientName: string,
+  duration: string,
+  consultationDate: string,
+): DoctorPostSessionCarePlanDraft {
+  const safePatientName = patientName.trim() || 'Patient';
+  const patientInitials = initialsFromName(safePatientName);
+  const makeDraftId = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
+
+  return {
+    consultationId: appointmentId || safePatientName,
+    appointmentId: appointmentId || safePatientName,
+    patientId: appointmentId || safePatientName,
+    patientName: safePatientName,
+    patientInitials,
+    patientGender: 'Patient',
+    sessionType: 'Video',
+    consultationType: 'Virtual',
+    duration,
+    consultationDate,
+    isAiGenerated: false,
+    soap: {
+      subjective: '',
+      objective: '',
+      assessment: '',
+      plan: '',
+    },
+    diagnoses: [
+      { id: makeDraftId('diagnosis'), name: '', icd10Code: '', priority: 'primary' },
+    ],
+    recommendedTests: [{ id: makeDraftId('test'), name: '' }],
+    prescriptions: [
+      {
+        id: makeDraftId('prescription'),
+        medication: '',
+        brandName: '',
+        dose: '',
+        frequency: '',
+        duration: '',
+        route: '',
+        refillsLeft: '',
+        notes: '',
+      },
+    ],
+  };
 }
 
 function buildPatientAwareAiReply(
@@ -81,11 +163,15 @@ export function useDoctorConsultation() {
         return;
       }
 
-      const patient = useDoctorPatientsStore.getState().patients.find((item) => item.id === appointmentId);
+      const appointment = useDoctorAppointmentsStore
+        .getState()
+        .appointments.find((item) => item.id === appointmentId);
+      const patient = findConsultationPatient(appointmentId, appointment?.patientName);
       if (patient) {
         store.setPatientSession(patient.name, initialsFromName(patient.name), appointmentId);
       } else {
-        store.setPatientSession('Patient', 'P', appointmentId);
+        const fallbackName = appointment?.patientName?.trim() || 'Patient';
+        store.setPatientSession(fallbackName, initialsFromName(fallbackName), appointmentId);
       }
 
       try {
@@ -176,7 +262,7 @@ export function useDoctorConsultation() {
       store.addSoapAiMessage(aiReply);
       store.setSoapAiTyping(false);
 
-      const patient = useDoctorPatientsStore.getState().patients.find((item) => item.id === store.appointmentId);
+      const patient = findConsultationPatient(store.appointmentId, store.patientName);
       useDoctorNuraAIStore.getState().recordHistoryItem(
         buildHistoryItem({
           id: `soap-ai-${store.appointmentId || 'general'}-${Date.now()}`,
@@ -192,9 +278,7 @@ export function useDoctorConsultation() {
   }
 
   function handleConfirmEndCall() {
-    const patient = useDoctorPatientsStore
-      .getState()
-      .patients.find((item) => item.id === store.appointmentId);
+    const patient = findConsultationPatient(store.appointmentId, store.patientName);
     store.setEndCallModalOpen(false);
     store.setCallStatus('ended');
     if (patient) {
@@ -208,6 +292,16 @@ export function useDoctorConsultation() {
           store.aiNoteActive,
         ),
       );
+    } else {
+      store.setPostSessionDraft(
+        buildFallbackPostSessionDraft(
+          store.appointmentId,
+          store.patientName,
+          formattedTime,
+          formatConsultationDate(),
+        ),
+      );
+      toast.warning('Post-session note opened without linked patient details.');
     }
     router.replace({
       pathname: '/(doctor)/post-session-care-plan',
@@ -219,7 +313,7 @@ export function useDoctorConsultation() {
     store.setSoapSubmitting(true);
     try {
       await upsertDoctorSoapNote(store.appointmentId, store.soap);
-      const patient = useDoctorPatientsStore.getState().patients.find((item) => item.id === store.appointmentId);
+      const patient = findConsultationPatient(store.appointmentId, store.patientName);
       const summaryText = [
         store.soap.subjective && `Subjective: ${store.soap.subjective}`,
         store.soap.objective && `Objective: ${store.soap.objective}`,

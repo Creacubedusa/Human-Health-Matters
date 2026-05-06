@@ -201,7 +201,9 @@ export function DoctorAppointmentCalendarView({
 
   const appointments = useMemo<DisplayAppointment[]>(
     () =>
-      rawAppointments.map((a) => {
+      rawAppointments
+        .filter((appointment) => appointment.status === 'UPCOMING')
+        .map((a) => {
         const displayDateKey = getDateKeyInTimeZone(a.startsAt, selectedTimeZone.id);
         return {
           id: a.id,
@@ -278,9 +280,14 @@ export function DoctorAppointmentCalendarView({
         {compact ? (
           cell.appointments.length > 0 ? (
             <View className="mt-1 flex-row items-center justify-center gap-1">
-              {cell.appointments.slice(0, 2).map((a, i) => (
+              {cell.appointments.slice(0, 3).map((a, i) => (
                 <View key={`${cell.key}-${a.id}-dot`} className={['h-1 w-1 rounded-full', DOT_CLASSES[i % DOT_CLASSES.length]].join(' ')} />
               ))}
+              {cell.appointments.length > 3 ? (
+                <Text className="text-[8px] font-medium font-sans text-grey-500">
+                  3+
+                </Text>
+              ) : null}
             </View>
           ) : null
         ) : (

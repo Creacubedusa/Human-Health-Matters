@@ -18,6 +18,7 @@ export function DoctorUpcomingAppointmentCard({
   onJoin,
 }: DoctorUpcomingAppointmentCardProps) {
   const { t } = useTranslation();
+  const canJoin = appointment.status === 'upcoming';
 
   return (
     <View className="overflow-hidden rounded-2xl bg-primary-50">
@@ -90,8 +91,12 @@ export function DoctorUpcomingAppointmentCard({
         </View>
 
         <Pressable
-          className="h-11 items-center justify-center rounded-xl bg-green-600"
-          onPress={() => onJoin(appointment.id)}
+          className={[
+            'h-11 items-center justify-center rounded-xl bg-green-600',
+            !canJoin ? 'opacity-50' : '',
+          ].join(' ')}
+          onPress={!canJoin ? undefined : () => onJoin(appointment.id)}
+          disabled={!canJoin}
           accessibilityRole="button"
         >
           <Text className="text-[14px] font-semibold font-sans text-white">

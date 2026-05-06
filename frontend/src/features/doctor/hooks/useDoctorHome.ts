@@ -18,14 +18,6 @@ interface UseDoctorHomeResult {
   retry: () => void;
 }
 
-function formatTodayLabel() {
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(new Date());
-}
-
 function normalizeName(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, ' ');
 }
@@ -37,13 +29,14 @@ function urgencyFromSeverity(
     return severity;
   }
 
-  return 'low';
+  return 'emergency';
 }
 
 function buildQueueItem(
   patient: DoctorPatientProfile | undefined,
   appointment: {
     id: string;
+    patientId?: string;
     patientName: string;
     patientAvatar: string;
     time: string;
@@ -52,7 +45,7 @@ function buildQueueItem(
   const fallbackName = appointment.patientName || 'Patient';
 
   return {
-    id: patient?.id ?? `patient-${appointment.id}`,
+    id: patient?.id ?? appointment.patientId ?? `patient-${appointment.id}`,
     appointmentId: appointment.id,
     name: patient?.name ?? fallbackName,
     gender: patient?.gender ?? 'Patient',
@@ -61,7 +54,7 @@ function buildQueueItem(
     timeSlot: appointment.time,
     aiSummary:
       patient?.aiSummary.summary ??
-      'AI summary will appear here when patient triage details are available.',
+      'Severe case flagged for urgent doctor review. Open the consultation to assess the patient and complete the visit.',
     avatarUri: patient?.avatarUri ?? appointment.patientAvatar,
   };
 }
@@ -71,47 +64,57 @@ function deriveHomeDashboard(
   patients: DoctorPatientProfile[],
   appointments: Array<{
     id: string;
+    patientId?: string;
     patientName: string;
     patientAvatar: string;
+    startsAt: string;
     date: string;
     time: string;
     status: 'upcoming' | 'completed' | 'cancelled';
   }>,
 ): DoctorHomeDashboard {
-  const todayLabel = formatTodayLabel();
+  const now = Date.now();
   const patientsByName = new Map(
     patients.map((patient) => [normalizeName(patient.name), patient]),
   );
 
-  const todaysAppointments = appointments.filter(
-    (appointment) =>
-      appointment.date === todayLabel && appointment.status !== 'cancelled',
+  const activeAppointments = appointments.filter(
+    (appointment) => appointment.status !== 'cancelled',
   );
+  const completedAppointments = activeAppointments.filter(
+    (appointment) => appointment.status === 'completed',
+  );
+  const futureAppointments = activeAppointments
+    .filter(
+      (appointment) =>
+        appointment.status === 'upcoming' &&
+        new Date(appointment.startsAt).getTime() >= now,
+    )
+    .sort(
+      (left, right) =>
+        new Date(left.startsAt).getTime() - new Date(right.startsAt).getTime(),
+    );
 
-  const todaysPatients = todaysAppointments.map((appointment) =>
+  const futurePatients = futureAppointments.map((appointment) =>
     patientsByName.get(normalizeName(appointment.patientName)),
   );
 
-  const patientsQueue = todaysAppointments
-    .filter((appointment) => appointment.status === 'upcoming')
-    .map((appointment) =>
-      buildQueueItem(
-        patientsByName.get(normalizeName(appointment.patientName)),
-        appointment,
-      ),
-    );
+  const patientsQueue = futureAppointments.map((appointment) =>
+    buildQueueItem(
+      patientsByName.get(normalizeName(appointment.patientName)),
+      appointment,
+    ),
+  );
 
   return {
     doctorName,
     isNewUser: false,
     stats: {
-      totalPatients: todaysAppointments.length,
-      emergencyCount: todaysPatients.filter(
-        (patient) => patient?.severity === 'emergency',
+      totalPatients: activeAppointments.length,
+      emergencyCount: futurePatients.filter(
+        (patient) => !patient || patient.severity === 'emergency',
       ).length,
-      seenCount: todaysAppointments.filter(
-        (appointment) => appointment.status === 'completed',
-      ).length,
+      seenCount: completedAppointments.length,
     },
     patientsQueue,
   };
@@ -131,8 +134,10 @@ export function useDoctorHome(): UseDoctorHomeResult {
     [appointments, patients],
   );
 
-  async function load() {
-    setStatus('loading');
+  async function load(options?: { silent?: boolean }) {
+    if (!options?.silent) {
+      setStatus('loading');
+    }
     try {
       const data = await fetchDoctorManagedAppointments();
       setAppointments(data);
@@ -148,9 +153,7 @@ export function useDoctorHome(): UseDoctorHomeResult {
   }
 
   useEffect(() => {
-    if (appointments.length === 0) {
-      void load();
-    }
+    void load({ silent: appointments.length > 0 });
   }, []);
 
   useEffect(() => {
@@ -160,6 +163,8 @@ export function useDoctorHome(): UseDoctorHomeResult {
   return {
     status,
     homeDashboard: derivedDashboard,
-    retry: load,
+    retry: () => {
+      void load();
+    },
   };
 }
