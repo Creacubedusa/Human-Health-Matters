@@ -151,24 +151,24 @@ export function DonorProfileView({
                 {t('donorProfile.settingsTitle')}
               </Text>
 
-              <DonorProfileSettingToggleRow
-                icon={<Ionicons name="notifications-outline" size={18} color={primitiveColors['grey-700']} />}
-                label={t('donorProfile.settingNotifications')}
-                value={profile.notificationsEnabled}
-                onValueChange={handleToggleNotifications}
-              />
+                <DonorProfileSettingToggleRow
+                  icon={<Ionicons name="notifications-outline" size={16} color={primitiveColors['primary-500']} />}
+                  label={t('donorProfile.settingNotifications')}
+                  value={profile.notificationsEnabled}
+                  onValueChange={handleToggleNotifications}
+                />
 
-              <DonorProfileSettingNavRow
-                icon={<Ionicons name="language-outline" size={18} color={primitiveColors['grey-700']} />}
-                label={t('donorProfile.settingLanguage')}
-                onPress={onLanguage}
-              />
+                <DonorProfileSettingNavRow
+                  icon={<MaterialCommunityIcons name="translate" size={16} color={primitiveColors['primary-500']} />}
+                  label={t('donorProfile.settingLanguage')}
+                  onPress={onLanguage}
+                />
 
-              <DonorProfileSettingNavRow
-                icon={<Ionicons name="document-text-outline" size={18} color={primitiveColors['grey-700']} />}
-                label={t('donorProfile.settingPrivacyPolicy')}
-                onPress={onPrivacyPolicy}
-              />
+                <DonorProfileSettingNavRow
+                  icon={<MaterialCommunityIcons name="file-document-outline" size={16} color={primitiveColors['primary-500']} />}
+                  label={t('donorProfile.settingPrivacyPolicy')}
+                  onPress={onPrivacyPolicy}
+                />
             </View>
           </View>
         </ScrollView>

@@ -1,4 +1,5 @@
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { ActivityIndicator, Animated, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +18,30 @@ export function DonorHomeView() {
   const { t } = useTranslation();
   const router = useRouter();
   const { status, dashboard, retry } = useDonorHome();
+  const liveBadgePulse = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(liveBadgePulse, {
+          toValue: 1,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+        Animated.timing(liveBadgePulse, {
+          toValue: 0,
+          duration: 900,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+
+    animation.start();
+
+    return () => {
+      animation.stop();
+    };
+  }, [liveBadgePulse]);
 
   // ── Loading ──────────────────────────────────────────────────────────────
   if (status === 'loading') {
@@ -56,6 +81,18 @@ export function DonorHomeView() {
 
   const initials = initialsFromName(dashboard.donorName);
   const poolFillPct = Math.min(Math.max(dashboard.poolProgress * 100, 0), 100);
+  const liveBadgeScale = liveBadgePulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.04],
+  });
+  const liveDotScale = liveBadgePulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.8],
+  });
+  const liveDotOpacity = liveBadgePulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.45, 0],
+  });
 
   // ── Success ──────────────────────────────────────────────────────────────
   return (
@@ -64,9 +101,14 @@ export function DonorHomeView() {
       <View className="bg-primary-50 h-[66px] justify-end">
         <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
           {/* Avatar */}
-          <View className="w-[30px] h-[30px] rounded-full bg-primary-100 items-center justify-center">
+          <Pressable
+            onPress={() => router.push('/(donor)/profile')}
+            accessibilityRole="button"
+            accessibilityLabel={t('donorBottomNav.profile')}
+            className="w-[30px] h-[30px] rounded-full bg-primary-100 items-center justify-center"
+          >
             <Text className="text-[12px] font-semibold font-sans text-primary-500">{initials}</Text>
-          </View>
+          </Pressable>
 
           {/* Title */}
           <Text className="text-[16px] font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
@@ -75,11 +117,20 @@ export function DonorHomeView() {
 
           {/* Right: flag badge + bell */}
           <View className="flex-row items-center gap-3">
-            <View className="flex-row items-center gap-1 bg-grey-50 border border-grey-300 rounded-md px-2.5 py-0.5 h-6">
+            <Pressable
+              onPress={() => router.push('/(auth)/select-language')}
+              accessibilityRole="button"
+              accessibilityLabel={t('selectLanguage.headerTitle')}
+              className="flex-row items-center gap-1 bg-grey-50 border border-grey-300 rounded-md px-2.5 py-0.5 h-6"
+            >
               <Text className="text-[12px]">🇺🇸</Text>
               <Ionicons name="chevron-down" size={12} color={primitiveColors['grey-500']} />
-            </View>
-            <Pressable accessibilityRole="button" accessibilityLabel={t('donorHome.notifications')}>
+            </Pressable>
+            <Pressable
+              onPress={() => router.push('/(donor)/notifications')}
+              accessibilityRole="button"
+              accessibilityLabel={t('donorHome.notifications')}
+            >
               <Ionicons name="notifications" size={22} color={primitiveColors['grey-900']} />
             </Pressable>
           </View>
@@ -151,12 +202,24 @@ export function DonorHomeView() {
               </Text>
             </View>
             {/* Live badge */}
-            <View className="flex-row items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg">
-              <View className="w-2 h-2 rounded-full bg-green-500" />
+            <Animated.View
+              className="flex-row items-center gap-1 bg-green-50 px-3 py-1.5 rounded-lg"
+              style={{ transform: [{ scale: liveBadgeScale }] }}
+            >
+              <View className="relative h-2 w-2 items-center justify-center">
+                <Animated.View
+                  className="absolute h-2 w-2 rounded-full bg-green-500"
+                  style={{
+                    opacity: liveDotOpacity,
+                    transform: [{ scale: liveDotScale }],
+                  }}
+                />
+                <View className="h-2 w-2 rounded-full bg-green-500" />
+              </View>
               <Text className="text-[12px] font-semibold font-sans text-green-500">
                 {t('donorHome.poolLiveBadge')}
               </Text>
-            </View>
+            </Animated.View>
           </View>
 
           {/* Progress bar */}

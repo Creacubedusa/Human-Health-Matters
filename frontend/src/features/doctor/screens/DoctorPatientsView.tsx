@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { primitiveColors } from '@design/tokens';
 import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 import { useDoctorPatients } from '../hooks/useDoctorPatients';
 import { DoctorPatientCard } from '../components/patients/DoctorPatientCard';
 import { DoctorPatientEmptyState } from '../components/patients/DoctorPatientEmptyState';
@@ -29,14 +30,7 @@ export function DoctorPatientsView() {
       <View className="bg-primary-50 px-4 pb-4 pt-2">
         <View className="flex-row items-center justify-between h-[29px]">
           <HeaderBackButton
-            onPress={() => {
-              if (router.canGoBack()) {
-                router.back();
-                return;
-              }
-
-              router.replace('/(doctor)');
-            }}
+            onPress={() => goBackOrReplace(router, '/(doctor)')}
             accessibilityLabel={t('common.back')}
           />
           <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">

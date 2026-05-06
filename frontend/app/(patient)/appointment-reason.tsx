@@ -5,6 +5,7 @@ import { AppointmentActionSuccessModal } from '@features/patient/components/appo
 import { useAppointmentManagementStore } from '@features/patient/store/appointmentManagement.store';
 import { cancelAppointment } from '@features/patient/services/appointmentManagement.service';
 import type { AppointmentActionType } from '@features/patient/types/appointmentManagement.types';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function AppointmentReasonScreen() {
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function AppointmentReasonScreen() {
     <>
       <AppointmentReasonView
         type={actionType}
-        onBack={() => router.back()}
+        onBack={() => goBackOrReplace(router, '/(patient)/appointment-policy')}
         onNext={handleNext}
       />
 

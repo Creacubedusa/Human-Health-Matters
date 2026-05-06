@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { DonorEditCardView } from '@features/donor/screens/DonorEditCardView';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function DonorProfileEditCardScreen() {
   const router = useRouter();
@@ -7,8 +8,8 @@ export default function DonorProfileEditCardScreen() {
   return (
     <DonorEditCardView
       cardId={cardId ?? ''}
-      onBack={() => router.back()}
-      onSave={() => router.back()}
+      onBack={() => goBackOrReplace(router, '/(donor)/profile')}
+      onSave={() => goBackOrReplace(router, '/(donor)/profile')}
     />
   );
 }

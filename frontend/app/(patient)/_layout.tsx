@@ -17,7 +17,7 @@ function TabItem({ focused, label, renderIcon, width }: TabItemProps) {
     <View
       style={{
         backgroundColor: focused ? primitiveColors['primary-100'] : 'transparent',
-        borderRadius: focused ? 8 : 0,
+        borderRadius: focused ? 2 : 0,
         height: 52,
         alignItems: 'center',
         gap: 4,

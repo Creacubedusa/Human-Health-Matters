@@ -1350,6 +1350,15 @@
       "submitFailed": "Something went wrong. Please try again."
     }
   },
+  "donorOnboarding": {
+    "slide1Title": "Haz posible la atención al instante",
+    "slide1Subtitle": "Tu contribución ayuda a que los pacientes reciban tratamiento en el momento en que lo necesitan.",
+    "slide2Title": "Asignado automáticamente, usado al instante",
+    "slide2Subtitle": "Tus fondos se asignan a pacientes según su urgencia y necesidad.",
+    "slide3Title": "Transparente. Confiable. Impactante.",
+    "slide3Subtitle": "Sigue cómo se usan tus contribuciones en tratamientos y atención.",
+    "getStarted": "Comenzar"
+  },
   "donorLogin": {
     "title": "Welcome Back",
     "subtitle": "Sign in to your donor account",

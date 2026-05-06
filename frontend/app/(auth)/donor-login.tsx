@@ -7,7 +7,7 @@ export default function DonorLoginScreen() {
     <DonorLoginView
       onSuccess={() => router.replace('/(donor)/')}
       onForgotPassword={() => router.push('/(auth)/donor-forgot-password')}
-      onSignUp={() => router.push('/(auth)/donor-signup')}
+      onSignUp={() => router.push('/(auth)/donor-onboarding')}
     />
   );
 }

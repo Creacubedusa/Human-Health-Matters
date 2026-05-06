@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { DoctorAppointmentRescheduleDateTimeView } from '@features/doctor/screens/DoctorAppointmentRescheduleDateTimeView';
 import { DoctorAppointmentActionSuccessModal } from '@features/doctor/components/appointments/DoctorAppointmentActionSuccessModal';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function DoctorAppointmentRescheduleDateTimeScreen() {
   const router = useRouter();
   const [successVisible, setSuccessVisible] = useState(false);
 
   function handleBack() {
-    if (router.canGoBack()) { router.back(); return; }
-    router.replace('/(doctor)/consultations');
+    goBackOrReplace(router, '/(doctor)/consultations');
   }
 
   function handleDone() {

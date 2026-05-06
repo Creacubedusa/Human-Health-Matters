@@ -5,6 +5,7 @@ import {
   SelectLanguageView,
   type LanguageOption,
 } from '@shared/components/feedback/SelectLanguageView';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function DoctorLanguageScreen() {
   const { t } = useTranslation();
@@ -18,19 +19,11 @@ export default function DoctorLanguageScreen() {
 
   async function onSave() {
     await handleSave();
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(doctor)');
-    }
+    goBackOrReplace(router, '/(doctor)');
   }
 
   function onBack() {
-    if (router.canGoBack()) {
-      router.back();
-    } else {
-      router.replace('/(doctor)');
-    }
+    goBackOrReplace(router, '/(doctor)');
   }
 
   return (

@@ -7,10 +7,16 @@ import type { ProfessionalDetails } from '../../types/doctorProfileSetup.types';
 export interface ServiceSetupStepProps {
   data: ProfessionalDetails;
   onChange: (data: Partial<ProfessionalDetails>) => void;
+  onAvailabilityPress?: () => void;
   testID?: string;
 }
 
-export function ServiceSetupStep({ data, onChange, testID }: ServiceSetupStepProps) {
+export function ServiceSetupStep({
+  data,
+  onChange,
+  onAvailabilityPress,
+  testID,
+}: ServiceSetupStepProps) {
   const { t } = useTranslation();
 
   return (
@@ -65,6 +71,7 @@ export function ServiceSetupStep({ data, onChange, testID }: ServiceSetupStepPro
             {t('doctorProfileSetup.service.availabilityLabel')}
           </Text>
           <Pressable
+            onPress={onAvailabilityPress}
             className="flex-row items-center gap-3 border-[1.5px] border-grey-200 rounded-md p-3 bg-grey-50"
             accessibilityRole="button"
           >

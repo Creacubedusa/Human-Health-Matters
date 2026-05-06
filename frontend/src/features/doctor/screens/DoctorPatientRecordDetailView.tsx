@@ -7,6 +7,7 @@ import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { OrderCard } from '@features/patient/components/order/OrderCard';
 import { PrescriptionCard } from '@features/patient/components/prescription/PrescriptionCard';
 import { TestResultCard } from '@features/patient/components/tests/TestResultCard';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 import { useDoctorPatientProfile } from '../hooks/useDoctorPatientProfile';
 import {
   DoctorReadOnlyHistoryCard,
@@ -144,7 +145,7 @@ export function DoctorPatientRecordDetailView({
         <View className="bg-primary-50 h-[66px] justify-end">
           <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
             <HeaderBackButton
-              onPress={() => router.replace('/(doctor)/patients')}
+              onPress={() => goBackOrReplace(router, '/(doctor)/patients')}
               accessibilityLabel={t('common.back')}
             />
             <Text className="text-[16px] font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
@@ -169,7 +170,10 @@ export function DoctorPatientRecordDetailView({
       {/* Header */}
       <View className="bg-primary-50 h-[66px] justify-end">
         <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
-          <HeaderBackButton onPress={() => router.back()} accessibilityLabel={t('common.back')} />
+          <HeaderBackButton
+            onPress={() => goBackOrReplace(router, '/(doctor)/patients')}
+            accessibilityLabel={t('common.back')}
+          />
           <Text className="text-[16px] font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
             {headerTitle}
           </Text>

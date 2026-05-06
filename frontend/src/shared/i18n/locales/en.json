@@ -467,6 +467,15 @@
     "logIn": "Log In",
     "donateAsGuest": "Donate as Guest"
   },
+  "donorOnboarding": {
+    "slide1Title": "Make care possible instantly",
+    "slide1Subtitle": "Your contribution helps patients get treated at the moment they need it.",
+    "slide2Title": "Automatically allocated, instantly used",
+    "slide2Subtitle": "Your funds are matched to patients based on urgency and need.",
+    "slide3Title": "Transparent. Reliable. Impactful.",
+    "slide3Subtitle": "Track how your contributions are used across treatments and care.",
+    "getStarted": "Get Started"
+  },
   "doctorSignUp": {
     "title": "Create an account",
     "subtitle": "Please fill in the details below",

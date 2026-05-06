@@ -1,5 +1,6 @@
 import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { StepProgressBar } from '@shared/components/ui/StepProgressBar';
@@ -45,6 +46,7 @@ const SHOW_PROGRESS = new Set([
 
 export function DoctorProfileSetupWizardView({ onComplete }: DoctorProfileSetupWizardViewProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const {
     currentStep,
     form,
@@ -75,6 +77,10 @@ export function DoctorProfileSetupWizardView({ onComplete }: DoctorProfileSetupW
     }
   }
 
+  function handleAvailabilityPress() {
+    router.push('/(doctor)/availability');
+  }
+
   function renderStep() {
     switch (currentStep) {
       case ProfileSetupStep.INTRO:
@@ -85,6 +91,7 @@ export function DoctorProfileSetupWizardView({ onComplete }: DoctorProfileSetupW
           <PersonalDetailsStep
             data={form.personalDetails}
             onChange={updatePersonalDetails}
+            onAvailabilityPress={handleAvailabilityPress}
             testID="step-personal"
           />
         );
@@ -105,6 +112,7 @@ export function DoctorProfileSetupWizardView({ onComplete }: DoctorProfileSetupW
           <ServiceSetupStep
             data={form.professionalDetails}
             onChange={updateProfessionalDetails}
+            onAvailabilityPress={handleAvailabilityPress}
             testID="step-service"
           />
         );

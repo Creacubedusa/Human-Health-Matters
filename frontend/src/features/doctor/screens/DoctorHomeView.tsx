@@ -144,24 +144,27 @@ export function DoctorHomeView() {
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {/* ── Header ── */}
       <View className="bg-primary-50 px-4 pb-4 pt-2">
-        <View className="flex-row items-center justify-between h-[42px]">
+        <View className="flex-row items-center h-[42px]">
           {/* Doctor avatar — taps to profile */}
           <Pressable
             onPress={() => router.push('/(doctor)/profile')}
             accessibilityRole="button"
             accessibilityLabel="View profile"
-            className="w-8 h-8 rounded-full bg-primary-100 items-center justify-center overflow-hidden"
+            hitSlop={8}
+            className="w-8 h-8 rounded-full bg-primary-100 items-center justify-center overflow-hidden z-10"
           >
             <Image source={{ uri: avatarUri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
           </Pressable>
 
           {/* Title */}
-          <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-            {t('tabs.home')}
-          </Text>
+          <View className="flex-1 items-center px-4" pointerEvents="none">
+            <Text className="text-s2 font-semibold font-sans text-grey-900 text-center">
+              {t('tabs.home')}
+            </Text>
+          </View>
 
           {/* Right icons */}
-          <View className="flex-row items-center gap-4">
+          <View className="flex-row items-center justify-end gap-4 min-w-[116px]">
             <Pressable
               onPress={() => router.push('/(doctor)/language')}
               accessibilityRole="button"

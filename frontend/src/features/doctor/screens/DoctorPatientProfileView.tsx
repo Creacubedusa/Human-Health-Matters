@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert } from '@shared/components/ui/Alert';
 import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { primitiveColors } from '@design/tokens';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 import { useDoctorPatientProfile } from '../hooks/useDoctorPatientProfile';
 import type { DoctorPatientProfile } from '../types/doctor.types';
 import type { DoctorRecordDetailId } from './DoctorPatientRecordDetailView';
@@ -77,7 +78,7 @@ export function DoctorPatientProfileView({ patientId }: DoctorPatientProfileView
         <View className="bg-primary-50 px-4 pb-4 pt-2">
           <View className="flex-row items-center justify-between h-[29px]">
             <HeaderBackButton
-              onPress={() => router.replace('/(doctor)/patients')}
+              onPress={() => goBackOrReplace(router, '/(doctor)/patients')}
               accessibilityLabel={t('common.back')}
             />
             <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
@@ -103,7 +104,10 @@ export function DoctorPatientProfileView({ patientId }: DoctorPatientProfileView
     <SafeAreaView className="flex-1 bg-white">
       <View className="bg-primary-50 px-4 pb-4 pt-2">
         <View className="flex-row items-center justify-between h-[29px]">
-          <HeaderBackButton onPress={() => router.back()} accessibilityLabel={t('common.back')} />
+          <HeaderBackButton
+            onPress={() => goBackOrReplace(router, '/(doctor)/patients')}
+            accessibilityLabel={t('common.back')}
+          />
           <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
             Profile
           </Text>

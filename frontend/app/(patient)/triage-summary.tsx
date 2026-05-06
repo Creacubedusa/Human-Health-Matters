@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { TriageSummaryView } from '@features/patient/screens/TriageSummaryView';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function TriageSummaryScreen() {
   const router = useRouter();
@@ -7,7 +8,7 @@ export default function TriageSummaryScreen() {
 
   return (
     <TriageSummaryView
-      onBack={() => router.back()}
+      onBack={() => goBackOrReplace(router, '/(patient)/triage-history')}
       summary={summary ?? ''}
     />
   );

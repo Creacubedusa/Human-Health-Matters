@@ -74,10 +74,12 @@ export default function DonorLayout() {
       <Tabs.Screen name="donate-payment" options={{ href: null }} />
       <Tabs.Screen name="donate-add-card" options={{ href: null }} />
       <Tabs.Screen name="donate-review" options={{ href: null }} />
+      <Tabs.Screen name="notifications" options={{ href: null }} />
       <Tabs.Screen name="profile-edit-card" options={{ href: null }} />
       <Tabs.Screen name="profile-frequency" options={{ href: null }} />
       <Tabs.Screen name="profile-add-method" options={{ href: null }} />
       <Tabs.Screen name="profile-add-card" options={{ href: null }} />
+      <Tabs.Screen name="privacy-policy" options={{ href: null }} />
     </Tabs>
   );
 }

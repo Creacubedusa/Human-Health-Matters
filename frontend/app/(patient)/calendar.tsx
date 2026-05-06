@@ -4,6 +4,7 @@ import { CalendarView } from '@features/patient/screens/CalendarView';
 import { AppointmentConfirmModal } from '@features/patient/components/appointment/AppointmentConfirmModal';
 import { useAppointmentManagementStore } from '@features/patient/store/appointmentManagement.store';
 import type { AppointmentActionType } from '@features/patient/types/appointmentManagement.types';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function CalendarScreen() {
   const router = useRouter();
@@ -11,12 +12,7 @@ export default function CalendarScreen() {
   const [pendingAction, setPendingAction] = useState<AppointmentActionType | null>(null);
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)');
+    goBackOrReplace(router, '/(patient)');
   }
 
   function handleOpenAction(id: string, action: AppointmentActionType) {

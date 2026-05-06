@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { TriageHistoryView } from '@features/patient/screens/TriageHistoryView';
 import { useTriageStore } from '@features/patient/store/triage.store';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function TriageHistoryScreen() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function TriageHistoryScreen() {
 
   return (
     <TriageHistoryView
-      onBack={() => router.back()}
+      onBack={() => goBackOrReplace(router, '/(patient)/triage')}
       onViewSummary={handleViewSummary}
     />
   );

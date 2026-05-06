@@ -11,6 +11,7 @@ export interface AppBottomTabDefinition {
 
 export interface AppBottomTabBarProps extends BottomTabBarProps {
   tabs: AppBottomTabDefinition[];
+  activeTabClassName?: string;
 }
 
 export function AppBottomTabBar({
@@ -18,6 +19,7 @@ export function AppBottomTabBar({
   descriptors,
   navigation,
   tabs,
+  activeTabClassName = 'rounded-[2px]',
 }: AppBottomTabBarProps) {
   const activeRoute = state.routes[state.index];
   const activeRouteOptions = activeRoute ? descriptors[activeRoute.key]?.options : undefined;
@@ -76,8 +78,9 @@ export function AppBottomTabBar({
             >
               <View
                 className={[
-                  'items-center justify-center rounded-lg',
+                  'items-center justify-center',
                   focused ? 'bg-primary-100 px-3 py-1' : '',
+                  focused ? activeTabClassName : '',
                 ].join(' ')}
               >
                 <View

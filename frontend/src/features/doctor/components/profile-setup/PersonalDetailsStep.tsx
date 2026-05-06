@@ -8,6 +8,7 @@ import type { PersonalDetails } from '../../types/doctorProfileSetup.types';
 export interface PersonalDetailsStepProps {
   data: PersonalDetails;
   onChange: (data: Partial<PersonalDetails>) => void;
+  onAvailabilityPress?: () => void;
   testID?: string;
 }
 
@@ -18,7 +19,12 @@ const GENDER_OPTIONS = [
   { label: 'Prefer not to say', value: 'prefer-not-to-say' },
 ];
 
-export function PersonalDetailsStep({ data, onChange, testID }: PersonalDetailsStepProps) {
+export function PersonalDetailsStep({
+  data,
+  onChange,
+  onAvailabilityPress,
+  testID,
+}: PersonalDetailsStepProps) {
   const { t } = useTranslation();
 
   return (
@@ -64,6 +70,7 @@ export function PersonalDetailsStep({ data, onChange, testID }: PersonalDetailsS
             {t('doctorProfileSetup.personal.availabilityLabel')}
           </Text>
           <Pressable
+            onPress={onAvailabilityPress}
             className="flex-row items-center gap-3 border-[1.5px] border-grey-200 rounded-md p-3 bg-grey-50"
             accessibilityRole="button"
           >

@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { DoctorCreateOrderWizardView } from '@features/doctor/screens/DoctorCreateOrderWizardView';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function DoctorCreateOrderWizardScreen() {
   const router = useRouter();
@@ -8,7 +9,7 @@ export default function DoctorCreateOrderWizardScreen() {
   return (
     <DoctorCreateOrderWizardView
       preselectedPatientId={patientId}
-      onBack={() => router.back()}
+      onBack={() => goBackOrReplace(router, '/(doctor)/patients')}
       onSuccess={() => router.replace('/(doctor)/patients')}
     />
   );

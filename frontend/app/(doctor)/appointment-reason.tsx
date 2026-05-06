@@ -5,6 +5,7 @@ import { DoctorAppointmentActionSuccessModal } from '@features/doctor/components
 import { useDoctorAppointmentsStore } from '@features/doctor/store/doctorAppointments.store';
 import { cancelDoctorAppointment } from '@features/doctor/services/doctor.service';
 import type { DoctorAppointmentActionType } from '@features/doctor/types/doctorAppointments.types';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function DoctorAppointmentReasonScreen() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function DoctorAppointmentReasonScreen() {
     <>
       <DoctorAppointmentReasonView
         type={actionType}
-        onBack={() => router.back()}
+        onBack={() => goBackOrReplace(router, '/(doctor)/appointment-policy')}
         onNext={() => void handleNext()}
       />
 

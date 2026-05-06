@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Pressable } from 'react-native';
 import { primitiveColors } from '@design/tokens';
 
@@ -29,7 +29,7 @@ export function HeaderBackButton({
         className ?? '',
       ].join(' ')}
     >
-      <Feather name="chevron-left" size={18} color={primitiveColors['primary-500']} />
+      <Ionicons name="chevron-back" size={20} color={primitiveColors['primary-500']} />
     </Pressable>
   );
 }

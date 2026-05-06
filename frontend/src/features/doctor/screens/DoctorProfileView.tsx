@@ -43,6 +43,15 @@ function getDocumentLabel(uri: string | null, fallback: string) {
   return fallback;
 }
 
+function pickFirstText(...values: Array<string | null | undefined>) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) {
+      return value;
+    }
+  }
+  return '';
+}
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 interface InfoRowProps {
@@ -112,7 +121,7 @@ function SettingNavRow({ icon, label, onPress }: SettingNavRowProps) {
       accessibilityRole="button"
     >
       <View className="flex-row items-center gap-4">
-        <View className="w-4 items-center justify-center">
+        <View className="h-5 w-5 shrink-0 items-center justify-center">
           {icon}
         </View>
         <Text className="text-[14px] font-sans text-grey-900">{label}</Text>
@@ -133,7 +142,7 @@ function SettingToggleRow({ icon, label, value, onValueChange }: SettingToggleRo
   return (
     <View className="flex-row items-center justify-between h-[35px]">
       <View className="flex-row items-center gap-4">
-        <View className="w-4 items-center justify-center">
+        <View className="h-5 w-5 shrink-0 items-center justify-center">
           {icon}
         </View>
         <Text className="text-[14px] font-sans text-grey-900">{label}</Text>
@@ -204,8 +213,10 @@ export function DoctorProfileView() {
   const specialty = specialties[0] ?? '';
   const fullName = name || t('doctorProfile.nameFallback');
   const displayName = fullName.startsWith('Dr.') ? fullName : `Dr. ${fullName}`;
-  const professionalSpecialty = setupForm.credentials.medicalSpecialty || specialty;
-  const biography = setupForm.professionalDetails.biography || bio || '';
+  const displayAvatarUri = avatarUri ?? setupForm.personalDetails.profileImage;
+  const displayGender = pickFirstText(gender, setupForm.personalDetails.gender);
+  const professionalSpecialty = pickFirstText(setupForm.credentials.medicalSpecialty, specialty);
+  const biography = pickFirstText(setupForm.professionalDetails.biography, bio);
 
   useEffect(() => {
     let mounted = true;
@@ -223,14 +234,25 @@ export function DoctorProfileView() {
           .filter(Boolean)
           .join('');
         setPhone(rawPhone);
-        setAvatarUri(res.profile?.avatarUri ?? null);
-        setSpecialties(res.profile?.specialties ?? []);
-        setBio(res.profile?.bio ?? null);
+        setGender((current) => pickFirstText(current, setupForm.personalDetails.gender));
+        setAvatarUri(res.profile?.avatarUri ?? setupForm.personalDetails.profileImage ?? null);
+        setSpecialties(
+          res.profile?.specialties?.length
+            ? res.profile.specialties
+            : setupForm.credentials.medicalSpecialty
+              ? [setupForm.credentials.medicalSpecialty]
+              : [],
+        );
+        setBio(res.profile?.bio ?? setupForm.professionalDetails.biography ?? null);
         updateDocuments({
-          medicalCertificate: res.profile?.medicalCertificate ?? null,
-          boardCertificate: res.profile?.boardCertificate ?? null,
-          deaRegistration: res.profile?.deaRegistration ?? null,
-          malpracticeInsurance: res.profile?.malpracticeInsurance ?? null,
+          medicalCertificate:
+            res.profile?.medicalCertificate ?? setupForm.documents.medicalCertificate ?? null,
+          boardCertificate:
+            res.profile?.boardCertificate ?? setupForm.documents.boardCertificate ?? null,
+          deaRegistration:
+            res.profile?.deaRegistration ?? setupForm.documents.deaRegistration ?? null,
+          malpracticeInsurance:
+            res.profile?.malpracticeInsurance ?? setupForm.documents.malpracticeInsurance ?? null,
         });
         setOnboardingDone(!!res.profile?.onboardingCompletedAt);
       } catch {
@@ -338,10 +360,14 @@ export function DoctorProfileView() {
       const nextProfile = response.profile;
 
       updateDocuments({
-        medicalCertificate: nextProfile?.medicalCertificate ?? null,
-        boardCertificate: nextProfile?.boardCertificate ?? null,
-        deaRegistration: nextProfile?.deaRegistration ?? null,
-        malpracticeInsurance: nextProfile?.malpracticeInsurance ?? null,
+        medicalCertificate:
+          nextProfile?.medicalCertificate ?? setupForm.documents.medicalCertificate ?? null,
+        boardCertificate:
+          nextProfile?.boardCertificate ?? setupForm.documents.boardCertificate ?? null,
+        deaRegistration:
+          nextProfile?.deaRegistration ?? setupForm.documents.deaRegistration ?? null,
+        malpracticeInsurance:
+          nextProfile?.malpracticeInsurance ?? setupForm.documents.malpracticeInsurance ?? null,
       });
       setEditField(null);
     } catch {
@@ -429,9 +455,9 @@ export function DoctorProfileView() {
         <View className="items-center gap-4">
           {/* Avatar */}
           <View className="w-[100px] h-[100px] rounded-full bg-primary-100 items-center justify-center overflow-hidden border-2 border-primary-200">
-            {avatarUri ? (
+            {displayAvatarUri ? (
               <Image
-                source={{ uri: avatarUri }}
+                source={{ uri: displayAvatarUri }}
                 style={{ width: 100, height: 100 }}
                 contentFit="cover"
               />
@@ -447,9 +473,9 @@ export function DoctorProfileView() {
             <Text className="text-[16px] font-semibold font-sans text-grey-900 text-center">
               {displayName}
             </Text>
-            {!!specialty && (
+            {!!professionalSpecialty && (
               <Text className="text-[12px] font-sans text-grey-500 text-center">
-                {specialty}
+                {professionalSpecialty}
               </Text>
             )}
           </View>
@@ -475,7 +501,7 @@ export function DoctorProfileView() {
           />
           <InfoRow
             label={t('doctorProfile.genderLabel')}
-            value={gender || dash}
+            value={displayGender || dash}
             onPress={() => setEditField('gender')}
           />
           <InfoRow

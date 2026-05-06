@@ -1,16 +1,12 @@
 import { useRouter } from 'expo-router';
 import { PatientProfileEditView } from '@features/patient/screens/PatientProfileEditView';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function PatientProfileEditScreen() {
   const router = useRouter();
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)/profile');
+    goBackOrReplace(router, '/(patient)/profile');
   }
 
   return (

@@ -10,8 +10,8 @@ export default function DonorProfileScreen() {
       }
       onEditFrequency={() => router.push('/(donor)/profile-frequency')}
       onAddMethod={() => router.push('/(donor)/profile-add-method')}
-      onLanguage={() => {}}
-      onPrivacyPolicy={() => {}}
+        onLanguage={() => router.push('/(auth)/select-language')}
+        onPrivacyPolicy={() => router.push('/(donor)/privacy-policy')}
     />
   );
 }
