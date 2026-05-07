@@ -100,11 +100,97 @@ export class AppointmentsController {
             },
           },
         },
-        patient: { select: { id: true, firstName: true, lastName: true } },
+        patient: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            patientProfile: { select: { profileData: true } },
+          },
+        },
       },
     });
 
-    return items;
+    const now = Date.now();
+    return items.map((item) => {
+      const patientProfileData = item.patient?.patientProfile?.profileData as
+        | Record<string, unknown>
+        | null
+        | undefined;
+      const patientAvatarUri =
+        (patientProfileData &&
+        typeof patientProfileData === 'object' &&
+        typeof (patientProfileData as { avatarUri?: unknown }).avatarUri === 'string'
+          ? (patientProfileData as { avatarUri?: string }).avatarUri
+          : null) ?? null;
+
+      const isPast = item.endsAt.getTime() <= now;
+      const computedStatus =
+        item.status === 'CANCELLED'
+          ? 'CANCELLED'
+          : isPast && item.status === 'UPCOMING'
+            ? 'COMPLETED'
+            : item.status;
+
+      const { patient, ...rest } = item;
+      return {
+        ...rest,
+        status: computedStatus,
+        patient: patient
+          ? {
+              id: patient.id,
+              firstName: patient.firstName,
+              lastName: patient.lastName,
+              avatarUri: patientAvatarUri,
+            }
+          : null,
+      };
+    });
+  }
+
+  @Post('now')
+  @UseGuards(JwtAuthGuard)
+  async createNow(@Req() req: any, @Body() body: any) {
+    const patientId = req.user?.sub as string | undefined;
+    const role = req.user?.role as Role | undefined;
+    if (!patientId || !role) throw new Error('missing_user');
+    if (role !== 'PATIENT') throw new Error('forbidden');
+
+    const doctorId = body?.doctorId as string;
+    if (!doctorId) throw new BadRequestException('doctor_required');
+
+    const doctor = await this.prisma.user.findFirst({
+      where: { id: doctorId, role: 'DOCTOR' },
+      select: { id: true },
+    });
+    if (!doctor) throw new BadRequestException('doctor_not_found');
+
+    const startsAt = new Date(Date.now() + 1_000);
+    const endsAt = new Date(startsAt.getTime() + 2 * 60 * 60_000);
+    const reason = (body?.reason as string | undefined) ?? 'Instant consultation';
+
+    try {
+      const appointment = await this.prisma.appointment.create({
+        data: {
+          patientId,
+          doctorId,
+          startsAt,
+          endsAt,
+          reason,
+        },
+      });
+
+      await this.notifications.createForUsers([patientId, doctorId], {
+        type: NotificationType.APPOINTMENT_BOOKED,
+        title: 'Instant consultation started',
+        message: 'An instant consultation is ready to join.',
+        data: { appointmentId: appointment.id, instant: true },
+      });
+
+      return appointment;
+    } catch (error) {
+      throw bookingConflictError(error);
+    }
   }
 
   @Post()

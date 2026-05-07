@@ -134,7 +134,14 @@ export class DoctorController {
     const appts = await this.prisma.appointment.findMany({
       where: { doctorId },
       include: {
-        patient: { select: { id: true, firstName: true, lastName: true } },
+        patient: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            patientProfile: { select: { profileData: true } },
+          },
+        },
       },
       take: 200,
       orderBy: { createdAt: 'desc' },
@@ -146,15 +153,28 @@ export class DoctorController {
         id: string;
         name: string;
         lastVisit: string;
+        avatarUri: string | null;
       }
     >();
     for (const a of appts) {
+      if (map.has(a.patient.id)) continue;
+      const profileData = a.patient.patientProfile?.profileData as
+        | Record<string, unknown>
+        | null
+        | undefined;
+      const avatarUri =
+        profileData &&
+        typeof profileData === 'object' &&
+        typeof (profileData as { avatarUri?: unknown }).avatarUri === 'string'
+          ? ((profileData as { avatarUri?: string }).avatarUri ?? null)
+          : null;
       map.set(a.patient.id, {
         id: a.patient.id,
         name: [a.patient.firstName, a.patient.lastName]
           .filter(Boolean)
           .join(' '),
         lastVisit: a.startsAt.toISOString(),
+        avatarUri,
       });
     }
 
