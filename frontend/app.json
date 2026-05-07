@@ -17,10 +17,15 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["CAMERA", "RECORD_AUDIO", "MODIFY_AUDIO_SETTINGS"],
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "MODIFY_AUDIO_SETTINGS"
+      ],
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.humanhealthmatters"
+      "package": "com.humanhealthmatters",
+      "versionCode": 1
     },
     "scheme": "humanhealth",
     "web": {
@@ -37,11 +42,19 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.humanhealthmatters",
+      "bundleIdentifier": "com.human-health-matters",
       "infoPlist": {
         "NSCameraUsageDescription": "Allow access to your camera for video consultations.",
-        "NSMicrophoneUsageDescription": "Allow access to your microphone for video consultations."
+        "NSMicrophoneUsageDescription": "Allow access to your microphone for video consultations.",
+        "ITSAppUsesNonExemptEncryption": false
       }
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4368658c-eb43-4c05-bd78-bebe9a76e802"
+      }
+    },
+    "owner": "creacubed"
   }
 }

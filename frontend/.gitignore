@@ -49,3 +49,7 @@ figma-*
 storybook-static
 # Added by code-review-graph
 .code-review-graph/
+
+.env
+
+.vscode
