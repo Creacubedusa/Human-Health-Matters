@@ -1,6 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { AppointmentPolicyView } from '@features/patient/screens/AppointmentPolicyView';
 import type { AppointmentActionType } from '@features/patient/types/appointmentManagement.types';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function AppointmentPolicyScreen() {
   const router = useRouter();
@@ -10,7 +11,7 @@ export default function AppointmentPolicyScreen() {
   return (
     <AppointmentPolicyView
       type={actionType}
-      onBack={() => router.back()}
+      onBack={() => goBackOrReplace(router, '/(patient)/appointment')}
       onNext={() => router.push(`/(patient)/appointment-reason?type=${actionType}`)}
     />
   );

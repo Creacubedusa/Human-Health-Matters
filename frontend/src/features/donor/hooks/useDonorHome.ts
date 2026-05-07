@@ -12,7 +12,7 @@ interface UseDonorHomeResult {
 }
 
 export function useDonorHome(): UseDonorHomeResult {
-  const { dashboard, setDashboard } = useDonorStore();
+  const { dashboard, setDashboard, simulateDashboardTick } = useDonorStore();
   const [status, setStatus] = useState<Status>(dashboard ? 'success' : 'loading');
 
   const load = async () => {
@@ -29,6 +29,16 @@ export function useDonorHome(): UseDonorHomeResult {
   useEffect(() => {
     if (!dashboard) load();
   }, []);
+
+  useEffect(() => {
+    if (!dashboard) return;
+
+    const interval = setInterval(() => {
+      simulateDashboardTick();
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [dashboard, simulateDashboardTick]);
 
   return { status, dashboard, retry: load };
 }

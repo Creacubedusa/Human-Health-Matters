@@ -1,6 +1,49 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import type { DoctorFilterTab, DoctorRecommendation } from './types';
+import {
+  doctorHasAvailability,
+  parseDoctorAvailabilitySettings,
+  type DoctorAvailabilitySettings,
+} from './schedule';
+
+function formatAvailabilityRange(settings: DoctorAvailabilitySettings | null) {
+  if (!doctorHasAvailability(settings)) return 'Availability not set';
+
+  const populatedDays = settings.days.filter((day) => day.slots.length > 0);
+  if (populatedDays.length === 0) return 'Availability not set';
+
+  const firstSlot = populatedDays[0].slots[0];
+  const lastSlot = populatedDays[0].slots[populatedDays[0].slots.length - 1];
+  const toLabel = (value: string) => {
+    const [hourText, minuteText] = value.split(':');
+    const hour = Number(hourText);
+    const minute = Number(minuteText);
+    const period = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+    return minute === 0 ? `${hour12} ${period}` : `${hour12}:${minuteText} ${period}`;
+  };
+
+  return `${toLabel(firstSlot.startTime)} - ${toLabel(lastSlot.endTime)}`;
+}
+
+function isAvailableNow(settings: DoctorAvailabilitySettings | null) {
+  if (!doctorHasAvailability(settings)) return false;
+
+  const now = new Date();
+  const weekdayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
+  const day = settings.days.find((item) => item.key === weekdayKeys[now.getDay()]);
+  if (!day) return false;
+
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  return day.slots.some((slot) => {
+    const [startHour, startMinute] = slot.startTime.split(':').map(Number);
+    const [endHour, endMinute] = slot.endTime.split(':').map(Number);
+    const start = startHour * 60 + startMinute;
+    const end = endHour * 60 + endMinute;
+    return minutes >= start && minutes < end;
+  });
+}
 
 @Injectable()
 export class DoctorsService {
@@ -26,6 +69,10 @@ export class DoctorsService {
           : reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length;
 
       const specialty = d.doctorProfile?.specialties?.[0] ?? '';
+      const availabilitySettings = parseDoctorAvailabilitySettings(
+        d.doctorProfile?.availabilitySettings,
+      );
+      const hasAvailability = doctorHasAvailability(availabilitySettings);
 
       return {
         id: d.id,
@@ -38,11 +85,12 @@ export class DoctorsService {
         reviewCount: reviews.length,
         donorFunded: true,
         aiReason: 'Recommended based on your triage and availability',
-        isAvailableNow: true,
+        isAvailableNow: isAvailableNow(availabilitySettings),
         patientsLabel: '100+',
         experienceLabel: '10 yr',
         about: d.doctorProfile?.bio ?? '',
-        availabilityRange: '9 AM - 5 PM',
+        availabilityRange: formatAvailabilityRange(availabilitySettings),
+        hasAvailability,
       };
     });
 

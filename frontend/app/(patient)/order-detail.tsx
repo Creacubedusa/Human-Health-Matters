@@ -1,5 +1,6 @@
 import { Tabs, useLocalSearchParams, useRouter } from 'expo-router';
 import { OrderDetailView } from '@features/patient/screens/OrderDetailView';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function OrderDetailScreen() {
   const router = useRouter();
@@ -10,7 +11,7 @@ export default function OrderDetailScreen() {
       <Tabs.Screen options={{ tabBarStyle: { display: 'none' } }} />
       <OrderDetailView
         orderId={id ?? ''}
-        onBack={() => router.back()}
+        onBack={() => goBackOrReplace(router, '/(patient)/orders')}
       />
     </>
   );

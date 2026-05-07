@@ -1,12 +1,5 @@
-import { useTranslation } from 'react-i18next';
-import { Text } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { DonorHistoryView } from '@features/donor/screens/DonorHistoryView';
 
 export default function DonorHistoryScreen() {
-  const { t } = useTranslation();
-  return (
-    <SafeAreaView className="flex-1 bg-bg-default items-center justify-center">
-      <Text className="text-s2 text-text-primary">{t('tabs.history')}</Text>
-    </SafeAreaView>
-  );
+  return <DonorHistoryView />;
 }

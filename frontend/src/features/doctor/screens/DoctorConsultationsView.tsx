@@ -1,122 +1,155 @@
-import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useRouter } from 'expo-router';
 import { primitiveColors } from '@design/tokens';
-import { format } from 'date-fns';
-import { fetchDoctorConsultations, type DoctorAppointment } from '../services/doctor.service';
+import { useDoctorAppointmentManagement } from '@features/doctor/hooks/useDoctorAppointmentManagement';
+import { DoctorUpcomingAppointmentCard } from '@features/doctor/components/appointments/DoctorUpcomingAppointmentCard';
+import { DoctorAppointmentListCard } from '@features/doctor/components/appointments/DoctorAppointmentListCard';
+import { DoctorAppointmentConfirmModal } from '@features/doctor/components/appointments/DoctorAppointmentConfirmModal';
+import type { DoctorManagedAppointment } from '@features/doctor/types/doctorAppointments.types';
 
-function patientName(a: DoctorAppointment) {
-  const p = a.patient;
-  const name = [p?.firstName, p?.lastName].filter(Boolean).join(' ');
-  return name || 'Patient';
+export interface DoctorConsultationsViewProps {
+  onCalendar: () => void;
+  onCancelConfirmed: () => void;
+  onRescheduleConfirmed: () => void;
+  onJoinAppointment: (id: string) => void;
 }
 
-export function DoctorConsultationsView() {
+export function DoctorConsultationsView({
+  onCalendar,
+  onCancelConfirmed,
+  onRescheduleConfirmed,
+  onJoinAppointment,
+}: DoctorConsultationsViewProps) {
   const { t } = useTranslation();
-  const router = useRouter();
-  const [status, setStatus] = useState<'loading' | 'error' | 'success'>('loading');
-  const [items, setItems] = useState<DoctorAppointment[]>([]);
+  const {
+    status,
+    appointments,
+    upcomingAppointment,
+    cancelModalOpen,
+    rescheduleModalOpen,
+    openCancelModal,
+    openRescheduleModal,
+    closeModals,
+    retry,
+  } = useDoctorAppointmentManagement();
 
-  async function load() {
-    setStatus('loading');
-    try {
-      const data = await fetchDoctorConsultations();
-      setItems(data);
-      setStatus('success');
-    } catch {
-      setStatus('error');
-    }
-  }
+  const header = (
+    <View className="bg-primary-50 h-[66px] justify-end">
+      <View className="flex-row items-center justify-between px-5 pb-3 h-[48px]">
+        <View className="w-[29px]" />
 
-  useEffect(() => {
-    void load();
-  }, []);
+        <Text className="text-[16px] font-semibold font-sans text-grey-900">
+          {t('doctorAppointmentManagement.headerTitle')}
+        </Text>
 
-  const upcoming = useMemo(
-    () => items.filter((i) => i.status === 'UPCOMING'),
-    [items],
+        <Pressable
+          onPress={onCalendar}
+          className="w-[29px] h-[29px] items-end justify-center"
+          accessibilityRole="button"
+          accessibilityLabel={t('calendar.title', { defaultValue: 'Calendar' })}
+        >
+          <Ionicons name="calendar-outline" size={22} color={primitiveColors['grey-900']} />
+        </Pressable>
+      </View>
+    </View>
   );
 
   if (status === 'loading') {
     return (
-      <SafeAreaView className="flex-1 bg-bg-default items-center justify-center">
-        <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
+      <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+        {header}
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
+        </View>
       </SafeAreaView>
     );
   }
 
   if (status === 'error') {
     return (
-      <SafeAreaView className="flex-1 bg-bg-default items-center justify-center px-6">
-        <Text className="text-s2 text-text-primary text-center">{t('doctorConsultations.error')}</Text>
-        <Pressable
-          className="mt-4 bg-action-primary rounded-lg px-6 py-3"
-          onPress={load}
-          accessibilityRole="button"
-        >
-          <Text className="text-btn-medium text-white">{t('common.retry')}</Text>
-        </Pressable>
+      <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+        {header}
+        <View className="flex-1 items-center justify-center px-6 gap-4">
+          <Text className="text-[15px] font-sans text-grey-700 text-center">
+            {t('doctorAppointmentManagement.errorMessage')}
+          </Text>
+          <Pressable
+            onPress={retry}
+            className="bg-primary-500 rounded-xl px-6 py-3"
+            accessibilityRole="button"
+          >
+            <Text className="text-[14px] font-semibold font-sans text-white">{t('common.retry')}</Text>
+          </Pressable>
+        </View>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-bg-default">
-      <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 24 }}>
-        <View className="pt-6 pb-4">
-          <Text className="text-h5 text-text-primary">{t('doctorConsultations.title')}</Text>
-          <Text className="text-b3 text-text-secondary mt-1">
-            {t('doctorConsultations.subtitle', { count: upcoming.length })}
-          </Text>
-        </View>
+    <SafeAreaView className="flex-1 bg-grey-50" edges={['top']}>
+      {header}
 
-        {items.length === 0 ? (
-          <View className="items-center py-12">
-            <Text className="text-b1 text-text-secondary">{t('doctorConsultations.empty')}</Text>
-          </View>
-        ) : (
-          items.map((a) => {
-            const starts = new Date(a.startsAt);
-            const date = format(starts, 'MMM d, yyyy');
-            const time = format(starts, 'h:mm a');
-            const statusLabel =
-              a.status === 'CANCELLED'
-                ? t('doctorConsultations.statusCancelled')
-                : a.status === 'COMPLETED'
-                  ? t('doctorConsultations.statusCompleted')
-                  : t('doctorConsultations.statusUpcoming');
-            return (
-              <View
-                key={a.id}
-                className="bg-bg-surface border border-border-default rounded-xl p-4 mb-3"
-              >
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-b2 text-text-primary">{patientName(a)}</Text>
-                  <Text className="text-c2 text-text-tertiary">{statusLabel}</Text>
-                </View>
-                <Text className="text-b3 text-text-secondary mt-1">
-                  {t('doctorConsultations.when', { date, time })}
+      <FlatList
+        className="flex-1"
+        contentContainerClassName="px-4 pt-4 pb-28 gap-4"
+        showsVerticalScrollIndicator={false}
+        data={appointments}
+        keyExtractor={(item: DoctorManagedAppointment) => item.id}
+        ListHeaderComponent={
+          <View className="gap-4">
+            {upcomingAppointment ? (
+              <DoctorUpcomingAppointmentCard
+                appointment={upcomingAppointment}
+                onCancel={openCancelModal}
+                onReschedule={openRescheduleModal}
+                onJoin={onJoinAppointment}
+              />
+            ) : (
+              <View className="bg-primary-50 rounded-2xl p-5 items-center">
+                <Text className="text-[14px] font-sans text-grey-600 text-center">
+                  {t('doctorAppointmentManagement.noUpcoming')}
                 </Text>
-
-                {a.status === 'UPCOMING' && (
-                  <Pressable
-                    className="mt-3 bg-action-primary rounded-lg px-4 py-3 items-center"
-                    onPress={() => router.push({ pathname: '/(doctor)/consultation', params: { appointmentId: a.id } })}
-                    accessibilityRole="button"
-                  >
-                    <Text className="text-btn-medium text-white">
-                      {t('doctorConsultations.joinCall', { defaultValue: 'Join call' })}
-                    </Text>
-                  </Pressable>
-                )}
               </View>
-            );
-          })
+            )}
+
+            {appointments.length > 0 && (
+              <Text className="text-[16px] font-semibold font-sans text-grey-900">
+                {t('doctorAppointmentManagement.listTitle')}
+              </Text>
+            )}
+          </View>
+        }
+        ListEmptyComponent={
+          <View className="items-center py-16 gap-3">
+            <Ionicons name="calendar-outline" size={48} color={primitiveColors['grey-300']} />
+            <Text className="text-[15px] font-sans text-grey-500 text-center">
+              {t('doctorAppointmentManagement.emptyTitle')}
+            </Text>
+            <Text className="text-[13px] font-sans text-grey-400 text-center px-8">
+              {t('doctorAppointmentManagement.emptySubtitle')}
+            </Text>
+          </View>
+        }
+        renderItem={({ item }: { item: DoctorManagedAppointment }) => (
+          <DoctorAppointmentListCard appointment={item} />
         )}
-      </ScrollView>
+      />
+
+      <DoctorAppointmentConfirmModal
+        visible={cancelModalOpen}
+        type="cancel"
+        onClose={closeModals}
+        onConfirm={onCancelConfirmed}
+      />
+
+      <DoctorAppointmentConfirmModal
+        visible={rescheduleModalOpen}
+        type="reschedule"
+        onClose={closeModals}
+        onConfirm={onRescheduleConfirmed}
+      />
     </SafeAreaView>
   );
 }
-

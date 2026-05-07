@@ -10,11 +10,59 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Prisma, NotificationType, Role } from '@prisma/client';
 import { JwtAuthGuard } from '../../common/auth/jwt-auth.guard';
 import { PrismaService } from '../../prisma/prisma.service';
-import { NotificationType, Role } from '@prisma/client';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Roles } from '../../common/auth/roles.decorator';
+import {
+  hasDoctorReachedDailyLimit,
+  hasDoctorTimeConflict,
+  isDoctorAvailableForRange,
+  parseDoctorAvailabilitySettings,
+} from '../doctors/schedule';
+
+type DoctorBookingReader = Pick<PrismaService, 'user'>;
+
+async function getDoctorBookingContext(prisma: DoctorBookingReader, doctorId: string) {
+  const doctor = await prisma.user.findFirst({
+    where: { id: doctorId, role: 'DOCTOR' },
+    select: {
+      doctorProfile: {
+        select: {
+          availabilitySettings: true,
+        },
+      },
+      appointmentsAsDoctor: {
+        where: { status: 'UPCOMING' },
+        select: {
+          id: true,
+          startsAt: true,
+          endsAt: true,
+          status: true,
+        },
+      },
+    },
+  });
+
+  return {
+    settings: parseDoctorAvailabilitySettings(
+      doctor?.doctorProfile?.availabilitySettings,
+    ),
+    appointments: doctor?.appointmentsAsDoctor ?? [],
+  };
+}
+
+function bookingConflictError(error: unknown) {
+  if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2002'
+  ) {
+    return new BadRequestException('This time slot has already been booked.');
+  }
+
+  return error;
+}
 
 @ApiTags('appointments')
 @Controller('appointments')
@@ -82,24 +130,68 @@ export class AppointmentsController {
       throw new BadRequestException('starts_at_in_past');
     }
 
-    const appointment = await this.prisma.appointment.create({
-      data: {
-        patientId,
-        doctorId,
-        startsAt,
-        endsAt,
-        reason,
-      },
-    });
+    try {
+      const appointment = await this.prisma.$transaction(async (tx) => {
+        const doctorContext = await getDoctorBookingContext(tx, doctorId);
+        if (!doctorContext.settings) {
+          throw new BadRequestException(
+            'This doctor has not set availability yet.',
+          );
+        }
+        if (!isDoctorAvailableForRange(doctorContext.settings, startsAt, endsAt)) {
+          throw new BadRequestException(
+            'This doctor is not available at the selected time.',
+          );
+        }
+        const bufferMinutes = doctorContext.settings.bookingLimits.bufferEnabled
+          ? doctorContext.settings.bookingLimits.bufferDurationMinutes
+          : 0;
+        if (
+          hasDoctorTimeConflict(
+            doctorContext.appointments,
+            startsAt,
+            endsAt,
+            bufferMinutes,
+          )
+        ) {
+          throw new BadRequestException(
+            'This time slot has already been booked.',
+          );
+        }
+        if (
+          hasDoctorReachedDailyLimit(
+            doctorContext.settings,
+            doctorContext.appointments,
+            startsAt,
+          )
+        ) {
+          throw new BadRequestException(
+            'This doctor has reached the booking limit for that day.',
+          );
+        }
 
-    await this.notifications.createForUsers([patientId, doctorId], {
-      type: NotificationType.APPOINTMENT_BOOKED,
-      title: 'Appointment booked',
-      message: 'Your appointment has been booked.',
-      data: { appointmentId: appointment.id },
-    });
+        return tx.appointment.create({
+          data: {
+            patientId,
+            doctorId,
+            startsAt,
+            endsAt,
+            reason,
+          },
+        });
+      });
 
-    return appointment;
+      await this.notifications.createForUsers([patientId, doctorId], {
+        type: NotificationType.APPOINTMENT_BOOKED,
+        title: 'Appointment booked',
+        message: 'Your appointment has been booked.',
+        data: { appointmentId: appointment.id },
+      });
+
+      return appointment;
+    } catch (error) {
+      throw bookingConflictError(error);
+    }
   }
 
   @Delete(':id')
@@ -166,13 +258,60 @@ export class AppointmentsController {
       throw new BadRequestException('starts_at_in_past');
     }
 
-    await this.prisma.appointment.update({
-      where: { id },
-      data: {
-        startsAt,
-        endsAt,
-      },
-    });
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        const doctorContext = await getDoctorBookingContext(
+          tx,
+          appointment.doctorId,
+        );
+        if (!doctorContext.settings) {
+          throw new BadRequestException(
+            'This doctor has not set availability yet.',
+          );
+        }
+        if (!isDoctorAvailableForRange(doctorContext.settings, startsAt, endsAt)) {
+          throw new BadRequestException(
+            'This doctor is not available at the selected time.',
+          );
+        }
+        const bufferMinutes = doctorContext.settings.bookingLimits.bufferEnabled
+          ? doctorContext.settings.bookingLimits.bufferDurationMinutes
+          : 0;
+        if (
+          hasDoctorTimeConflict(
+            doctorContext.appointments.filter((item) => item.id !== appointment.id),
+            startsAt,
+            endsAt,
+            bufferMinutes,
+          )
+        ) {
+          throw new BadRequestException(
+            'This time slot has already been booked.',
+          );
+        }
+        if (
+          hasDoctorReachedDailyLimit(
+            doctorContext.settings,
+            doctorContext.appointments.filter((item) => item.id !== appointment.id),
+            startsAt,
+          )
+        ) {
+          throw new BadRequestException(
+            'This doctor has reached the booking limit for that day.',
+          );
+        }
+
+        await tx.appointment.update({
+          where: { id },
+          data: {
+            startsAt,
+            endsAt,
+          },
+        });
+      });
+    } catch (error) {
+      throw bookingConflictError(error);
+    }
 
     await this.notifications.createForUsers(
       [appointment.patientId, appointment.doctorId],

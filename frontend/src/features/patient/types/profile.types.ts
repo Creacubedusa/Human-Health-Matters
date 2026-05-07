@@ -31,6 +31,8 @@ export interface ProfileForm {
   insulinSubtype: string | null;
   antidiabeticSubtype: string | null;
   otherMedication: string;
+  medicationTypes: string[];
+  currentMedications: string[];
   // Step 6 — Family History of Diabetes
   familyHistoryDiabetes: 'yes' | 'no' | 'unknown' | null;
   // Step 7 — Chronic Diseases (checkboxes)
@@ -61,6 +63,8 @@ export const INITIAL_PROFILE_FORM: ProfileForm = {
   insulinSubtype: null,
   antidiabeticSubtype: null,
   otherMedication: '',
+  medicationTypes: [],
+  currentMedications: [],
   familyHistoryDiabetes: null,
   chronicDiseases: [],
   generalFamilyHistory: [],

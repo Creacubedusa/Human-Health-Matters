@@ -11,6 +11,7 @@ export interface CodeInputProps {
   status?: CodeInputStatus;
   disabled?: boolean;
   testID?: string;
+  variant?: 'default' | 'auth';
 }
 
 // ── State lookup tables (static strings so NativeWind detects them at build time)
@@ -38,6 +39,7 @@ export function CodeInput({
   status = 'default',
   disabled = false,
   testID,
+  variant = 'default',
 }: CodeInputProps) {
   const inputRefs = useRef<Array<TextInput | null>>(Array(length).fill(null));
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
@@ -91,11 +93,13 @@ export function CodeInput({
   }
 
   return (
-    <View className="flex-row gap-4" testID={testID}>
+    <View className={variant === 'auth' ? 'flex-row gap-4' : 'flex-row gap-4'} testID={testID}>
       {chars.map((char, index) => {
         const state = cellState(index);
         const containerClass = [
-          'w-10 h-10 rounded-full border items-center justify-center',
+          variant === 'auth'
+            ? 'w-10 h-10 rounded-full border items-center justify-center'
+            : 'w-10 h-10 rounded-full border items-center justify-center',
           CELL_BG[state],
           CELL_BORDER[state],
         ].join(' ');

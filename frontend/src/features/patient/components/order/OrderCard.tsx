@@ -9,7 +9,7 @@ export interface OrderCardProps {
     notUrgent: string;
     orderedBy: string;
   };
-  onPress: (id: string) => void;
+  onPress?: (id: string) => void;
 }
 
 export function OrderCard({ item, labels, onPress }: OrderCardProps) {
@@ -17,9 +17,9 @@ export function OrderCard({ item, labels, onPress }: OrderCardProps) {
 
   return (
     <Pressable
-      onPress={() => onPress(item.id)}
+      onPress={onPress ? () => onPress(item.id) : undefined}
       className="bg-white border border-grey-300 rounded-lg overflow-hidden"
-      accessibilityRole="button"
+      accessibilityRole={onPress ? 'button' : undefined}
       accessibilityLabel={item.testName}
     >
       <View className="flex-row items-center justify-between px-3 h-[90px]">

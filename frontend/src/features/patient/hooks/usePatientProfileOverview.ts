@@ -1,30 +1,126 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchPatientProfileOverview, updatePatientProfileOverview } from '../services/profileOverview.service';
+import {
+  fetchPatientProfileOverview,
+  updatePatientProfileOverview,
+} from '../services/profileOverview.service';
 import { usePatientStore } from '../store/patient.store';
 import type {
   PatientProfileOverview,
+  ProfileDetailItem,
   ProfileOverviewForm,
   ProfileRecordId,
 } from '../types/profileOverview.types';
+import { syncMedicationMedicalRecord } from '../utils/medication';
+import { syncPatientHistoryMedicalRecord } from '../utils/patientHistory';
 
 type ProfileOverviewStatus = 'loading' | 'error' | 'empty' | 'success';
+
+export type ProfileEditErrors = Partial<Record<keyof ProfileOverviewForm, string>>;
+export type ProfileOverviewDetailField = ProfileDetailItem['id'];
+
+interface DetailFieldConfig {
+  emptyErrorKey: string;
+  invalidErrorKey?: string;
+  normalize: (value: string) => string;
+  validate: (value: string) => boolean;
+}
+
+const PHONE_ALLOWED_PATTERN = /^[+\d\s\-()]+$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const DETAIL_FIELD_CONFIG: Record<ProfileOverviewDetailField, DetailFieldConfig> = {
+  phone: {
+    emptyErrorKey: 'profileOverview.detailEditErrors.phoneRequired',
+    invalidErrorKey: 'profileOverview.detailEditErrors.phoneInvalid',
+    normalize: (value) => value.trim().replace(/\s+/g, ' '),
+    validate: (value) => {
+      const trimmed = value.trim();
+      const digits = trimmed.replace(/\D/g, '');
+      return PHONE_ALLOWED_PATTERN.test(trimmed) && digits.length >= 7 && digits.length <= 15;
+    },
+  },
+  email: {
+    emptyErrorKey: 'profileOverview.detailEditErrors.emailRequired',
+    invalidErrorKey: 'profileOverview.detailEditErrors.emailInvalid',
+    normalize: (value) => value.trim(),
+    validate: (value) => EMAIL_PATTERN.test(value.trim()),
+  },
+  address: {
+    emptyErrorKey: 'profileOverview.detailEditErrors.addressRequired',
+    normalize: (value) => value.trim(),
+    validate: (value) => value.trim().length > 0,
+  },
+  nationality: {
+    emptyErrorKey: 'profileOverview.detailEditErrors.nationalityRequired',
+    normalize: (value) => value.trim(),
+    validate: (value) => value.trim().length > 0,
+  },
+};
 
 export interface UsePatientProfileOverviewResult {
   status: ProfileOverviewStatus;
   profile: PatientProfileOverview | null;
   isSetupModalVisible: boolean;
+  selectedField: ProfileOverviewDetailField | null;
+  isDetailModalVisible: boolean;
+  isEditingDetail: boolean;
+  detailFieldValue: string;
+  detailValidationError: string | null;
+  isSavingDetail: boolean;
   editForm: ProfileOverviewForm | null;
   selectedRecord: (id: ProfileRecordId) => PatientProfileOverview['medicalRecords'][number] | undefined;
   retry: () => void;
   dismissSetupModal: () => void;
+  openDetailModal: (field: ProfileOverviewDetailField) => void;
+  closeDetailModal: () => void;
+  enableDetailEditing: () => void;
+  updateDetailValue: (value: string) => void;
+  saveDetailValue: () => Promise<boolean>;
   setNotificationEnabled: (enabled: boolean) => void;
   setSelectedLanguage: (language: string) => void;
+  validateEditForm: (form: ProfileOverviewForm) => ProfileEditErrors;
   saveProfile: (form: ProfileOverviewForm) => Promise<void>;
+}
+
+function deriveAgeFromDob(dob: string): string {
+  if (!dob) return '';
+
+  let date: Date;
+  if (dob.includes('/')) {
+    const [day, month, year] = dob.split('/').map(Number);
+    date = new Date(year, month - 1, day);
+  } else {
+    date = new Date(dob);
+  }
+
+  if (Number.isNaN(date.getTime())) return '';
+
+  const today = new Date();
+  let age = today.getFullYear() - date.getFullYear();
+  const hasBirthdayPassed =
+    today.getMonth() > date.getMonth() ||
+    (today.getMonth() === date.getMonth() && today.getDate() >= date.getDate());
+
+  if (!hasBirthdayPassed) age -= 1;
+  return age > 0 ? `${age} years` : '';
+}
+
+export function validateProfileEditForm(form: ProfileOverviewForm): ProfileEditErrors {
+  const errors: ProfileEditErrors = {};
+
+  if (!form.name.trim()) errors.name = 'profileOverview.editErrors.nameRequired';
+  if (!form.gender) errors.gender = 'profileOverview.editErrors.genderRequired';
+  if (!form.height.trim()) errors.height = 'profileOverview.editErrors.heightRequired';
+  if (!form.weight.trim()) errors.weight = 'profileOverview.editErrors.weightRequired';
+  if (!form.dateOfBirth.trim()) errors.dateOfBirth = 'profileOverview.editErrors.dobRequired';
+
+  return errors;
 }
 
 export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
   const {
     profileOverview,
+    profile,
     setupProfile,
     setProfileOverview,
     updateProfileOverview,
@@ -32,6 +128,12 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
 
   const [status, setStatus] = useState<ProfileOverviewStatus>(profileOverview ? 'success' : 'loading');
   const [isSetupModalVisible, setSetupModalVisible] = useState(false);
+  const [selectedField, setSelectedField] = useState<ProfileOverviewDetailField | null>(null);
+  const [isDetailModalVisible, setDetailModalVisible] = useState(false);
+  const [isEditingDetail, setIsEditingDetail] = useState(false);
+  const [detailFieldValue, setDetailFieldValue] = useState('');
+  const [detailValidationError, setDetailValidationError] = useState<string | null>(null);
+  const [isSavingDetail, setIsSavingDetail] = useState(false);
 
   const load = useCallback(async () => {
     setStatus('loading');
@@ -39,7 +141,29 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     try {
       const data = profileOverview ?? await fetchPatientProfileOverview();
       const isComplete = setupProfile != null ? true : data.isProfileComplete;
-      const nextProfile = { ...data, isProfileComplete: isComplete };
+      const nextProfile: PatientProfileOverview = { ...data, isProfileComplete: isComplete };
+      const historySource = profile ?? setupProfile;
+
+      if (historySource) {
+        const heightStr = historySource.heightUnit === 'cm'
+          ? `${historySource.heightCm} cm`
+          : `${historySource.heightFeet}' ${historySource.heightInches}"`;
+        const weightStr = `${historySource.weight} ${historySource.weightUnit}`;
+
+        if (historySource.avatarUri != null) nextProfile.avatarUri = historySource.avatarUri;
+        if (historySource.gender) {
+          nextProfile.gender =
+            historySource.gender.charAt(0).toUpperCase() + historySource.gender.slice(1);
+        }
+        if (historySource.dateOfBirth) nextProfile.dateOfBirth = historySource.dateOfBirth;
+        if (historySource.heightCm || historySource.heightFeet) nextProfile.height = heightStr;
+        if (historySource.weight) nextProfile.weight = weightStr;
+        const syncedHistoryRecords = syncPatientHistoryMedicalRecord(
+          nextProfile.medicalRecords,
+          historySource,
+        );
+        nextProfile.medicalRecords = syncMedicationMedicalRecord(syncedHistoryRecords, historySource);
+      }
 
       setProfileOverview(nextProfile);
       setSetupModalVisible(!nextProfile.isProfileComplete);
@@ -47,11 +171,11 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     } catch {
       setStatus('error');
     }
-  }, [profileOverview, setProfileOverview, setupProfile]);
+  }, [profileOverview, profile, setProfileOverview, setupProfile]);
 
   useEffect(() => {
     if (!profileOverview) {
-      load();
+      void load();
       return;
     }
 
@@ -65,6 +189,7 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
       avatarUri: profileOverview.avatarUri,
       name: profileOverview.name,
       gender: profileOverview.gender,
+      dateOfBirth: profileOverview.dateOfBirth,
       height: profileOverview.height,
       weight: profileOverview.weight,
       age: profileOverview.age,
@@ -81,14 +206,89 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     [profileOverview],
   );
 
+  const resetDetailModalState = useCallback(() => {
+    setSelectedField(null);
+    setDetailModalVisible(false);
+    setIsEditingDetail(false);
+    setDetailFieldValue('');
+    setDetailValidationError(null);
+    setIsSavingDetail(false);
+  }, []);
+
+  const openDetailModal = useCallback((field: ProfileOverviewDetailField) => {
+    if (!profileOverview) return;
+
+    setSelectedField(field);
+    setDetailFieldValue(profileOverview[field]);
+    setDetailValidationError(null);
+    setIsEditingDetail(false);
+    setIsSavingDetail(false);
+    setDetailModalVisible(true);
+  }, [profileOverview]);
+
+  const closeDetailModal = useCallback(() => {
+    resetDetailModalState();
+  }, [resetDetailModalState]);
+
+  const enableDetailEditing = useCallback(() => {
+    if (!selectedField) return;
+    setIsEditingDetail(true);
+    setDetailValidationError(null);
+  }, [selectedField]);
+
+  const updateDetailValue = useCallback((value: string) => {
+    setDetailFieldValue(value);
+    if (detailValidationError) setDetailValidationError(null);
+  }, [detailValidationError]);
+
+  const saveDetailValue = useCallback(async () => {
+    if (!profileOverview || !selectedField || isSavingDetail) return false;
+
+    const config = DETAIL_FIELD_CONFIG[selectedField];
+    const normalizedValue = config.normalize(detailFieldValue);
+
+    if (!normalizedValue) {
+      setDetailValidationError(config.emptyErrorKey);
+      return false;
+    }
+
+    if (!config.validate(normalizedValue)) {
+      setDetailValidationError(config.invalidErrorKey ?? config.emptyErrorKey);
+      return false;
+    }
+
+    setIsSavingDetail(true);
+
+    try {
+      updateProfileOverview({ [selectedField]: normalizedValue });
+      resetDetailModalState();
+      return true;
+    } finally {
+      setIsSavingDetail(false);
+    }
+  }, [
+    detailFieldValue,
+    isSavingDetail,
+    profileOverview,
+    resetDetailModalState,
+    selectedField,
+    updateProfileOverview,
+  ]);
+
   const saveProfile = useCallback(async (form: ProfileOverviewForm) => {
-    await updatePatientProfileOverview(form);
-    updateProfileOverview({
+    const age = deriveAgeFromDob(form.dateOfBirth);
+    const nextForm = {
       ...form,
+      age: age || profileOverview?.age || '',
+    };
+
+    await updatePatientProfileOverview(nextForm);
+    updateProfileOverview({
+      ...nextForm,
       isProfileComplete: true,
     });
     setSetupModalVisible(false);
-  }, [updateProfileOverview]);
+  }, [profileOverview?.age, updateProfileOverview]);
 
   const setNotificationEnabled = useCallback((enabled: boolean) => {
     updateProfileOverview({ notificationEnabled: enabled });
@@ -102,12 +302,24 @@ export function usePatientProfileOverview(): UsePatientProfileOverviewResult {
     status,
     profile: profileOverview,
     isSetupModalVisible,
+    selectedField,
+    isDetailModalVisible,
+    isEditingDetail,
+    detailFieldValue,
+    detailValidationError,
+    isSavingDetail,
     editForm,
     selectedRecord,
     retry: load,
     dismissSetupModal: () => setSetupModalVisible(false),
+    openDetailModal,
+    closeDetailModal,
+    enableDetailEditing,
+    updateDetailValue,
+    saveDetailValue,
     setNotificationEnabled,
     setSelectedLanguage,
+    validateEditForm: validateProfileEditForm,
     saveProfile,
   };
 }

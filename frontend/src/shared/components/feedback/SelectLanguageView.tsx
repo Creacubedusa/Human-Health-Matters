@@ -1,7 +1,8 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/Button';
+import { HeaderBackButton } from '../ui/HeaderBackButton';
 import { LanguageOptionCard } from '../ui/LanguageOptionCard';
 
 export interface LanguageOption {
@@ -31,14 +32,11 @@ export function SelectLanguageView({
     <SafeAreaView className="flex-1 bg-white">
       {/* Header */}
       <View className="bg-primary-50 flex-row items-center justify-center px-4 py-5 relative">
-        <Pressable
+        <HeaderBackButton
           onPress={onBack}
-          className="absolute left-4 w-[29px] h-[29px] rounded-md border border-grey-200 bg-white items-center justify-center"
-          accessibilityRole="button"
           accessibilityLabel={t('common.back')}
-        >
-          <Text className="text-s2 text-grey-900 leading-none">‹</Text>
-        </Pressable>
+          className="absolute left-4 border-grey-200"
+        />
         <Text className="text-s2 font-sans font-semibold text-grey-900">
           {t('selectLanguage.headerTitle')}
         </Text>

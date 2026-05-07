@@ -1,12 +1,13 @@
 import { useRouter } from 'expo-router';
 import { NotificationView } from '@features/patient/screens/NotificationView';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function NotificationsScreen() {
   const router = useRouter();
 
   return (
     <NotificationView
-      onBack={() => router.back()}
+      onBack={() => goBackOrReplace(router, '/(patient)')}
       onJoinConsultation={(appointmentId) =>
         router.push({
           pathname: '/(patient)/consultations',

@@ -10,7 +10,8 @@
     "retry": "Intentar de nuevo",
     "loading": "Cargando...",
     "error": "Algo salió mal",
-    "noData": "Nada aquí todavía"
+    "noData": "Nada aquí todavía",
+    "dismiss": "Cerrar"
   },
   "doctorHome": {
     "greeting": "Hola Dr. {{name}}",
@@ -44,7 +45,166 @@
     "error": "No se pudo cargar tu perfil. Inténtalo de nuevo.",
     "nameFallback": "Doctor",
     "specialtiesEmpty": "Agrega tus especialidades",
-    "initialsFallback": "Doctor"
+    "initialsFallback": "Doctor",
+    "licensedBadge": "Médico con licencia",
+    "incompleteTitle": "Completa tu perfil",
+    "incompleteSubtitle": "Toca para terminar tu registro y poder facturar",
+    "personalInfoTitle": "Información personal",
+    "fullNameLabel": "Nombre completo",
+    "genderLabel": "Género",
+    "phoneLabel": "Número de teléfono",
+    "emailLabel": "Correo electrónico",
+    "earningTitle": "Tus ganancias",
+    "earningSubtitle": "Puedes ver y retirar tus ganancias aquí",
+    "professionalInfoTitle": "Información profesional",
+    "npiLabel": "Número NPI",
+    "stateLicenseLabel": "Licencia médica estatal",
+    "deaLabel": "Número DEA",
+    "specialtyLabel": "Especialidad médica (Taxonomía)",
+    "experienceLabel": "Años de experiencia",
+    "biographyLabel": "Biografía",
+    "hospitalLabel": "Hospital",
+    "officeAddressLabel": "Dirección del consultorio",
+    "consultationFeeLabel": "Tarifa base de consulta",
+    "certificationsTitle": "Certificaciones",
+    "medicalCertLabel": "Certificado médico",
+    "medicalCertFile": "Certificado médico en cardiología",
+    "medicalCertModalTitle": "Certificación médica",
+    "boardCertLabel": "Certificado de consejo",
+    "boardCertFile": "Certificado de consejo en cardiología",
+    "boardCertModalTitle": "Certificación del consejo",
+    "deaRegLabel": "Registro DEA",
+    "deaRegFile": "Certificado de registro DEA",
+    "deaModalTitle": "Registro DEA",
+    "malpracticeLabel": "Seguro por mala praxis",
+    "malpracticeFile": "Certificado de seguro por mala praxis",
+    "malpracticeModalTitle": "Seguro por mala praxis",
+    "uploadPlaceholder": "subir",
+    "settingsTitle": "Configuración",
+    "settingNotifications": "Notificaciones",
+    "settingAIAssistance": "Asistencia IA",
+    "settingAvailability": "Gestionar disponibilidad",
+    "settingLanguage": "Idioma",
+    "settingPrivacyPolicy": "Política de privacidad",
+    "editFullNameLabel": "Nombre completo",
+    "editGenderLabel": "Género",
+    "editPhoneLabel": "Número de teléfono",
+    "editEmailLabel": "Correo electrónico",
+    "editSaveBtn": "Guardar",
+    "editGenderMale": "Masculino",
+    "editGenderFemale": "Femenino",
+    "editGenderOther": "Otro"
+  },
+  "doctorEarnings": {
+    "title": "Ganancias",
+    "zeroCommission": "HMM toma 0% de comisión: todo lo que ganas es tuyo",
+    "totalBalance": "Saldo total",
+    "monthlyGoal": "Gana $100 este mes",
+    "periodEarnings": "Ganaste {{amount}} en este período",
+    "claimsPending": "Reclamaciones pendientes",
+    "claimsPendingHint": "En espera del asegurador",
+    "claimsProcessing": "Procesando",
+    "claimsProcessingHint": "en adjudicación",
+    "quickActions": "Acción rápida",
+    "withdraw": "Retirar",
+    "claimsTracker": "Seguimiento de reclamos",
+    "payoutHistory": "Historial de pagos",
+    "transactionsTitle": "Transacciones",
+    "transactions": "Transacciones",
+    "seeAll": "Ver todo",
+    "fromLabel": "Desde",
+    "toLabel": "Hasta",
+    "filters": {
+      "all": "Todo",
+      "paid": "Pagado",
+      "pending": "Pendiente",
+      "processing": "Procesando"
+    },
+    "claimsTrackerSubtitle": "Da seguimiento al progreso de pago y adjudicación de reclamos simulados.",
+    "payoutHistorySubtitle": "Revisa toda la actividad simulada de pagos y estados de transacción.",
+    "transactionDetail": "Detalle de transacción",
+    "transactionDetailsTitle": "Detalles de la transacción",
+    "transactionDate": "Fecha",
+    "transactionReason": "Motivo",
+    "transactionReference": "Referencia",
+    "unknownTransaction": "Transacción desconocida",
+    "backToHistory": "Volver al historial",
+    "sourceDonorFund": "Fondo del donante",
+    "sourceInsuranceClaim": "Reclamo del seguro",
+    "consultationTitle": "Consulta",
+    "consultationPatient": "Paciente",
+    "consultationChiefComplaint": "Motivo principal",
+    "consultationDate": "Fecha",
+    "consultationTime": "Hora",
+    "consultationDuration": "Duración",
+    "availableToWithdraw": "Disponible para retirar",
+    "withdrawAmount": "Monto a retirar",
+    "withdrawDestination": "Cuenta de destino",
+    "withdrawDestinationMock": "Banco simulado HHM •••• 1182",
+    "withdrawCta": "Solicitar retiro",
+    "withdrawMockSuccess": "Solicitud de retiro simulada enviada con éxito.",
+    "withdrawalTitle": "Retiro",
+    "payoutTitle": "Pago",
+    "confirmTitle": "Confirmar",
+    "addBankTitle": "Agregar banco",
+    "bankSection": "Banco",
+    "add": "Agregar",
+    "addBankCta": "Agregar banco",
+    "addBankHeading": "Agrega los datos de tu banco",
+    "noBankTitle": "Aún no has agregado ningún banco",
+    "noBankSubtitle": "Actualmente no tienes ningún banco agregado. Agrega los datos de tu banco haciendo clic en el botón \"Agregar\"",
+    "chooseBankHeading": "Elige el banco al que deseas retirar",
+    "withdrawAmountCta": "Retirar {{amount}}",
+    "verifyTitle": "Ingresa los 6 dígitos enviados a tu correo",
+    "verifySubtitle": "Enviamos un código de 6 dígitos al correo {{email}}. Esto confirma el retiro de {{amount}}",
+    "confirmWithdrawal": "Confirmar",
+    "resendCode": "Reenviar código",
+    "withdrawSuccessMessage": "Tu retiro ha sido enviado a {{bankName}} {{last4}}. Los fondos suelen llegar en un plazo de 2 horas",
+    "withdrawSuccessFallback": "Tu retiro se envió correctamente. Los fondos suelen llegar en un plazo de 2 horas",
+    "goIt": "Entendido",
+    "receiptTitle": "Recibo",
+    "receiptSuccessTitle": "Retiro exitoso",
+    "receiptSuccessMessage": "Un retiro de {{amount}} ha sido enviado a tu banco {{bank}}",
+    "receiptDetailsTitle": "Detalles del retiro",
+    "receiptReferenceLabel": "Detalles de referencia",
+    "receiptAmountLabel": "Monto",
+    "receiptBankLabel": "Banco",
+    "receiptTimeLabel": "Hora",
+    "receiptDateLabel": "Fecha",
+    "receiptBankFallback": "wellness fargo",
+    "errors": {
+      "bankNameRequired": "El nombre del banco es obligatorio",
+      "accountNameRequired": "El nombre de la cuenta es obligatorio",
+      "accountNumberRequired": "El número de cuenta es obligatorio",
+      "sortCodeRequired": "El código de ruta o sort code es obligatorio",
+      "amountRequired": "Ingresa un monto de retiro válido",
+      "amountExceedsBalance": "El monto del retiro no puede ser mayor que tu saldo disponible"
+    }
+  },
+  "doctorClaims": {
+    "title": "Reclamos de seguro",
+    "subtitle": "Revisa los detalles del seguro de los pacientes que has consultado y presenta sus reclamos fuera de HHM.",
+    "detailSubtitle": "Revisa la información del seguro del paciente necesaria para la presentación externa del reclamo.",
+    "postSessionTitle": "Seguro del paciente",
+    "postSessionSubtitle": "Usa estos detalles del seguro para completar la presentación externa del reclamo después de esta consulta.",
+    "claimEssentialsTitle": "Datos clave del reclamo",
+    "patientName": "Nombre del paciente",
+    "provider": "Proveedor de seguro",
+    "memberId": "ID de miembro",
+    "groupNumber": "Número de grupo",
+    "planType": "Tipo de plan",
+    "scheduleFollowUp": "Programar seguimiento",
+    "markCompleted": "Marcar como completada",
+    "completeSuccess": "La cita fue marcada como completada.",
+    "followUpTitle": "Seguimiento con {{patientName}}",
+    "emptyTitle": "Aún no hay reclamos de seguro",
+    "emptySubtitle": "Cuando completes consultas aseguradas, los detalles del seguro del paciente aparecerán aquí.",
+    "unknownPatient": "Paciente desconocido",
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "inconclusive": "No concluyente"
+    }
   },
   "doctorPatients": {
     "title": "Pacientes",
@@ -79,6 +239,46 @@
     "signUp": "Registrarse",
     "logIn": "Iniciar sesión"
   },
+  "doctorGetStarted": {
+    "title": "Comienza como médico",
+    "subtitle": "Brinda atención, revisa información de IA y gestiona tus pacientes en un solo lugar",
+    "signUp": "Registrarse",
+    "logIn": "Iniciar sesión"
+  },
+  "doctorSignUp": {
+    "title": "Crear una cuenta",
+    "subtitle": "Por favor completa los datos a continuación",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "phone": "Número de teléfono",
+    "password": "Contraseña",
+    "passwordStrengthTitle": "La contraseña debe contener:",
+    "passwordRule8Chars": "Al menos 8 caracteres",
+    "passwordRule1Number": "Al menos 1 número",
+    "passwordRule1Special": "Al menos 1 carácter especial",
+    "passwordRule1Upper": "Al menos 1 letra mayúscula",
+    "passwordRule1Lower": "Al menos 1 letra minúscula",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "termsPrefix": "Al registrarte aceptas nuestros",
+    "terms": "Términos",
+    "signUp": "Registrarse",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "signIn": "Iniciar sesión",
+    "errors": {
+      "firstNameRequired": "El nombre es obligatorio",
+      "lastNameRequired": "El apellido es obligatorio",
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailInvalid": "Por favor ingresa un correo válido",
+      "phoneRequired": "El número de teléfono es obligatorio",
+      "phoneInvalid": "Por favor ingresa un número de teléfono válido",
+      "passwordRequired": "La contraseña es obligatoria",
+      "passwordWeak": "La contraseña no cumple los requisitos anteriores",
+      "submitFailedTitle": "Registro fallido",
+      "submitFailed": "Algo salió mal. Por favor intenta de nuevo."
+    }
+  },
   "patientOnboarding": {
     "getStarted": "Comenzar",
     "slide1Title": "Salud más inteligente, hecha para ti",
@@ -87,6 +287,15 @@
     "slide2Subtitle": "Habla con un médico certificado mientras la IA escucha, captura tu historia y asegura que nada importante se pase por alto.",
     "slide3Title": "Salud sin fronteras ni barreras.",
     "slide3Subtitle": "Si tu seguro no cubre todo, puedes recibir apoyo para el costo restante—para que nada te separe de la atención."
+  },
+  "doctorOnboarding": {
+    "getStarted": "Comenzar",
+    "slide1Title": "Una forma más inteligente de brindar atención",
+    "slide1Subtitle": "Evalúa a tus pacientes más rápido con apoyo de IA y automatiza la documentación para enfocarte en mejores resultados, no en la administración.",
+    "slide2Title": "Menos papeleo. Mejor atención.",
+    "slide2Subtitle": "HHMS usa IA para capturar notas, resaltar información clave y optimizar tu flujo de trabajo, dándote más tiempo para tus pacientes.",
+    "slide3Title": "Un solo sistema para una atención completa",
+    "slide3Subtitle": "HHMS combina IA, atención clínica y herramientas de apoyo financiero para ayudarte a tratar a más pacientes de forma eficaz y asequible"
   },
   "patientSignUp": {
     "title": "Crear una cuenta",
@@ -125,6 +334,17 @@
     "title": "Verificación Requerida",
     "subtitlePrefix": "Enviamos un código de 6 dígitos a",
     "timerLabel": "{{minutes}}:{{seconds}}",
+    "verify": "Verificar",
+    "resendCode": "Reenviar Código",
+    "errors": {
+      "invalidCode": "Código incorrecto. Por favor intenta de nuevo.",
+      "submitFailed": "Algo salió mal. Por favor intenta de nuevo.",
+      "resendFailed": "No se pudo reenviar el código. Por favor intenta de nuevo."
+    }
+  },
+  "doctorVerify": {
+    "title": "Verificación Requerida",
+    "subtitlePrefix": "Enviamos un código de 6 dígitos a",
     "verify": "Verificar",
     "resendCode": "Reenviar Código",
     "errors": {
@@ -227,6 +447,9 @@
     "notification": "Notificación",
     "language": "Idioma",
     "privacyPolicy": "Política de privacidad",
+    "save": "Guardar",
+    "closeDetailEdit": "Cerrar modal de edición de dato personal",
+    "editField": "Habilitar edición del campo",
     "setupTitle": "Completa tu perfil de salud",
     "setupDescription": "Ayúdanos a conocerte mejor. Unos datos rápidos pueden desbloquear atención personalizada, información más precisa y mejor seguimiento de salud.",
     "cancel": "No, cancelar",
@@ -239,7 +462,104 @@
     "errorMessage": "No se pudo cargar tu perfil",
     "privacyIntroTitle": "Cómo HHM protege tu información",
     "privacyIntroBody": "Human Health Matters usa la información de tu perfil para apoyar el acceso a la atención, personalizar recomendaciones y ayudar a médicos autorizados a comprender tu contexto de salud.",
-    "privacyBody": "Tu información de salud se trata como información sensible. Los datos simulados de este prototipo solo se almacenan localmente y no se envían a un backend. Las futuras integraciones de producción deben usar APIs seguras, acceso de mínimo privilegio y uso compartido con consentimiento para flujos clínicos."
+    "privacyBody": "Tu información de salud se trata como información sensible. Los datos simulados de este prototipo solo se almacenan localmente y no se envían a un backend. Las futuras integraciones de producción deben usar APIs seguras, acceso de mínimo privilegio y uso compartido con consentimiento para flujos clínicos.",
+    "privacyPolicyEffectiveDate": "Fecha de vigencia: 4/04/2026",
+    "privacyPolicyIntro": {
+      "effectiveDate": "Fecha de vigencia: [Insertar fecha]",
+      "commitment": "Respetamos tu privacidad y estamos comprometidos a proteger tu información personal y de salud."
+    },
+    "privacyPolicySections": {
+      "collect": {
+        "title": "1. Lo que recopilamos",
+        "body": "Podemos recopilar:",
+        "bullets": {
+          "personalDetails": "Datos personales (nombre, información de contacto)",
+          "healthInformation": "Información de salud (síntomas, historial médico, registros)",
+          "insuranceAndPayment": "Datos de seguro y pago",
+          "aiInteractions": "Interacciones con nuestro asistente de IA",
+          "appUsage": "Datos de uso de la aplicación"
+        }
+      },
+      "use": {
+        "title": "2. Cómo usamos tu información",
+        "body": "Usamos tus datos para:",
+        "bullets": {
+          "assessments": "Brindar evaluaciones de salud con IA y conectarte con médicos",
+          "carePlans": "Crear planes de atención y gestionar consultas",
+          "insuranceVerification": "Verificar el seguro y estimar costos",
+          "fundingSupport": "Respaldar la financiación de tu atención",
+          "serviceImprovement": "Mejorar nuestros servicios"
+        }
+      },
+      "share": {
+        "title": "3. Cómo compartimos la información",
+        "body": "Solo compartimos tus datos cuando es necesario:",
+        "bullets": {
+          "doctors": "Con médicos involucrados en tu atención",
+          "insuranceProviders": "Con proveedores de seguros (para cobertura y reclamos)",
+          "serviceProviders": "Con proveedores de servicios de confianza",
+          "legalRequirement": "Cuando la ley lo exija"
+        }
+      },
+      "security": {
+        "title": "4. Tu privacidad y seguridad",
+        "bullets": {
+          "encrypted": "Tus datos están cifrados y almacenados de forma segura",
+          "authorizedAccess": "Solo profesionales autorizados pueden acceder a tu información",
+          "control": "Tú controlas tus datos y puedes actualizarlos o solicitar su eliminación"
+        }
+      },
+      "retention": {
+        "title": "5. Conservación de datos",
+        "body": "Conservamos tus datos solo el tiempo necesario para prestar servicios y cumplir con los requisitos legales."
+      },
+      "contact": {
+        "title": "6. Contáctanos",
+        "body": "Si tienes preguntas o inquietudes:",
+        "email": "Correo electrónico: info@h0hm.ai"
+      },
+      "updates": {
+        "title": "7. Actualizaciones",
+        "body": "Podemos actualizar esta política. Te notificaremos sobre los cambios importantes."
+      }
+    },
+    "patientHistory": {
+      "screenTitle": "Historial del paciente",
+      "chronicDiseases": "Enfermedades crónicas",
+      "familyDiabetesHistory": "Historial familiar de diabetes",
+      "generalFamilyHistory": "Historial familiar general",
+      "operation": "Operación",
+      "allergies": "Alergias",
+      "addMore": "Agregar más",
+      "emptyCategory": "Aún no se ha agregado información.",
+      "closeEditModal": "Cerrar modal de edición del historial del paciente",
+      "editRow": "Habilitar edición de la fila",
+      "deleteRow": "Eliminar entrada del historial",
+      "familyHistoryRequired": "Selecciona sí o no antes de guardar.",
+      "rowRequired": "Elimina o completa cada entrada del historial antes de guardar."
+    },
+    "medication": {
+      "screenTitle": "Medicacion",
+      "type": "Tipo",
+      "currentMedications": "Medicamentos actuales",
+      "typeModalTitle": "Tipo de medicacion",
+      "currentMedicationModalTitle": "Medicacion actual",
+      "addMore": "Agregar mas",
+      "emptyCategory": "Aun no se ha agregado medicacion.",
+      "closeEditModal": "Cerrar modal de edicion de medicacion",
+      "editRow": "Habilitar edicion de la fila de medicacion",
+      "deleteRow": "Eliminar entrada de medicacion",
+      "rowRequired": "Elimina o completa cada entrada de medicacion antes de guardar.",
+      "duplicateRow": "Las entradas de medicacion deben ser unicas antes de guardar."
+    },
+    "detailEditErrors": {
+      "phoneRequired": "El número de teléfono es obligatorio",
+      "phoneInvalid": "Ingresa un número de teléfono válido",
+      "emailRequired": "El correo electrónico es obligatorio",
+      "emailInvalid": "Ingresa un correo válido",
+      "addressRequired": "La dirección es obligatoria",
+      "nationalityRequired": "La nacionalidad es obligatoria"
+    }
   },
   "selectRole": {
     "headerTitle": "Selecciona tu rol",
@@ -370,6 +690,12 @@
     "ctaViewReport": "Ver reporte",
     "ctaCheck": "Verificar",
     "errorMessage": "No se pudieron cargar las notificaciones"
+  },
+  "doctorNotifications": {
+    "ctaJoin": "Unirse",
+    "ctaViewPatient": "Ver paciente",
+    "ctaReviewSummary": "Revisar resumen",
+    "ctaCheckRecord": "Ver registro"
   },
   "patientHome": {
     "headerTitle": "Inicio",
@@ -647,6 +973,8 @@
     "cancel": "Cancelar",
     "description": "Consulta con {{name}}",
     "errorMessage": "No pudimos cargar tu calendario. Inténtalo de nuevo.",
+    "setAvailability": "Configurar disponibilidad",
+    "setTimezones": "Configurar zonas horarias",
     "views": {
       "day": "Día",
       "week": "Semana",
@@ -756,6 +1084,11 @@
     "dateTime": {
       "availableTimeSlotTitle": "Horario disponible"
     },
+    "availabilityAlert": {
+      "title": "Se requiere disponibilidad del doctor",
+      "description": "Este doctor debe configurar su disponibilidad antes de que los pacientes puedan reservar una cita. Elige otro doctor o inténtalo más tarde.",
+      "cta": "Entendido"
+    },
     "success": {
       "messagePrefix": "Has reservado correctamente una cita con"
     },
@@ -774,25 +1107,6 @@
       "fri": "Fri",
       "sat": "Sat"
     }
-  },
-  "doctorHome": {
-    "greeting": "Dr. {{name}}",
-    "greetingFallback": "Bienvenido, Doctor",
-    "pendingCard": {
-      "title": "Consultas pendientes",
-      "none": "Sin consultas pendientes"
-    },
-    "statsCard": {
-      "title": "Esta semana",
-      "consultations": "Consultas",
-      "patients": "Pacientes"
-    },
-    "recentPatients": "Pacientes recientes",
-    "noPatients": "Sin pacientes aún",
-    "noPatientsHint": "Acepta una consulta para comenzar",
-    "onboardingBanner": "Completa tu perfil para aceptar consultas",
-    "completeProfile": "Completar perfil",
-    "errorMessage": "No se pudo cargar tu panel"
   },
   "donorHome": {
     "greeting": "Hola, {{name}}",
@@ -970,6 +1284,145 @@
       "fr": "Francés",
       "ar": "Árabe",
       "tr": "Turco"
+    }
+  },
+  "donorDonation": {
+    "headerDonate": "Donate",
+    "headerPayment": "Payment Method",
+    "headerAddCard": "Add Card",
+    "headerReview": "Review",
+    "amountTitle": "Donate to the pool",
+    "amountSubtitle": "Your contribution will be used where it's needed most — immediately.",
+    "customAmountLabel": "Custom amount",
+    "oneTime": "One time",
+    "monthly": "Monthly",
+    "donateBtnLabel": "Donate ${{amount}}",
+    "paymentSubtitle": "Choose how you want to contribute",
+    "savedMethodsTitle": "Saved Payment Methods",
+    "addNewMethodTitle": "Add New Method",
+    "debitCreditLabel": "Debit or Credit Card",
+    "debitCreditSub": "Instant contribution",
+    "bankTransferLabel": "Bank Transfer",
+    "bankTransferSub": "May take few hours",
+    "addCardTitle": "Add Your Card Details",
+    "cardNumberLabel": "Card Number",
+    "cardNumberPlaceholder": "Bank name",
+    "expiryLabel": "Expiration date",
+    "expiryPlaceholder": "MM/YY",
+    "cvvLabel": "CVV",
+    "cvvPlaceholder": "3-4 digits",
+    "zipLabel": "Zip Code",
+    "saveCardLabel": "Save Card",
+    "addBtn": "Add",
+    "reviewTitle": "Review your contribution",
+    "summaryCardTitle": "Contribution Summary",
+    "rowAmount": "Amount Details",
+    "rowType": "Type",
+    "rowAllocation": "Pool allocation",
+    "allocationValue": "Immediate · real-time",
+    "alertInfo": "You'll receive real-time updates as your contribution is allocated to patient care.",
+    "processingText": "Processing…",
+    "successMessage": "Thank you. Your ${{amount}} added to the care pool.",
+    "loading": "Loading payment methods…",
+    "error": "Could not load payment methods. Please try again.",
+    "empty": "No payment methods found."
+  },
+  "donorSignUp": {
+    "title": "Create an account",
+    "subtitle": "Please fill in the details below",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email address",
+    "password": "Password",
+    "passwordStrengthTitle": "Password must contain:",
+    "passwordRule8Chars": "At least 8 characters",
+    "passwordRule1Number": "At least 1 number",
+    "passwordRule1Special": "At least 1 special character",
+    "passwordRule1Upper": "At least 1 uppercase letter",
+    "passwordRule1Lower": "At least 1 lowercase letter",
+    "showPassword": "Show",
+    "hidePassword": "Hide",
+    "termsPrefix": "By signing up you accept our",
+    "terms": "Terms",
+    "signUp": "Sign Up",
+    "haveAccount": "Have an account?",
+    "signIn": "Sign In",
+    "errors": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "passwordRequired": "Password is required",
+      "submitFailedTitle": "Registration failed",
+      "submitFailed": "Something went wrong. Please try again."
+    }
+  },
+  "donorOnboarding": {
+    "slide1Title": "Haz posible la atención al instante",
+    "slide1Subtitle": "Tu contribución ayuda a que los pacientes reciban tratamiento en el momento en que lo necesitan.",
+    "slide2Title": "Asignado automáticamente, usado al instante",
+    "slide2Subtitle": "Tus fondos se asignan a pacientes según su urgencia y necesidad.",
+    "slide3Title": "Transparente. Confiable. Impactante.",
+    "slide3Subtitle": "Sigue cómo se usan tus contribuciones en tratamientos y atención.",
+    "getStarted": "Comenzar"
+  },
+  "donorLogin": {
+    "title": "Welcome Back",
+    "subtitle": "Sign in to your donor account",
+    "emailPlaceholder": "Email address",
+    "passwordPlaceholder": "Password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "forgotPassword": "Forgot Password?",
+    "logIn": "Log In",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign Up",
+    "errors": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "passwordRequired": "Password is required",
+      "submitFailed": "Invalid credentials. Please try again."
+    }
+  },
+  "donorHistory": {
+    "headerTitle": "Historial",
+    "fromLabel": "Desde",
+    "toLabel": "Hasta",
+    "fromPlaceholder": "12 Ago 2025",
+    "toPlaceholder": "12 Ago 2026",
+    "statusAllocated": "Asignado",
+    "statusPending": "Pendiente",
+    "statusFailed": "Fallido",
+    "emptyTitle": "Aún no hay historial de donaciones",
+    "emptySubtitle": "Tus donaciones aparecerán aquí una vez que contribuyas al fondo.",
+    "errorMessage": "No se pudo cargar tu historial de donaciones. Inténtalo de nuevo."
+  },
+  "donorImpact": {
+    "headerTitle": "Impacto",
+    "totalImpactLabel": "Impacto total",
+    "patientsSupported": "Has apoyado a {{count}} pacientes hasta ahora",
+    "privacyNotice": "La identidad de los pacientes siempre está protegida. Solo mostramos el tipo de condición y el rango de edad.",
+    "patientImpactTitle": "Impacto en pacientes",
+    "patientTypeAdult": "Adulto",
+    "patientTypeChild": "Niño",
+    "patientTypeSenior": "Adulto mayor",
+    "statusPaid": "Pagado",
+    "statusPending": "Pendiente",
+    "statusProcessing": "Procesando",
+    "emptyPatients": "Aún no hay impacto registrado en pacientes.",
+    "errorMessage": "No se pudo cargar tu datos de impacto. Inténtalo de nuevo."
+  },
+  "donorForgotPassword": {
+    "title": "Reset Your Password",
+    "subtitle": "Enter your email address and we'll send you a reset code",
+    "emailPlaceholder": "Email address",
+    "sendCode": "Send Code",
+    "rememberPassword": "Don't receive any code?",
+    "backToLogin": "Resend Code",
+    "errors": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email",
+      "submitFailed": "Something went wrong. Please try again."
     }
   }
 }

@@ -46,11 +46,59 @@ const EMPTY_FORM: SignUpForm = {
 
 type Status = 'idle' | 'loading' | 'error' | 'success';
 
+function extractErrorCode(error: unknown): string | null {
+  const responseData = (error as {
+    response?: { data?: { message?: string | string[] } | string };
+    message?: string;
+  })?.response?.data;
+
+  if (typeof responseData === 'string' && responseData.trim()) {
+    return responseData.trim();
+  }
+
+  if (typeof responseData === 'object' && responseData != null) {
+    const message = responseData.message;
+    if (typeof message === 'string' && message.trim()) return message.trim();
+    if (Array.isArray(message) && message.length > 0) return String(message[0]);
+  }
+
+  const fallbackMessage = (error as { message?: string })?.message;
+  return typeof fallbackMessage === 'string' && fallbackMessage.trim()
+    ? fallbackMessage.trim()
+    : null;
+}
+
+function mapSignUpErrorMessage(errorCode: string, stage: 'register' | 'login'): string {
+  switch (errorCode) {
+    case 'email_taken':
+      return 'This email is already registered.';
+    case 'phone_taken':
+      return 'This phone number is already registered.';
+    case 'phone_country_code_required':
+      return 'Phone country code is required.';
+    case 'phone_invalid':
+      return 'Please enter a valid phone number.';
+    case 'email_or_phone_required':
+      return 'Email or phone number is required.';
+    case 'invalid_credentials':
+      return stage === 'login'
+        ? 'Account created, but automatic sign-in failed. Please log in manually.'
+        : 'Invalid credentials.';
+    case 'Network Error':
+      return 'Could not reach the server. Check your internet connection and API URL.';
+    default:
+      return stage === 'login'
+        ? `Account created, but sign-in failed: ${errorCode}`
+        : `Registration failed: ${errorCode}`;
+  }
+}
+
 export interface UsePatientSignUpResult {
   form: SignUpForm;
   errors: SignUpErrors;
   passwordStrength: PasswordStrength;
   status: Status;
+  errorMessage: string | null;
   isFormValid: boolean;
   showPassword: boolean;
   handleChange: (field: keyof SignUpForm, value: string) => void;
@@ -68,6 +116,7 @@ export function usePatientSignUp(): UsePatientSignUpResult {
   const [touched, setTouched] = useState<Set<keyof SignUpForm>>(new Set());
   const [submitted, setSubmitted] = useState(false);
   const [status, setStatus] = useState<Status>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const allErrors = useMemo(() => validateAll(form), [form]);
@@ -87,6 +136,10 @@ export function usePatientSignUp(): UsePatientSignUpResult {
 
   function handleChange(field: keyof SignUpForm, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
+    if (status === 'error') {
+      setStatus('idle');
+      setErrorMessage(null);
+    }
   }
 
   function handleBlur(field: keyof SignUpForm) {
@@ -102,19 +155,40 @@ export function usePatientSignUp(): UsePatientSignUpResult {
     if (!isFormValid) return;
 
     setStatus('loading');
+    setErrorMessage(null);
     try {
       const role = (await kvGet('app_role')) as string | null;
       const register = role === 'doctor' ? registerDoctor : registerPatient;
 
-      const { userId, role: backendRole } = await register({
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim(),
-        phoneCountryCode: form.phoneCountryCode,
-        password: form.password,
-      });
-      const login = await loginWithEmail(form.email.trim(), form.password);
+      let userId: string;
+      let backendRole: 'PATIENT' | 'DOCTOR' | 'DONOR' | 'ADMIN';
+
+      try {
+        const result = await register({
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          phoneCountryCode: form.phoneCountryCode,
+          password: form.password,
+        });
+        userId = result.userId;
+        backendRole = result.role;
+      } catch (error) {
+        setErrorMessage(mapSignUpErrorMessage(extractErrorCode(error) ?? 'unknown_error', 'register'));
+        setStatus('error');
+        return;
+      }
+
+      let login;
+      try {
+        login = await loginWithEmail(form.email.trim(), form.password);
+      } catch (error) {
+        setErrorMessage(mapSignUpErrorMessage(extractErrorCode(error) ?? 'unknown_error', 'login'));
+        setStatus('error');
+        return;
+      }
+
       const accessToken = (login as any).accessToken as string | undefined;
       if (accessToken) {
         setToken(accessToken);
@@ -130,7 +204,8 @@ export function usePatientSignUp(): UsePatientSignUpResult {
       );
       setStatus('success');
       onSuccess();
-    } catch {
+    } catch (error) {
+      setErrorMessage(mapSignUpErrorMessage(extractErrorCode(error) ?? 'unknown_error', 'register'));
       setStatus('error');
     }
   }
@@ -140,6 +215,7 @@ export function usePatientSignUp(): UsePatientSignUpResult {
     errors,
     passwordStrength,
     status,
+    errorMessage,
     isFormValid,
     showPassword,
     handleChange,

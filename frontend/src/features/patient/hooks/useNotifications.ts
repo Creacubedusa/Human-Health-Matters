@@ -7,6 +7,7 @@ type Status = 'loading' | 'error' | 'success';
 
 interface UseNotificationsResult {
   status: Status;
+  hasNotifications: boolean;
   filteredNotifications: Notification[];
   activeFilter: NotificationFilter;
   setFilter: (filter: NotificationFilter) => void;
@@ -50,6 +51,7 @@ export function useNotifications(): UseNotificationsResult {
 
   return {
     status,
+    hasNotifications: notifications.length > 0,
     filteredNotifications,
     activeFilter,
     setFilter,

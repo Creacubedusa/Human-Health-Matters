@@ -1,16 +1,12 @@
 import { useRouter } from 'expo-router';
 import { CarePlanView } from '@features/patient/screens/CarePlanView';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function CareScreen() {
   const router = useRouter();
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)');
+    goBackOrReplace(router, '/(patient)');
   }
 
   return (

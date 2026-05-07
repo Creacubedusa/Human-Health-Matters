@@ -1,14 +1,17 @@
-export interface DonationActivity {
+export interface DonorLiveActivity {
   id: string;
+  diagnosis: string;
+  patientType: string;
   amount: number;
-  date: string;
-  patientInitials?: string;
+  timeLabel: string;
 }
 
 export interface DonorDashboard {
   donorName: string;
-  totalDonated: number;
+  careFunding: number;
   patientsHelped: number;
+  impactRate: number;
   poolBalance: number;
-  recentActivity: DonationActivity[];
+  poolProgress: number;
+  liveActivity: DonorLiveActivity[];
 }

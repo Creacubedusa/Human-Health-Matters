@@ -124,7 +124,7 @@ export function CalendarView({
 
     return (
       <View className="mt-1 flex-row items-center justify-center gap-1">
-        {cell.appointments.slice(0, 2).map((appointment, index) => (
+        {cell.appointments.slice(0, 3).map((appointment, index) => (
           <View
             key={`${cell.key}-${appointment.id}-dot`}
             className={[
@@ -133,6 +133,11 @@ export function CalendarView({
             ].join(' ')}
           />
         ))}
+        {cell.appointments.length > 3 ? (
+          <Text className="text-[8px] font-medium font-sans text-grey-500">
+            3+
+          </Text>
+        ) : null}
       </View>
     );
   }

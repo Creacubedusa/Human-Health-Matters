@@ -1,13 +1,15 @@
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { useEffect, useMemo, useRef } from 'react';
+import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { Button } from '@shared/components/ui/Button';
 import { usePatientProfileOverview } from '../hooks/usePatientProfileOverview';
-import type { ProfileRecordId } from '../types/profileOverview.types';
+import type { ProfileDetailItem, ProfileRecordId } from '../types/profileOverview.types';
 import { HealthcareSupportCard } from '../components/profile/HealthcareSupportCard';
 import { MedicalRecordsSection } from '../components/profile/MedicalRecordsSection';
 import { ProfileCard } from '../components/profile/ProfileCard';
+import { ProfileDetailEditModal } from '../components/profile/ProfileDetailEditModal';
 import { ProfileDetailsSection } from '../components/profile/ProfileDetailsSection';
 import { ProfileHeader } from '../components/profile/ProfileHeader';
 import { ProfileSetupModal } from '../components/profile/ProfileSetupModal';
@@ -37,10 +39,41 @@ export function PatientProfileOverviewView({
     status,
     profile,
     isSetupModalVisible,
+    selectedField,
+    isDetailModalVisible,
+    isEditingDetail,
+    detailFieldValue,
+    detailValidationError,
+    isSavingDetail,
     dismissSetupModal,
+    openDetailModal,
+    closeDetailModal,
+    enableDetailEditing,
+    updateDetailValue,
+    saveDetailValue,
     setNotificationEnabled,
     retry,
   } = usePatientProfileOverview();
+  const detailInputRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    if (!isDetailModalVisible || !isEditingDetail) return;
+
+    const timeoutId = setTimeout(() => detailInputRef.current?.focus(), 50);
+    return () => clearTimeout(timeoutId);
+  }, [isDetailModalVisible, isEditingDetail]);
+
+  const detailKeyboardTypes: Record<ProfileDetailItem['id'], 'default' | 'phone-pad' | 'email-address'> = {
+    phone: 'phone-pad',
+    email: 'email-address',
+    address: 'default',
+    nationality: 'default',
+  };
+
+  const detailTitle = useMemo(() => {
+    if (!selectedField) return '';
+    return t(`profileOverview.${selectedField}`);
+  }, [selectedField, t]);
 
   const header = (
     <ProfileHeader
@@ -129,7 +162,27 @@ export function PatientProfileOverviewView({
             address: t('profileOverview.address'),
             nationality: t('profileOverview.nationality'),
           }}
-          onEdit={onEdit}
+          onEdit={openDetailModal}
+        />
+
+        <ProfileDetailEditModal
+          visible={isDetailModalVisible}
+          title={detailTitle}
+          value={detailFieldValue}
+          saveLabel={t('profileOverview.save')}
+          closeLabel={t('profileOverview.closeDetailEdit')}
+          editLabel={t('profileOverview.editField')}
+          keyboardType={selectedField ? detailKeyboardTypes[selectedField] : 'default'}
+          isEditing={isEditingDetail}
+          isSaving={isSavingDetail}
+          error={detailValidationError ? t(detailValidationError) : undefined}
+          inputRef={detailInputRef}
+          onChangeValue={updateDetailValue}
+          onEnableEditing={enableDetailEditing}
+          onClose={closeDetailModal}
+          onSave={() => {
+            void saveDetailValue();
+          }}
         />
 
         <HealthcareSupportCard
@@ -155,7 +208,12 @@ export function PatientProfileOverviewView({
         />
 
         <View className="pt-2">
-          <Button label={t('common.logout', { defaultValue: 'Logout' })} onPress={onLogout} variant="outline" size="large" />
+          <Button
+            label={t('common.logout', { defaultValue: 'Logout' })}
+            onPress={onLogout}
+            variant="outline"
+            size="large"
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

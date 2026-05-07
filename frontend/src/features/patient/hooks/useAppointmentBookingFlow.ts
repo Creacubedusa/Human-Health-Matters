@@ -35,6 +35,7 @@ export interface UseAppointmentBookingFlowResult {
   nuraMessage: string;
   canMakeAppointment: boolean;
   isTimeSlotModalOpen: boolean;
+  isAvailabilityAlertOpen: boolean;
   handleRetry: () => void;
   handleSelectFilter: (filter: DoctorFilterTab) => void;
   handleSelectDoctor: (doctor: DoctorRecommendation) => void;
@@ -46,6 +47,7 @@ export interface UseAppointmentBookingFlowResult {
   handleNextMonth: () => void;
   handleBack: () => BackIntent;
   handleCloseTimeSlotModal: () => void;
+  handleCloseAvailabilityAlert: () => void;
   handleCloseSuccess: () => void;
   handleFinishBooking: (onFinish: (appointment: BookedAppointment) => void) => void;
 }
@@ -88,6 +90,7 @@ export function useAppointmentBookingFlow(): UseAppointmentBookingFlowResult {
   const [selectedTimeSlotId, setSelectedTimeSlotId] = useState<string | null>(null);
   const [bookedAppointment, setBookedAppointment] = useState<BookedAppointment | null>(null);
   const [isTimeSlotModalOpen, setIsTimeSlotModalOpen] = useState(false);
+  const [isAvailabilityAlertOpen, setIsAvailabilityAlertOpen] = useState(false);
   const matchingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const nuraMessage = accessSnapshot
@@ -134,6 +137,7 @@ export function useAppointmentBookingFlow(): UseAppointmentBookingFlowResult {
     setSelectedTimeSlotId(null);
     setBookedAppointment(null);
     setIsTimeSlotModalOpen(false);
+    setIsAvailabilityAlertOpen(false);
 
     matchingTimerRef.current = setTimeout(async () => {
       await loadDoctors('aiRecommended');
@@ -192,11 +196,19 @@ export function useAppointmentBookingFlow(): UseAppointmentBookingFlowResult {
 
   const handleProceedToDateTime = useCallback(async () => {
     if (!selectedDoctor) return;
+    if (!selectedDoctor.hasAvailability) {
+      setIsAvailabilityAlertOpen(true);
+      return;
+    }
 
     try {
       const now = new Date();
       const cursor = { year: now.getFullYear(), month: now.getMonth() + 1 };
       const schedule = await getDoctorSchedule(selectedDoctor.id, cursor);
+      if (!schedule.hasAvailability) {
+        setIsAvailabilityAlertOpen(true);
+        return;
+      }
       setAvailabilitySummary(schedule);
       setCalendarMonth(schedule.month);
       setScheduleCursor(cursor);
@@ -312,6 +324,10 @@ export function useAppointmentBookingFlow(): UseAppointmentBookingFlowResult {
     setIsTimeSlotModalOpen(false);
   }, []);
 
+  const handleCloseAvailabilityAlert = useCallback(() => {
+    setIsAvailabilityAlertOpen(false);
+  }, []);
+
   const handleCloseSuccess = useCallback(() => {
     setStep('dateTime');
   }, []);
@@ -338,6 +354,7 @@ export function useAppointmentBookingFlow(): UseAppointmentBookingFlowResult {
     nuraMessage,
     canMakeAppointment,
     isTimeSlotModalOpen,
+    isAvailabilityAlertOpen,
     handleRetry,
     handleSelectFilter,
     handleSelectDoctor,
@@ -349,6 +366,7 @@ export function useAppointmentBookingFlow(): UseAppointmentBookingFlowResult {
     handleNextMonth,
     handleBack,
     handleCloseTimeSlotModal,
+    handleCloseAvailabilityAlert,
     handleCloseSuccess,
     handleFinishBooking,
   };

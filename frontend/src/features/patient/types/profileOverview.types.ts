@@ -32,11 +32,28 @@ export interface HealthcareSupport {
   report: string[];
 }
 
+export type SupportActivityStatus = 'applied' | 'pending';
+
+export interface SupportActivity {
+  id: string;
+  consultationTitle: string;
+  amount: string;
+  date: string;
+  status: SupportActivityStatus;
+}
+
+export interface HealthcareSupportData {
+  totalSupportReceived: string;
+  totalCareVisits: number;
+  supportActivityList: SupportActivity[];
+}
+
 export interface PatientProfileOverview {
   isProfileComplete: boolean;
   avatarUri: string;
   name: string;
   gender: string;
+  dateOfBirth: string;
   height: string;
   weight: string;
   age: string;
@@ -54,6 +71,7 @@ export interface ProfileOverviewForm {
   avatarUri: string;
   name: string;
   gender: string;
+  dateOfBirth: string;
   height: string;
   weight: string;
   age: string;

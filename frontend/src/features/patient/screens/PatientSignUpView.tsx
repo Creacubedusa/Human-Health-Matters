@@ -66,6 +66,7 @@ export function PatientSignUpView({ onSuccess, onSignIn }: PatientSignUpViewProp
     errors,
     passwordStrength,
     status,
+    errorMessage,
     isFormValid,
     showPassword,
     handleChange,
@@ -211,7 +212,7 @@ export function PatientSignUpView({ onSuccess, onSignIn }: PatientSignUpViewProp
               status="error"
               variant="outline"
               title={t('patientSignUp.errors.submitFailedTitle')}
-              description={t('patientSignUp.errors.submitFailed')}
+              description={errorMessage ?? t('patientSignUp.errors.submitFailed')}
             />
           )}
 

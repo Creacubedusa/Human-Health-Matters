@@ -4,29 +4,42 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { I18nextProvider } from 'react-i18next';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import i18n from '@shared/i18n/config';
 import { kvGet } from '@shared/storage/kv';
 import { ToastHost } from '@shared/components/ui/ToastHost';
 
-SplashScreen.preventAutoHideAsync();
+void SplashScreen.preventAutoHideAsync().catch(() => {
+  // Ignore duplicate or platform-specific splash errors during bootstrap.
+});
 
 export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
-      const stored = await kvGet('app_language');
-      if (stored && stored !== i18n.language) {
-        await i18n.changeLanguage(stored);
+      try {
+        const stored = await kvGet('app_language');
+        if (stored && stored !== i18n.language) {
+          await i18n.changeLanguage(stored);
+        }
+      } catch (error) {
+        console.warn('Root layout bootstrap failed', error);
+      } finally {
+        await SplashScreen.hideAsync().catch(() => {
+          // Avoid trapping the app on the native splash screen.
+        });
       }
-      SplashScreen.hideAsync();
     }
-    prepare();
+
+    void prepare();
   }, []);
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <Stack screenOptions={{ headerShown: false }} />
-      <ToastHost />
-    </I18nextProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <I18nextProvider i18n={i18n}>
+        <Stack screenOptions={{ headerShown: false }} />
+        <ToastHost />
+      </I18nextProvider>
+    </GestureHandlerRootView>
   );
 }

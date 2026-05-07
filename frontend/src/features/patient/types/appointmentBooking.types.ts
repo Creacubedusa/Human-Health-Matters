@@ -32,6 +32,7 @@ export interface DoctorRecommendation {
   experienceLabel: string;
   about: string;
   availabilityRange: string;
+  hasAvailability: boolean;
 }
 
 export interface CalendarDayAvailability {
@@ -41,6 +42,7 @@ export interface CalendarDayAvailability {
   isCurrentMonth: boolean;
   isAvailable: boolean;
   availabilityDots: AvailabilityDotTone[];
+  appointmentCountLabel: string | null;
 }
 
 export interface AppointmentCalendarMonth {
@@ -56,6 +58,7 @@ export interface AppointmentTimeSlot {
 }
 
 export interface DoctorAvailabilitySummary {
+  hasAvailability: boolean;
   month: AppointmentCalendarMonth;
   timeSlotsByDate: Record<string, AppointmentTimeSlot[]>;
 }

@@ -1,6 +1,6 @@
-import type { PatientProfileOverview, ProfileOverviewForm } from '../types/profileOverview.types';
-import { http } from '@shared/api/http';
 import { z } from 'zod';
+import { http } from '@shared/api/http';
+import type { PatientProfileOverview, ProfileOverviewForm } from '../types/profileOverview.types';
 
 const PROFILE_AVATAR_URI = 'https://www.figma.com/api/mcp/asset/358adde8-f227-41f9-bef3-5355c4d8580d';
 
@@ -31,6 +31,7 @@ export async function fetchPatientProfileOverview(): Promise<PatientProfileOverv
   const gender = typeof profileObj.gender === 'string' ? profileObj.gender : '';
   const nationality = typeof profileObj.nationality === 'string' ? profileObj.nationality : '';
   const address = typeof profileObj.address === 'string' ? profileObj.address : '';
+  const dateOfBirth = typeof profileObj.dateOfBirth === 'string' ? profileObj.dateOfBirth : '';
 
   const weight =
     typeof profileObj.weight === 'number' && typeof profileObj.weightUnit === 'string'
@@ -54,9 +55,12 @@ export async function fetchPatientProfileOverview(): Promise<PatientProfileOverv
 
   return {
     isProfileComplete: Boolean(api.onboardingCompletedAt),
-    avatarUri: overview?.avatarUri ?? (typeof profileObj.avatarUri === 'string' ? profileObj.avatarUri : PROFILE_AVATAR_URI),
+    avatarUri:
+      overview?.avatarUri ??
+      (typeof profileObj.avatarUri === 'string' ? profileObj.avatarUri : PROFILE_AVATAR_URI),
     name,
     gender: overview?.gender ?? gender,
+    dateOfBirth: overview?.dateOfBirth ?? dateOfBirth,
     height,
     weight,
     age: overview?.age ?? '--',

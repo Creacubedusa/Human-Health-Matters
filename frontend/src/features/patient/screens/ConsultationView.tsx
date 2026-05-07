@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
-import { useConsultation } from '../hooks/useConsultation';
 import { InAppCallWebView } from '@shared/components/ui/InAppCallWebView';
+import { useConsultation } from '../hooks/useConsultation';
 import { AINoteIndicator } from '../components/consultation/AINoteIndicator';
 import { FloatingDoctorCard } from '../components/consultation/FloatingDoctorCard';
 import { CallControls } from '../components/consultation/CallControls';
@@ -20,8 +20,6 @@ const PATIENT_INITIALS = 'A';
 export function ConsultationView() {
   const { t } = useTranslation();
   const consultation = useConsultation();
-
-  // Card drawer state — hoisted here so ConsultationView owns it
   const [cardExpanded, setCardExpanded] = useState(false);
   const [cardTab, setCardTab] = useState<'language' | 'transcription'>('language');
 
@@ -45,8 +43,6 @@ export function ConsultationView() {
 
   return (
     <View className="flex-1 bg-black">
-
-      {/* ── Video area ─────────────────────────────────── */}
       <View className="flex-1 relative">
         {consultation.videoOn ? (
           <View className="flex-1 bg-black items-center justify-center px-6 gap-4">
@@ -67,10 +63,8 @@ export function ConsultationView() {
           </View>
         )}
 
-        {/* AI note indicator (top-left) */}
         <AINoteIndicator active={consultation.aiNoteActive} />
 
-        {/* Floating doctor card (top-right) */}
         {consultation.doctor && (
           <FloatingDoctorCard
             doctorName={consultation.doctor.name}
@@ -79,7 +73,6 @@ export function ConsultationView() {
           />
         )}
 
-        {/* Patient name + timer — centered */}
         <View className="absolute bottom-[72px] left-0 right-0 items-center gap-2">
           <Text className="text-white text-[24px] font-semibold font-sans leading-7">
             {PATIENT_NAME}
@@ -89,7 +82,6 @@ export function ConsultationView() {
           </Text>
         </View>
 
-        {/* Call controls — centred at bottom of video */}
         <View className="absolute bottom-6 left-0 right-0">
           <CallControls
             muted={consultation.muted}
@@ -103,7 +95,6 @@ export function ConsultationView() {
         </View>
       </View>
 
-      {/* ── Language / Transcription card ──────────────── */}
       <View className="bg-black">
         <LanguageTranscriptionCard
           selectedLanguage={consultation.selectedLanguage}
@@ -119,7 +110,6 @@ export function ConsultationView() {
         <SafeAreaView edges={['bottom']} className="bg-black" />
       </View>
 
-      {/* ── Modals ─────────────────────────────────────── */}
       <AudioDeviceModal
         visible={consultation.audioModalOpen}
         muted={consultation.muted}
@@ -134,7 +124,6 @@ export function ConsultationView() {
         onCancel={() => consultation.setEndCallModalOpen(false)}
       />
 
-      {/* ── Full-screen chat panels (Modals) ───────────── */}
       <DoctorChatPanel
         visible={consultation.activePanel === 'doctorChat'}
         messages={consultation.doctorMessages}

@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { AppointmentHomeView } from '@features/patient/screens/AppointmentHomeView';
 import { useAppointmentManagementStore } from '@features/patient/store/appointmentManagement.store';
+import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 
 export default function AppointmentScreen() {
   const router = useRouter();
@@ -17,12 +18,7 @@ export default function AppointmentScreen() {
   }
 
   function handleBack() {
-    if (router.canGoBack()) {
-      router.back();
-      return;
-    }
-
-    router.replace('/(patient)');
+    goBackOrReplace(router, '/(patient)');
   }
 
   return (

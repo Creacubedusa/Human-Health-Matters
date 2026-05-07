@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@shared/components/ui/Alert';
@@ -52,6 +52,7 @@ export function AppointmentBookingView({
     nuraMessage,
     canMakeAppointment,
     isTimeSlotModalOpen,
+    isAvailabilityAlertOpen,
     handleRetry,
     handleSelectFilter,
     handleSelectDoctor,
@@ -63,6 +64,7 @@ export function AppointmentBookingView({
     handleNextMonth,
     handleBack,
     handleCloseTimeSlotModal,
+    handleCloseAvailabilityAlert,
     handleCloseSuccess,
     handleFinishBooking,
   } = useAppointmentBookingFlow();
@@ -257,6 +259,33 @@ export function AppointmentBookingView({
           onClose={handleCloseSuccess}
           onConfirm={() => handleFinishBooking(() => onFinish())}
         />
+
+        <Modal
+          visible={isAvailabilityAlertOpen}
+          transparent
+          animationType="fade"
+          onRequestClose={handleCloseAvailabilityAlert}
+        >
+          <View className="flex-1 items-center justify-center bg-grey-900/30 px-6">
+            <View className="w-full max-w-[320px] rounded-[24px] bg-white px-6 py-6">
+              <Text className="text-h5 font-semibold font-sans text-grey-900">
+                {t('appointmentBooking.availabilityAlert.title')}
+              </Text>
+              <Text className="mt-3 text-b3 font-sans leading-5 text-grey-600">
+                {t('appointmentBooking.availabilityAlert.description')}
+              </Text>
+              <Pressable
+                onPress={handleCloseAvailabilityAlert}
+                className="mt-6 h-12 items-center justify-center rounded-sm bg-primary-500"
+                accessibilityRole="button"
+              >
+                <Text className="text-btn-large font-semibold font-sans text-white">
+                  {t('appointmentBooking.availabilityAlert.cta')}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </View>
     );
   }

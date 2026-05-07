@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { fetchCarePlans } from '../services/carePlan.service';
+import { useCallback, useMemo, useState } from 'react';
+import { useCarePlanStore } from '../store/carePlan.store';
 import type { CarePlan, CarePlanStatus } from '../types/carePlan.types';
 
 type CarePlanLoadStatus = 'loading' | 'error' | 'empty' | 'success';
@@ -15,25 +15,11 @@ export interface UseCarePlansResult {
 }
 
 export function useCarePlans(initialStatus: CarePlanStatus = 'active'): UseCarePlansResult {
-  const [status, setStatus] = useState<CarePlanLoadStatus>('loading');
-  const [carePlans, setCarePlans] = useState<CarePlan[]>([]);
   const [activeStatus, setActiveStatus] = useState<CarePlanStatus>(initialStatus);
+  const carePlans = useCarePlanStore((state) => state.carePlans);
+  const status: CarePlanLoadStatus = carePlans.length > 0 ? 'success' : 'empty';
 
-  const loadCarePlans = useCallback(async () => {
-    setStatus('loading');
-
-    try {
-      const data = await fetchCarePlans();
-      setCarePlans(data);
-      setStatus(data.length > 0 ? 'success' : 'empty');
-    } catch {
-      setStatus('error');
-    }
-  }, []);
-
-  useEffect(() => {
-    loadCarePlans();
-  }, [loadCarePlans]);
+  const loadCarePlans = useCallback(() => {}, []);
 
   const selectedCarePlans = useMemo(
     () => carePlans.filter((carePlan) => carePlan.status === activeStatus),

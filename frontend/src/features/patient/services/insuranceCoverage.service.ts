@@ -203,6 +203,44 @@ function buildScenario(request: CoverageVerificationRequest): CoverageResult {
   }
 }
 
+export function getMockCoverageResultForScenario(
+  scenarioId: CoverageScenarioId,
+  options?: { patientName?: string },
+): CoverageResult {
+  const path = scenarioId.startsWith('insured_') ? 'insurance' : 'donor';
+  const patientName = options?.patientName?.trim() || 'Angela Dairo';
+  const [firstName = patientName, ...rest] = patientName.split(' ');
+  const lastName = rest.join(' ');
+
+  const request: CoverageVerificationRequest = {
+    path,
+    scenarioId,
+    insuredForm: {
+      firstName,
+      lastName,
+      dateOfBirth: '',
+      gender: '',
+      insuranceProvider: '',
+      memberId: '',
+      groupNumber: '',
+      subscriberFirstName: '',
+      subscriberLastName: '',
+      subscriberDateOfBirth: '',
+      relationshipToSubscriber: '',
+    },
+    noInsuranceForm: {
+      fullName: patientName,
+      dateOfBirth: '',
+      employmentStatus: '',
+      householdSize: '',
+      householdIncome: '',
+      proofOfIncomeUri: null,
+    },
+  };
+
+  return buildScenario(request);
+}
+
 export async function mockVerifyCoverage(request: CoverageVerificationRequest): Promise<CoverageResult> {
   await new Promise((resolve) => setTimeout(resolve, 250));
   return buildScenario(request);
