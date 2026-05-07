@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +25,7 @@ export function DoctorConsultationsView({
   const { t } = useTranslation();
   const {
     status,
+    refreshing,
     appointments,
     upcomingAppointment,
     cancelModalOpen,
@@ -33,6 +34,7 @@ export function DoctorConsultationsView({
     openRescheduleModal,
     closeModals,
     retry,
+    refresh,
   } = useDoctorAppointmentManagement();
 
   const header = (
@@ -97,6 +99,14 @@ export function DoctorConsultationsView({
         showsVerticalScrollIndicator={false}
         data={appointments}
         keyExtractor={(item: DoctorManagedAppointment) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refresh()}
+            tintColor={primitiveColors['primary-500']}
+            colors={[primitiveColors['primary-500']]}
+          />
+        }
         ListHeaderComponent={
           <View className="gap-4">
             {upcomingAppointment ? (
@@ -133,7 +143,12 @@ export function DoctorConsultationsView({
           </View>
         }
         renderItem={({ item }: { item: DoctorManagedAppointment }) => (
-          <DoctorAppointmentListCard appointment={item} />
+          <DoctorAppointmentListCard
+            appointment={item}
+            onPress={(id) => {
+              if (item.status !== 'cancelled') onJoinAppointment(id);
+            }}
+          />
         )}
       />
 

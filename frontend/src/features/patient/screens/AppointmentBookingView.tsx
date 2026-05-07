@@ -1,6 +1,7 @@
 import { Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'expo-router';
 import { Alert } from '@shared/components/ui/Alert';
 import { Button } from '@shared/components/ui/Button';
 import { DOCTOR_FILTER_TAB_OPTIONS } from '../types/appointmentBooking.types';
@@ -37,6 +38,7 @@ export function AppointmentBookingView({
   onFinish,
 }: AppointmentBookingViewProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const {
     step,
     routeViewState,
@@ -56,6 +58,7 @@ export function AppointmentBookingView({
     handleRetry,
     handleSelectFilter,
     handleSelectDoctor,
+    handleBookNow,
     handleProceedToDateTime,
     handleSelectDate,
     handleSelectTimeSlot,
@@ -68,6 +71,15 @@ export function AppointmentBookingView({
     handleCloseSuccess,
     handleFinishBooking,
   } = useAppointmentBookingFlow();
+
+  async function onBookNowSelected(doctor: typeof doctors[number]) {
+    const appointmentId = await handleBookNow(doctor);
+    if (!appointmentId) return;
+    router.replace({
+      pathname: '/(patient)/consultations',
+      params: { appointmentId },
+    });
+  }
 
   const filterOptions = DOCTOR_FILTER_TAB_OPTIONS.map((option) => ({
     ...option,
@@ -168,7 +180,9 @@ export function AppointmentBookingView({
                 key={doctor.id}
                 doctor={doctor}
                 ctaLabel={t('appointmentBooking.actions.selectDoctor')}
+                bookNowLabel={t('appointmentBooking.actions.bookNow', { defaultValue: 'Book Now' })}
                 onSelect={handleSelectDoctor}
+                onBookNow={(d) => void onBookNowSelected(d)}
               />
             ))}
           </View>
@@ -211,12 +225,23 @@ export function AppointmentBookingView({
             </View>
           </View>
 
-          <Button
-            label={t('appointmentBooking.actions.next')}
-            onPress={() => void handleProceedToDateTime()}
-            size="large"
-            fullWidth
-          />
+          <View className="gap-3">
+            <Button
+              label={t('appointmentBooking.actions.next')}
+              onPress={() => void handleProceedToDateTime()}
+              size="large"
+              fullWidth
+            />
+            <Pressable
+              className="h-12 items-center justify-center rounded-xl bg-green-600"
+              onPress={() => void onBookNowSelected(selectedDoctor)}
+              accessibilityRole="button"
+            >
+              <Text className="text-[14px] font-semibold font-sans text-white">
+                {t('appointmentBooking.actions.bookNow', { defaultValue: 'Book Now' })}
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     );

@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
@@ -8,7 +8,6 @@ import { primitiveColors } from '@design/tokens';
 import { toast } from '@shared/components/ui/toast';
 import { useDoctorHome } from '../hooks/useDoctorHome';
 import { useDoctorNuraAI } from '../hooks/useDoctorNuraAI';
-import { useDoctorPatientsStore } from '../store/doctorPatients.store';
 import { PatientQueueCard } from '../components/home/PatientQueueCard';
 import type { PatientInQueue } from '../types/doctor.types';
 
@@ -45,9 +44,8 @@ const QUICK_ACTIONS = [
 export function DoctorHomeView() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { status, homeDashboard, retry } = useDoctorHome();
+  const { status, refreshing, homeDashboard, doctorAvatar, retry, refresh } = useDoctorHome();
   const { viewPatientSummary } = useDoctorNuraAI();
-  const patients = useDoctorPatientsStore((state) => state.patients);
 
   if (status === 'loading') {
     return (
@@ -81,12 +79,14 @@ export function DoctorHomeView() {
 
   const { doctorName, stats, patientsQueue } = homeDashboard;
   const hasQueue = patientsQueue.length > 0;
-  const avatarUri = `https://i.pravatar.cc/100?u=doctor-home-${doctorName}`;
+  const avatarUri =
+    doctorAvatar ?? `https://i.pravatar.cc/100?u=doctor-home-${doctorName}`;
 
-  function handleJoinCall(patientId: string) {
+  function handleJoinCall(appointmentId: string) {
+    if (!appointmentId) return;
     router.push({
       pathname: '/(doctor)/consultation',
-      params: { appointmentId: patientId },
+      params: { appointmentId },
     });
   }
 
@@ -100,7 +100,7 @@ export function DoctorHomeView() {
     action: (typeof QUICK_ACTIONS)[number],
   ) {
     if (action.key === 'prescription' || action.key === 'test') {
-      const targetPatientId = patientsQueue[0]?.id ?? patients[0]?.id;
+      const targetPatientId = patientsQueue[0]?.id;
 
       if (!targetPatientId) {
         toast.info('No patient record is available yet for this action.');
@@ -202,6 +202,14 @@ export function DoctorHomeView() {
         className="flex-1"
         contentContainerClassName="px-4 pt-4 pb-24 gap-6"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refresh()}
+            tintColor={primitiveColors['primary-500']}
+            colors={[primitiveColors['primary-500']]}
+          />
+        }
       >
         {/* ── Greeting ── */}
         <View className="gap-1">
@@ -276,15 +284,18 @@ export function DoctorHomeView() {
           </Text>
 
           {hasQueue ? (
-            patientsQueue.map((patient: PatientInQueue) => (
-              <PatientQueueCard
-                key={patient.id}
-                patient={patient}
-                onJoinCall={handleJoinCall}
-                onViewAiSummary={handleViewAiSummary}
-                testID={`queue-card-${patient.id}`}
-              />
-            ))
+            patientsQueue.map((patient: PatientInQueue) => {
+              const queueKey = patient.appointmentId ?? patient.id;
+              return (
+                <PatientQueueCard
+                  key={queueKey}
+                  patient={patient}
+                  onJoinCall={handleJoinCall}
+                  onViewAiSummary={handleViewAiSummary}
+                  testID={`queue-card-${queueKey}`}
+                />
+              );
+            })
           ) : (
             <View className="items-center py-14 px-6 gap-2">
               <Text className="text-h4 font-semibold font-sans text-grey-900 text-center">

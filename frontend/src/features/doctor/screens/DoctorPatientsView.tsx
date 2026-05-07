@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,7 @@ import { DoctorPatientEmptyState } from '../components/patients/DoctorPatientEmp
 export function DoctorPatientsView() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { status, query, setQuery, patients } = useDoctorPatients();
+  const { status, refreshing, query, setQuery, patients, refresh } = useDoctorPatients();
 
   if (status === 'loading') {
     return (
@@ -44,6 +44,14 @@ export function DoctorPatientsView() {
         className="flex-1"
         contentContainerClassName="px-4 pt-6 pb-24 gap-4"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refresh()}
+            tintColor={primitiveColors['primary-500']}
+            colors={[primitiveColors['primary-500']]}
+          />
+        }
       >
         <View className="flex-row items-center gap-3 rounded-xl border-[1.5px] border-grey-200 bg-white px-3 py-3">
           <Ionicons name="search" size={22} color={primitiveColors['grey-500']} />

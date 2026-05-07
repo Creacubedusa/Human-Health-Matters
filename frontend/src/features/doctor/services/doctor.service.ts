@@ -14,6 +14,7 @@ export type DoctorPatientListItem = {
   id: string;
   name: string;
   lastVisit: string;
+  avatarUri: string | null;
 };
 
 export async function fetchDoctorPatients(): Promise<DoctorPatientListItem[]> {
@@ -26,7 +27,12 @@ export type DoctorAppointment = {
   status: 'UPCOMING' | 'COMPLETED' | 'CANCELLED';
   startsAt: string;
   endsAt: string;
-  patient?: { id: string; firstName: string; lastName: string };
+  patient?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    avatarUri?: string | null;
+  };
 };
 
 export async function fetchDoctorConsultations(): Promise<DoctorAppointment[]> {
@@ -34,9 +40,18 @@ export async function fetchDoctorConsultations(): Promise<DoctorAppointment[]> {
   return res.data;
 }
 
+const FALLBACK_PATIENT_AVATAR =
+  'https://res.cloudinary.com/du2t1ntig/image/upload/v1746360001/default-avatar_xfybhq.png';
+
 export async function fetchDoctorManagedAppointments(): Promise<DoctorManagedAppointment[]> {
   const res = await http.get<DoctorAppointment[]>('/appointments');
-  return res.data.map((a) => {
+  const seen = new Set<string>();
+  const unique = res.data.filter((a) => {
+    if (!a?.id || seen.has(a.id)) return false;
+    seen.add(a.id);
+    return true;
+  });
+  return unique.map((a) => {
     const startsAt = new Date(a.startsAt);
     const patientName = a.patient?.firstName || a.patient?.lastName
       ? [a.patient?.firstName, a.patient?.lastName].filter(Boolean).join(' ')
@@ -51,7 +66,7 @@ export async function fetchDoctorManagedAppointments(): Promise<DoctorManagedApp
       id: a.id,
       patientId: a.patient?.id,
       patientName,
-      patientAvatar: `https://i.pravatar.cc/150?u=${a.patient?.id ?? a.id}`,
+      patientAvatar: a.patient?.avatarUri ?? FALLBACK_PATIENT_AVATAR,
       specialty: '',
       startsAt: a.startsAt,
       endsAt: a.endsAt,

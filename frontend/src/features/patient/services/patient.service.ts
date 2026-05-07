@@ -7,17 +7,12 @@ export async function fetchPatientDashboard(): Promise<PatientHomeDashboard> {
   const base = res.data;
 
   const appointments = await fetchAppointments();
-  const joinId = appointments.find((a) => a.status === 'upcoming')?.id ?? '';
   const recentActivities: Activity[] = appointments
     .filter((a) => a.status !== 'cancelled')
     .slice(0, 6)
     .map((a) => {
       const status =
-        a.status === 'completed'
-          ? ('completed' as const)
-          : a.id === joinId
-            ? ('join' as const)
-            : ('upcoming' as const);
+        a.status === 'completed' ? ('completed' as const) : ('join' as const);
 
       return {
         type: 'consultation' as const,
@@ -26,7 +21,7 @@ export async function fetchPatientDashboard(): Promise<PatientHomeDashboard> {
         subtitle: a.specialty || 'Consultation',
         date: a.date,
         status,
-        canJoin: a.status === 'upcoming' && a.id === joinId,
+        canJoin: a.status === 'upcoming',
       };
     });
 

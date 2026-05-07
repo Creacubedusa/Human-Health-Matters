@@ -2,10 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppointmentBookingStore } from '../store/appointmentBooking.store';
 import {
   createBookedAppointment,
+  createInstantAppointment,
   getDoctorRecommendations,
   getDoctorSchedule,
   getNuraRecommendationMessage,
 } from '../services/appointmentBooking.service';
+import { toast } from '@shared/components/ui/toast';
 import type {
   AppointmentBookingStep,
   AppointmentCalendarMonth,
@@ -39,6 +41,7 @@ export interface UseAppointmentBookingFlowResult {
   handleRetry: () => void;
   handleSelectFilter: (filter: DoctorFilterTab) => void;
   handleSelectDoctor: (doctor: DoctorRecommendation) => void;
+  handleBookNow: (doctor: DoctorRecommendation) => Promise<string | null>;
   handleProceedToDateTime: () => void;
   handleSelectDate: (dateKey: string) => void;
   handleSelectTimeSlot: (timeSlotId: string) => void;
@@ -193,6 +196,17 @@ export function useAppointmentBookingFlow(): UseAppointmentBookingFlowResult {
     setSelectedDoctor(doctor);
     setStep('doctorDetails');
   }, []);
+
+  const handleBookNow = useCallback(async (doctor: DoctorRecommendation) => {
+    try {
+      const instant = await createInstantAppointment(doctor.id);
+      clearAccessSnapshot();
+      return instant.appointmentId;
+    } catch {
+      toast.error('Could not start instant consultation. Please try again.');
+      return null;
+    }
+  }, [clearAccessSnapshot]);
 
   const handleProceedToDateTime = useCallback(async () => {
     if (!selectedDoctor) return;
@@ -358,6 +372,7 @@ export function useAppointmentBookingFlow(): UseAppointmentBookingFlowResult {
     handleRetry,
     handleSelectFilter,
     handleSelectDoctor,
+    handleBookNow,
     handleProceedToDateTime,
     handleSelectDate,
     handleSelectTimeSlot,

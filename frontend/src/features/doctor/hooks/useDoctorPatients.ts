@@ -1,19 +1,60 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useDoctorPatientsStore } from '../store/doctorPatients.store';
+import { format } from 'date-fns';
+import { fetchDoctorPatients } from '../services/doctor.service';
+import type { DoctorPatientListItem } from '../types/doctor.types';
 
-type Status = 'loading' | 'success';
+type Status = 'loading' | 'error' | 'success';
+
+function buildPatientItem(remote: {
+  id: string;
+  name: string;
+  lastVisit: string;
+  avatarUri: string | null;
+}): DoctorPatientListItem {
+  return {
+    id: remote.id,
+    name: remote.name || 'Patient',
+    age: 0,
+    gender: 'Patient',
+    appointmentTime: format(new Date(remote.lastVisit), 'MMM d, yyyy'),
+    severity: 'low',
+    aiSummary: {
+      label: 'Last visit',
+      summary: `Last visit on ${format(new Date(remote.lastVisit), 'MMM d, yyyy')}`,
+    },
+    symptoms: [],
+    avatarUri: remote.avatarUri ?? undefined,
+  };
+}
 
 export function useDoctorPatients() {
-  const patients = useDoctorPatientsStore((state) => state.patients);
+  const [patients, setPatients] = useState<DoctorPatientListItem[]>([]);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<Status>('loading');
+  const [refreshing, setRefreshing] = useState(false);
+
+  async function load(options?: { silent?: boolean }) {
+    if (!options?.silent) setStatus('loading');
+    try {
+      const remote = await fetchDoctorPatients();
+      setPatients(remote.map(buildPatientItem));
+      setStatus('success');
+    } catch {
+      if (!options?.silent) setStatus('error');
+    }
+  }
+
+  async function refresh() {
+    setRefreshing(true);
+    try {
+      await load({ silent: true });
+    } finally {
+      setRefreshing(false);
+    }
+  }
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setStatus('success');
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
+    void load();
   }, []);
 
   const filteredPatients = useMemo(() => {
@@ -50,10 +91,13 @@ export function useDoctorPatients() {
 
   return {
     status,
+    refreshing,
     query,
     setQuery,
     patients: filteredPatients,
     allPatientsCount: patients.length,
     isAiEnhancedSearch,
+    retry: () => void load(),
+    refresh,
   };
 }

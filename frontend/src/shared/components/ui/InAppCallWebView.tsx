@@ -5,6 +5,7 @@ import type { ComponentProps } from 'react';
 import { Platform } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useTranslation } from 'react-i18next';
+import * as Linking from 'expo-linking';
 
 export interface InAppCallWebViewProps {
   url: string;
@@ -25,12 +26,22 @@ export function InAppCallWebView({ url, onBack }: InAppCallWebViewProps) {
         <Pressable onPress={onBack} accessibilityRole="button">
           <Text className="text-white font-sans">{t('common.back')}</Text>
         </Pressable>
-        <View className="flex-row gap-3">
+        <View className="flex-row gap-4">
+          <Pressable
+            onPress={() => void Linking.openURL(url)}
+            accessibilityRole="button"
+          >
+            <Text className="text-white font-sans">
+              {t('consultation.openInBrowser', { defaultValue: 'Open in browser' })}
+            </Text>
+          </Pressable>
           <Pressable
             onPress={() => webviewRef.current?.reload()}
             accessibilityRole="button"
           >
-            <Text className="text-white font-sans">{t('common.retry', { defaultValue: 'Reload' })}</Text>
+            <Text className="text-white font-sans">
+              {t('common.retry', { defaultValue: 'Reload' })}
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -42,6 +53,7 @@ export function InAppCallWebView({ url, onBack }: InAppCallWebViewProps) {
         allowsInlineMediaPlayback
         mediaPlaybackRequiresUserAction={false}
         mediaCapturePermissionGrantType={mediaCapturePermissionGrantType}
+        onPermissionRequest={(event) => event?.grant?.()}
         javaScriptEnabled
         domStorageEnabled
         originWhitelist={['*']}

@@ -16,6 +16,7 @@ type ApiAppointment = {
   startsAt: string;
   endsAt: string;
   doctor?: {
+    id?: string;
     firstName?: string;
     lastName?: string;
     doctorProfile?: { avatarUri?: string | null; specialties?: string[] };
@@ -24,7 +25,13 @@ type ApiAppointment = {
 
 export async function fetchAppointments(): Promise<PatientAppointment[]> {
   const res = await http.get<ApiAppointment[]>('/appointments');
-  return res.data.map((a) => {
+  const seen = new Set<string>();
+  const unique = res.data.filter((a) => {
+    if (!a?.id || seen.has(a.id)) return false;
+    seen.add(a.id);
+    return true;
+  });
+  return unique.map((a) => {
     const startsAt = new Date(a.startsAt);
     const doctorName = a.doctor?.firstName || a.doctor?.lastName
       ? `Dr. ${[a.doctor?.firstName, a.doctor?.lastName].filter(Boolean).join(' ')}`
@@ -40,9 +47,12 @@ export async function fetchAppointments(): Promise<PatientAppointment[]> {
           : 'upcoming';
     return {
       id: a.id,
+      doctorId: a.doctor?.id ?? null,
       doctorName,
       doctorAvatar,
       specialty,
+      startsAt: a.startsAt,
+      endsAt: a.endsAt,
       date: format(startsAt, 'MMMM d, yyyy'),
       time: format(startsAt, 'h:mm a'),
       status,

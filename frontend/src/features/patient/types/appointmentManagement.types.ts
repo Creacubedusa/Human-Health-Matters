@@ -3,9 +3,12 @@ export type AppointmentActionType = 'cancel' | 'reschedule';
 
 export interface PatientAppointment {
   id: string;
+  doctorId: string | null;
   doctorName: string;
   doctorAvatar: string;
   specialty: string;
+  startsAt: string;
+  endsAt: string;
   date: string;
   time: string;
   status: AppointmentStatus;

@@ -2,6 +2,7 @@ import {
   ActivityIndicator,
   Image,
   Pressable,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -51,7 +52,7 @@ export function PatientHomeView({
   onJoinConsultation,
 }: PatientHomeViewProps) {
   const { t } = useTranslation();
-  const { status, dashboard, retry } = usePatientHome();
+  const { status, refreshing, dashboard, retry, refresh } = usePatientHome();
 
   // ── Loading ───────────────────────────────────────────────────────────────
   if (status === 'loading') {
@@ -136,6 +137,14 @@ export function PatientHomeView({
         className="flex-1"
         contentContainerClassName={['px-4 pt-4 gap-6 pb-28'].join(' ')}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refresh()}
+            tintColor={primitiveColors['primary-500']}
+            colors={[primitiveColors['primary-500']]}
+          />
+        }
       >
         {/* Greeting */}
         <View className="gap-1">

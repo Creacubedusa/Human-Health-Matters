@@ -10,6 +10,7 @@ export function useDoctorAppointmentManagement() {
   const [status, setStatus] = useState<Status>(
     store.appointments.length > 0 ? 'success' : 'loading',
   );
+  const [refreshing, setRefreshing] = useState(false);
 
   const upcomingAppointment =
     store.appointments.find((a) => a.status === 'upcoming') ?? null;
@@ -23,7 +24,16 @@ export function useDoctorAppointmentManagement() {
       store.setAppointments(data);
       setStatus('success');
     } catch {
-      setStatus('error');
+      if (!options?.silent) setStatus('error');
+    }
+  }
+
+  async function refresh() {
+    setRefreshing(true);
+    try {
+      await load({ silent: true });
+    } finally {
+      setRefreshing(false);
     }
   }
 
@@ -33,6 +43,7 @@ export function useDoctorAppointmentManagement() {
 
   return {
     status,
+    refreshing,
     appointments: store.appointments,
     upcomingAppointment,
     selectedId: store.selectedId,
@@ -48,5 +59,6 @@ export function useDoctorAppointmentManagement() {
     retry: () => {
       void load();
     },
+    refresh,
   };
 }

@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -31,6 +31,7 @@ export function AppointmentHomeView({
   const { t } = useTranslation();
   const {
     status,
+    refreshing,
     appointments,
     upcomingAppointment,
     cancelModalOpen,
@@ -39,6 +40,7 @@ export function AppointmentHomeView({
     openRescheduleModal,
     closeModals,
     retry,
+    refresh,
   } = useAppointmentManagement();
 
   const header = (
@@ -88,7 +90,7 @@ export function AppointmentHomeView({
             {t('appointmentManagement.errorMessage')}
           </Text>
           <Pressable
-            onPress={retry}
+            onPress={() => void retry()}
             className="bg-primary-500 rounded-xl px-6 py-3"
             accessibilityRole="button"
           >
@@ -113,6 +115,14 @@ export function AppointmentHomeView({
         showsVerticalScrollIndicator={false}
         data={appointments}
         keyExtractor={(item: PatientAppointment) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refresh()}
+            tintColor={primitiveColors['primary-500']}
+            colors={[primitiveColors['primary-500']]}
+          />
+        }
         ListHeaderComponent={
           <View className="gap-4">
             {/* Upcoming appointment card */}
@@ -154,7 +164,12 @@ export function AppointmentHomeView({
           </View>
         }
         renderItem={({ item }: { item: PatientAppointment }) => (
-          <AppointmentListCard appointment={item} />
+          <AppointmentListCard
+            appointment={item}
+            onPress={(id) => {
+              if (item.status !== 'cancelled') onJoinAppointment(id);
+            }}
+          />
         )}
       />
 

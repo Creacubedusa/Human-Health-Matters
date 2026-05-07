@@ -1,4 +1,4 @@
-import { ScrollView, Text, TextInput, View } from 'react-native';
+import { Image, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -22,9 +22,10 @@ export function ConsultationReviewView() {
     handleSubmitReview,
   } = useConsultation();
 
-  const doctorName = doctor?.name ?? 'Dr. Paul Grant';
-  const specialty = doctor?.specialty ?? 'General Practitioner';
-  const initials = doctor?.avatarInitials ?? 'PG';
+  const doctorName = doctor?.name ?? 'Doctor';
+  const specialty = doctor?.specialty ?? 'Consultation';
+  const initials = doctor?.avatarInitials ?? 'DR';
+  const avatarUri = doctor?.avatarUri ?? null;
 
   return (
     <SafeAreaView className="flex-1 bg-bg-default">
@@ -44,8 +45,12 @@ export function ConsultationReviewView() {
 
         {/* Doctor info */}
         <View className="items-center gap-3">
-          <View className="w-20 h-20 rounded-full bg-primary-500 items-center justify-center">
-            <Text className="text-h4 font-semibold font-sans text-white">{initials}</Text>
+          <View className="w-20 h-20 rounded-full bg-primary-500 items-center justify-center overflow-hidden">
+            {avatarUri ? (
+              <Image source={{ uri: avatarUri }} style={{ width: 80, height: 80 }} />
+            ) : (
+              <Text className="text-h4 font-semibold font-sans text-white">{initials}</Text>
+            )}
           </View>
           <View className="items-center gap-0.5">
             <Text className="text-s1 font-semibold font-sans text-text-primary">{doctorName}</Text>

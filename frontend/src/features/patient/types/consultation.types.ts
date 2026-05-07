@@ -24,6 +24,7 @@ export interface MockDoctor {
   name: string;
   specialty: string;
   avatarInitials: string;
+  avatarUri?: string | null;
 }
 
 export interface ConsultationSession {

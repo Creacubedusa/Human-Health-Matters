@@ -9,13 +9,17 @@ import { DoctorAvatar } from './DoctorAvatar';
 export interface DoctorRecommendationCardProps {
   doctor: DoctorRecommendation;
   ctaLabel: string;
+  bookNowLabel?: string;
   onSelect: (doctor: DoctorRecommendation) => void;
+  onBookNow?: (doctor: DoctorRecommendation) => void;
 }
 
 export function DoctorRecommendationCard({
   doctor,
   ctaLabel,
+  bookNowLabel,
   onSelect,
+  onBookNow,
 }: DoctorRecommendationCardProps) {
   return (
     <View className="rounded-md border border-grey-300 bg-white px-3 py-[18px]">
@@ -81,6 +85,18 @@ export function DoctorRecommendationCard({
           size="large"
           fullWidth
         />
+
+        {onBookNow ? (
+          <Pressable
+            className="h-11 items-center justify-center rounded-xl bg-green-600"
+            onPress={() => onBookNow(doctor)}
+            accessibilityRole="button"
+          >
+            <Text className="text-[14px] font-semibold font-sans text-white">
+              {bookNowLabel ?? 'Book Now'}
+            </Text>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   );

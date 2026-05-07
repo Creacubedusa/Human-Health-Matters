@@ -9,7 +9,8 @@ import {
 import { fetchAppointments } from '../services/appointmentManagement.service';
 import { buildDailyJoinUrl, joinAppointmentVideo } from '../services/video.service';
 import { useCallTimer } from './useCallTimer';
-import type { ChatMessage } from '../types/consultation.types';
+import type { ChatMessage, MockDoctor } from '../types/consultation.types';
+import type { PatientAppointment } from '../types/appointmentManagement.types';
 
 function makeId(): string {
   return Math.random().toString(36).slice(2, 9);
@@ -17,6 +18,24 @@ function makeId(): string {
 
 function nowIso(): string {
   return new Date().toISOString();
+}
+
+function initialsFromName(name: string): string {
+  const cleaned = name.replace(/^Dr\.\s*/i, '').trim();
+  const parts = cleaned.split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return 'DR';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0] ?? ''}${parts[parts.length - 1][0] ?? ''}`.toUpperCase();
+}
+
+function buildDoctorFromAppointment(appt: PatientAppointment): MockDoctor {
+  return {
+    id: appt.doctorId ?? appt.id,
+    name: appt.doctorName,
+    specialty: appt.specialty || 'Consultation',
+    avatarInitials: initialsFromName(appt.doctorName),
+    avatarUri: appt.doctorAvatar ?? null,
+  };
 }
 
 export function useConsultation() {
@@ -27,11 +46,26 @@ export function useConsultation() {
 
   useEffect(() => {
     async function boot() {
-      const session = await fetchConsultationSession();
-      store.setDoctor(session.doctor);
+      if (store.callStatus === 'ended' && store.doctor) return;
 
       const appointmentIdFromParams = params.appointmentId ? String(params.appointmentId) : '';
-      const appointmentId = appointmentIdFromParams || (await pickFallbackAppointmentId());
+
+      const appointments = await fetchAppointments().catch(() => [] as PatientAppointment[]);
+      const fallbackUpcoming =
+        appointments.find((appointment) => appointment.status === 'upcoming') ?? null;
+      const matched = appointmentIdFromParams
+        ? (appointments.find((a) => a.id === appointmentIdFromParams) ?? null)
+        : fallbackUpcoming;
+
+      if (matched) {
+        store.setDoctor(buildDoctorFromAppointment(matched));
+      } else {
+        const session = await fetchConsultationSession();
+        store.setDoctor(session.doctor);
+      }
+
+      const appointmentId = appointmentIdFromParams || matched?.id || fallbackUpcoming?.id || '';
+      store.setAppointmentId(appointmentId || null);
       if (!appointmentId) {
         store.setCallStatus('active');
         return;
@@ -46,12 +80,6 @@ export function useConsultation() {
     void boot();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  async function pickFallbackAppointmentId() {
-    const appointments = await fetchAppointments();
-    const upcoming = appointments.find((appointment) => appointment.status === 'upcoming');
-    return upcoming?.id ?? '';
-  }
 
   function handleToggleAudioModal() {
     store.setAudioModalOpen(!store.audioModalOpen);
@@ -127,15 +155,18 @@ export function useConsultation() {
   async function handleSubmitReview() {
     if (store.rating === 0 || store.wouldRecommend === null) return;
     store.setReviewSubmitting(true);
-    await submitReview({
-      sessionId: store.doctor?.id ?? 'unknown',
-      rating: store.rating,
-      reviewText: store.reviewText,
-      wouldRecommend: store.wouldRecommend,
-    });
-    store.setReviewSubmitting(false);
-    store.reset();
-    router.replace('/(patient)');
+    try {
+      await submitReview({
+        sessionId: store.appointmentId ?? '',
+        rating: store.rating,
+        reviewText: store.reviewText,
+        wouldRecommend: store.wouldRecommend,
+      });
+    } finally {
+      store.setReviewSubmitting(false);
+      store.reset();
+      router.replace('/(patient)');
+    }
   }
 
   const canSubmitReview = store.rating > 0 && store.wouldRecommend !== null;

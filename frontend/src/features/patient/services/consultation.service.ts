@@ -1,3 +1,4 @@
+import { http } from '@shared/api/http';
 import type { ConsultationSession, ReviewPayload } from '../types/consultation.types';
 
 const MOCK_SESSION: ConsultationSession = {
@@ -32,6 +33,12 @@ export async function sendAIMessage(text: string): Promise<string> {
   return reply;
 }
 
-export async function submitReview(_payload: ReviewPayload): Promise<void> {
-  await new Promise<void>((r) => setTimeout(r, 800));
+export async function submitReview(payload: ReviewPayload): Promise<void> {
+  if (!payload.sessionId || payload.sessionId === 'unknown') return;
+  await http.post(`/appointments/${payload.sessionId}/review`, {
+    rating: payload.rating,
+    comment: payload.reviewText
+      ? `${payload.reviewText} (Recommends: ${payload.wouldRecommend ? 'yes' : 'no'})`
+      : `Recommends: ${payload.wouldRecommend ? 'yes' : 'no'}`,
+  });
 }

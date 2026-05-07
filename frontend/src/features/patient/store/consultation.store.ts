@@ -12,6 +12,7 @@ import type {
 
 interface ConsultationState {
   doctor: MockDoctor | null;
+  appointmentId: string | null;
   callStatus: CallStatus;
   meetingUrl: string | null;
   videoOn: boolean;
@@ -34,6 +35,7 @@ interface ConsultationState {
   wouldRecommend: boolean | null;
   reviewSubmitting: boolean;
   setDoctor: (doctor: MockDoctor) => void;
+  setAppointmentId: (id: string | null) => void;
   setCallStatus: (status: CallStatus) => void;
   setMeetingUrl: (url: string | null) => void;
   toggleVideo: () => void;
@@ -77,6 +79,7 @@ const INITIAL_AI_MESSAGES: ChatMessage[] = [
 
 export const useConsultationStore = create<ConsultationState>((set) => ({
   doctor: null,
+  appointmentId: null,
   callStatus: 'connecting',
   meetingUrl: null,
   videoOn: true,
@@ -99,6 +102,7 @@ export const useConsultationStore = create<ConsultationState>((set) => ({
   wouldRecommend: null,
   reviewSubmitting: false,
   setDoctor: (doctor) => set({ doctor }),
+  setAppointmentId: (appointmentId) => set({ appointmentId }),
   setCallStatus: (callStatus) => set({ callStatus }),
   setMeetingUrl: (meetingUrl) => set({ meetingUrl }),
   toggleVideo: () => set((state) => ({ videoOn: !state.videoOn })),
@@ -122,6 +126,7 @@ export const useConsultationStore = create<ConsultationState>((set) => ({
   reset: () =>
     set({
       doctor: null,
+      appointmentId: null,
       callStatus: 'connecting',
       meetingUrl: null,
       videoOn: true,

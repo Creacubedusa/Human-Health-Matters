@@ -243,6 +243,27 @@ export async function getDoctorSchedule(
   return res.data;
 }
 
+export type InstantAppointment = {
+  appointmentId: string;
+  startsAt: string;
+  endsAt: string;
+};
+
+export async function createInstantAppointment(
+  doctorId: string,
+  reason?: string,
+): Promise<InstantAppointment> {
+  const res = await http.post<{ id: string; startsAt: string; endsAt: string }>(
+    '/appointments/now',
+    { doctorId, reason },
+  );
+  return {
+    appointmentId: res.data.id,
+    startsAt: res.data.startsAt,
+    endsAt: res.data.endsAt,
+  };
+}
+
 export async function createBookedAppointment(
   doctor: DoctorRecommendation,
   selectedDateIso: string,

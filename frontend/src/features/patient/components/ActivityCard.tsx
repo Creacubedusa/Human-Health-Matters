@@ -62,10 +62,16 @@ export function ActivityCard({ activity, onJoin }: Props) {
     badgeLabel   = t('patientHome.applied');
   }
 
+  const cardPressable = activity.type === 'consultation' && canJoin;
+
   return (
-    <View className="bg-white border border-grey-300 rounded-lg overflow-hidden w-full min-h-[90px]">
+    <Pressable
+      onPress={cardPressable ? () => onJoin?.(activityId) : undefined}
+      disabled={!cardPressable}
+      className="bg-white border border-grey-300 rounded-lg overflow-hidden w-full min-h-[90px]"
+      accessibilityRole={cardPressable ? 'button' : undefined}
+    >
       <View className="flex-row items-center justify-between px-3 py-4">
-        {/* Left */}
         <View className="flex-1 gap-2 pr-3">
           <Text className="text-s2 font-semibold font-sans text-grey-900" numberOfLines={1}>
             {title}
@@ -75,7 +81,6 @@ export function ActivityCard({ activity, onJoin }: Props) {
           </Text>
         </View>
 
-        {/* Right */}
         <View className="items-end gap-3 w-[86px] shrink-0">
           <Text className="text-c3 font-sans text-grey-600 text-right">{activity.date}</Text>
 
@@ -103,6 +108,6 @@ export function ActivityCard({ activity, onJoin }: Props) {
           )}
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
