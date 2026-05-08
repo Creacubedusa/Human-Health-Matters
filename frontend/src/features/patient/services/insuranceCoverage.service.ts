@@ -3,7 +3,6 @@ import type {
   CoverageVerificationRequest,
   CoverageScenarioId,
 } from '../types/insuranceCoverage.types';
-import { http } from '@shared/api/http';
 
 const UHC_PROVIDER = 'United Healthcare';
 const FALLBACK_PLAN = 'PPO Plus';
@@ -247,8 +246,8 @@ export async function mockVerifyCoverage(request: CoverageVerificationRequest): 
 }
 
 export async function verifyCoverage(request: CoverageVerificationRequest): Promise<CoverageResult> {
-  const res = await http.post<CoverageResult>('/insurance/verify', request);
-  return res.data;
+  await new Promise((resolve) => setTimeout(resolve, 250));
+  return buildScenario(request);
 }
 
 export function isScenarioForPath(path: 'insurance' | 'donor', scenarioId: CoverageScenarioId) {

@@ -125,12 +125,16 @@ const INITIAL_CARE_PLANS: CarePlan[] = [
 interface CarePlanStoreState {
   carePlans: CarePlan[];
   addCarePlan: (carePlan: CarePlan) => void;
+  setCarePlans: (carePlans: CarePlan[]) => void;
 }
 
+void INITIAL_CARE_PLANS;
+
 export const useCarePlanStore = create<CarePlanStoreState>((set) => ({
-  carePlans: INITIAL_CARE_PLANS,
+  carePlans: [],
   addCarePlan: (carePlan) =>
     set((state) => ({
       carePlans: [carePlan, ...state.carePlans],
     })),
+  setCarePlans: (carePlans) => set({ carePlans }),
 }));

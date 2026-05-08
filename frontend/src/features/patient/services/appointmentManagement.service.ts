@@ -117,8 +117,8 @@ export async function rescheduleAppointment(
 }
 
 export async function fetchRescheduleSchedule(
-  appointmentId: string,
+  doctorId: string,
   args?: { year: number; month: number },
 ) {
-  return getDoctorSchedule(appointmentId, args);
+  return getDoctorSchedule(doctorId, args);
 }

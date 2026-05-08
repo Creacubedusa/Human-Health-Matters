@@ -225,7 +225,7 @@ export function PatientHomeView({
             accessibilityRole="button"
           >
             <View className="flex-row items-center gap-2 justify-center">
-              <Image source={{ uri: NURA_ICON_URI }} style={{ width: 24, height: 24 }} resizeMode="contain" />
+              <Ionicons name="sparkles" size={20} color={primitiveColors['white']} />
               <Text className="text-btn-medium font-sans text-white">
                 {t('patientHome.checkSymptoms')}
               </Text>

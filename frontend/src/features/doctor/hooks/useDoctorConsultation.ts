@@ -36,6 +36,56 @@ function normalizeName(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
+function buildSyntheticPatientProfile(appointment: {
+  id: string;
+  patientId?: string;
+  patientName: string;
+  patientAvatar: string;
+  patientAge?: number | null;
+  date?: string;
+}): DoctorPatientProfile {
+  return {
+    id: appointment.patientId ?? appointment.id,
+    name: appointment.patientName || 'Patient',
+    age: appointment.patientAge ?? 0,
+    gender: 'Patient',
+    appointmentTime: '',
+    severity: 'low',
+    aiSummary: {
+      label: '',
+      summary: '',
+    },
+    symptoms: [],
+    avatarUri: appointment.patientAvatar,
+    height: '',
+    weight: '',
+    phone: '',
+    email: '',
+    address: '',
+    nationality: '',
+    medicalRecords: {
+      patientHistory: [],
+      medication: [],
+      patientHistoryCategories: {
+        chronicDiseases: [],
+        familyDiabetesHistory: 'no',
+        generalFamilyHistory: [],
+        surgeries: [],
+        allergies: [],
+      },
+      medicationCategories: {
+        medicationTypes: [],
+        currentMedications: [],
+      },
+      orders: [],
+      tests: [],
+      prescriptions: [],
+      reports: [],
+      carePlans: [],
+    },
+  };
+}
+
 function findConsultationPatient(
   appointmentId: string,
   fallbackPatientName?: string,
@@ -43,25 +93,32 @@ function findConsultationPatient(
   if (!appointmentId) return null;
 
   const { patients } = useDoctorPatientsStore.getState();
-  const directMatch = patients.find((item) => item.id === appointmentId);
-  if (directMatch) {
-    return directMatch;
-  }
-
   const appointment = useDoctorAppointmentsStore
     .getState()
     .appointments.find((item) => item.id === appointmentId);
+
+  if (appointment?.patientId) {
+    const direct = patients.find((p) => p.id === appointment.patientId);
+    if (direct) return direct;
+  }
+
+  const directIdMatch = patients.find((item) => item.id === appointmentId);
+  if (directIdMatch) return directIdMatch;
+
   const candidateNames = [fallbackPatientName, appointment?.patientName]
     .filter((value): value is string => Boolean(value?.trim()))
     .map(normalizeName);
 
-  if (candidateNames.length === 0) {
-    return null;
+  const nameMatch = candidateNames.length
+    ? patients.find((item) => candidateNames.includes(normalizeName(item.name)))
+    : null;
+  if (nameMatch) return nameMatch;
+
+  if (appointment) {
+    return buildSyntheticPatientProfile(appointment);
   }
 
-  return (
-    patients.find((item) => candidateNames.includes(normalizeName(item.name))) ?? null
-  );
+  return null;
 }
 
 function buildFallbackPostSessionDraft(

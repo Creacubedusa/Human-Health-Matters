@@ -266,6 +266,65 @@ export function doctorHasAvailability(
   return settings.days.some((day) => day.slots.length > 0);
 }
 
+export function createDefault24x7AvailabilitySettings(
+  year: number,
+  monthIndex: number,
+  appointmentDurationMinutes: 15 | 30 | 45 | 60 = 30,
+): DoctorAvailabilitySettings {
+  const startYear = Math.min(year, new Date().getFullYear()) - 1;
+  const endYear = Math.max(year, new Date().getFullYear()) + 5;
+  const fromDate = `${startYear}-01-01`;
+  const endLastDay = new Date(endYear, 11, 31).getDate();
+  const toDate = `${endYear}-12-${pad(endLastDay)}`;
+
+  void monthIndex;
+
+  const allDayKeys: DoctorAvailabilityWeekday[] = [
+    'sun',
+    'mon',
+    'tue',
+    'wed',
+    'thu',
+    'fri',
+    'sat',
+  ];
+  const dayLabels: Record<DoctorAvailabilityWeekday, string> = {
+    sun: 'Sun',
+    mon: 'Mon',
+    tue: 'Tue',
+    wed: 'Wed',
+    thu: 'Thu',
+    fri: 'Fri',
+    sat: 'Sat',
+  };
+
+  const days: DoctorAvailabilityDay[] = allDayKeys.map((key) => ({
+    key,
+    label: dayLabels[key],
+    slots: [
+      {
+        id: `${key}-default`,
+        startTime: '00:00',
+        endTime: '23:59',
+      },
+    ],
+  }));
+
+  return {
+    fromDate,
+    toDate,
+    timeZone: 'UTC',
+    appointmentDurationMinutes,
+    days,
+    bookingLimits: {
+      bufferEnabled: false,
+      bufferDurationMinutes: 10,
+      dailyLimitEnabled: false,
+      dailyLimit: '0',
+    },
+  };
+}
+
 function getUpcomingAppointments(appointments: ScheduleAppointment[]) {
   return appointments.filter((appointment) => appointment.status === 'UPCOMING');
 }
@@ -414,18 +473,14 @@ export function buildScheduleForMonth(
   settings: DoctorAvailabilitySettings | null,
   appointments: ScheduleAppointment[],
 ): DoctorAvailabilitySummary {
-  if (!doctorHasAvailability(settings)) {
-    return {
-      hasAvailability: false,
-      month: buildEmptyMonth(year, monthIndex),
-      timeSlotsByDate: {},
-    };
-  }
+  const effective = doctorHasAvailability(settings)
+    ? settings
+    : createDefault24x7AvailabilitySettings(year, monthIndex);
 
   return {
     hasAvailability: true,
-    month: buildMonth(year, monthIndex, settings, appointments),
-    timeSlotsByDate: buildTimeSlotsByDate(year, monthIndex, settings, appointments),
+    month: buildMonth(year, monthIndex, effective, appointments),
+    timeSlotsByDate: buildTimeSlotsByDate(year, monthIndex, effective, appointments),
   };
 }
 

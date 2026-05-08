@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { TypingIndicator } from '@shared/components/ui/TypingIndicator';
+import { capitalizeFirst } from '@shared/utils/text';
 import type { DoctorChatMessage, DoctorLanguage } from '../../types/doctorConsultation.types';
 import type { DoctorConsultationAISummary } from '../../utils/consultationAiSummary';
 
@@ -301,7 +302,7 @@ export function DoctorAIPatientPanel({
                               {summary.patientName}
                             </Text>
                             <Text className="text-[12px] font-sans leading-4 text-grey-600">
-                              {summary.gender}
+                              {capitalizeFirst(summary.gender)}
                             </Text>
                           </View>
                         </View>

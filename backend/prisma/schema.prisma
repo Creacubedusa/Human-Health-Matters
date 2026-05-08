@@ -28,7 +28,21 @@ enum NotificationType {
   APPOINTMENT_BOOKED
   APPOINTMENT_CANCELLED
   APPOINTMENT_RESCHEDULED
+  PRESCRIPTION_CREATED
+  LAB_ORDER_CREATED
+  LAB_ORDER_SUBMITTED
   GENERAL
+}
+
+enum PrescriptionStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum LabOrderStatus {
+  PENDING
+  SUBMITTED
+  COMPLETED
 }
 
 enum VideoProvider {
@@ -65,6 +79,12 @@ model User {
   passwordResets PasswordReset[]
 
   notifications Notification[]
+
+  prescriptionsAsPatient Prescription[] @relation("PatientPrescriptions")
+  prescriptionsAsDoctor  Prescription[] @relation("DoctorPrescriptions")
+
+  labOrdersAsPatient LabOrder[] @relation("PatientLabOrders")
+  labOrdersAsDoctor  LabOrder[] @relation("DoctorLabOrders")
 
   @@unique([phoneCountryCode, phone])
 }
@@ -146,6 +166,8 @@ model Appointment {
   videoSession VideoSession?
   soapNote SoapNote?
   reviews  Review[]
+  prescriptions Prescription[]
+  labOrders     LabOrder[]
 
   @@index([patientId, status])
   @@index([doctorId, status])
@@ -193,8 +215,64 @@ model SoapNote {
   objective     String?
   assessment    String?
   plan          String?
+  diagnoses        Json?
+  recommendedTests Json?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+}
+
+model Prescription {
+  id            String             @id @default(cuid())
+  patientId     String
+  doctorId      String
+  appointmentId String?
+  medication    String
+  brandName     String?
+  dose          String
+  frequency     String
+  duration      String
+  route         String
+  refillsLeft   Int                @default(0)
+  totalRefills  Int                @default(0)
+  notes         String?
+  status        PrescriptionStatus @default(ACTIVE)
+  rxNumber      String             @unique
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  patient     User         @relation("PatientPrescriptions", fields: [patientId], references: [id], onDelete: Cascade)
+  doctor      User         @relation("DoctorPrescriptions", fields: [doctorId], references: [id], onDelete: Cascade)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  @@index([patientId, status])
+  @@index([doctorId])
+  @@index([appointmentId])
+}
+
+model LabOrder {
+  id                    String         @id @default(cuid())
+  patientId             String
+  doctorId              String
+  appointmentId         String?
+  testName              String
+  testType              String?
+  priority              String?
+  sampleType            String?
+  collectionInstruction String?
+  additionalComment     String?
+  status                LabOrderStatus @default(PENDING)
+  submittedFiles        Json           @default("[]")
+  submittedAt           DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  patient     User         @relation("PatientLabOrders", fields: [patientId], references: [id], onDelete: Cascade)
+  doctor      User         @relation("DoctorLabOrders", fields: [doctorId], references: [id], onDelete: Cascade)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  @@index([patientId, status])
+  @@index([doctorId, status])
+  @@index([appointmentId])
 }
 
 model Review {

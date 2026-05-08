@@ -1,11 +1,10 @@
 import { useCallback, useMemo } from 'react';
-import { useDoctorPatientsStore } from '../store/doctorPatients.store';
 import { useDoctorNuraAIStore } from '../store/doctorNuraAI.store';
+import type { DoctorPatientListItem } from '../types/doctor.types';
 import type { DoctorAIPatient, DoctorNuraMessage } from '../types/doctorNuraAI.types';
 import {
   buildHistoryItem,
-  buildNuraPatientFromProfile,
-  buildPatientSummaryHistoryItem,
+  buildNuraPatientFromListItem,
   formatHistoryDate,
   truncateText,
 } from '../utils/nuraHistory';
@@ -16,47 +15,15 @@ const MOCK_AI_RESPONSES = [
   'Multiple symptom indicators point to a systemic issue. Further examination and lab work may be needed. Requires clinician review.',
 ] as const;
 
-export function useDoctorNuraAI() {
+export function useDoctorNuraAI(patientsSource: DoctorPatientListItem[] = []) {
   const store = useDoctorNuraAIStore();
-  const patients = useDoctorPatientsStore((state) => state.patients);
 
   const patientsList = useMemo<DoctorAIPatient[]>(
-    () => patients.map((patient) => buildNuraPatientFromProfile(patient)),
-    [patients],
+    () => patientsSource.map((patient) => buildNuraPatientFromListItem(patient)),
+    [patientsSource],
   );
 
-  const fallbackHistoryList = useMemo(
-    () =>
-      patients.map((patient) =>
-        buildPatientSummaryHistoryItem(patient, {
-          id: `base-summary-${patient.id}`,
-          snippet: truncateText(`Available AI summary for ${patient.name}`),
-        }),
-      ),
-    [patients],
-  );
-
-  const historyList =
-    store.activityHistory.length > 0 ? store.activityHistory : fallbackHistoryList;
-
-  const viewPatientSummary = useCallback(
-    (patientId: string) => {
-      const patient = patients.find((item) => item.id === patientId);
-      if (!patient) return null;
-
-      const item = buildPatientSummaryHistoryItem(patient, {
-        id: `summary-${patient.id}-${Date.now()}`,
-        snippet: truncateText(`Reviewed AI summary for ${patient.name}`),
-        sourceType: 'summary',
-        date: formatHistoryDate(),
-      });
-
-      store.setSelectedSummary(item);
-      store.recordHistoryItem(item);
-      return item;
-    },
-    [patients, store],
-  );
+  const historyList = store.activityHistory;
 
   const sendMessage = useCallback(
     async (content: string) => {
@@ -112,6 +79,7 @@ export function useDoctorNuraAI() {
         patientId: patient.id,
         patientName: patient.patientName,
         sourceType: 'patient-chat',
+        date: formatHistoryDate(),
       });
 
       store.recordHistoryItem(historyItem);
@@ -128,12 +96,17 @@ export function useDoctorNuraAI() {
   const openReportChat = useCallback(
     (patientId?: string) => {
       const fallbackPatient =
-        (patientId ? patients.find((patient) => patient.id === patientId) : null) ?? patients[0];
+        (patientId ? patientsList.find((patient) => patient.id === patientId) : null) ??
+        patientsList[0];
       if (!fallbackPatient) return null;
 
-      const summaryItem = buildPatientSummaryHistoryItem(fallbackPatient, {
+      const summaryItem = buildHistoryItem({
         id: `report-${fallbackPatient.id}-${Date.now()}`,
-        snippet: truncateText(`Opened AI report for ${fallbackPatient.name}`),
+        condition: fallbackPatient.condition,
+        snippet: truncateText(`Opened AI report for ${fallbackPatient.patientName}`),
+        summaryText: fallbackPatient.aiSummary,
+        patientId: fallbackPatient.id,
+        patientName: fallbackPatient.patientName,
         sourceType: 'summary',
         date: formatHistoryDate(),
       });
@@ -143,7 +116,30 @@ export function useDoctorNuraAI() {
       store.initReportChat(summaryItem);
       return summaryItem;
     },
-    [patients, store],
+    [patientsList, store],
+  );
+
+  const viewPatientSummary = useCallback(
+    (patientId: string) => {
+      const patient = patientsList.find((item) => item.id === patientId);
+      if (!patient) return null;
+
+      const item = buildHistoryItem({
+        id: `summary-${patient.id}-${Date.now()}`,
+        condition: patient.condition,
+        snippet: truncateText(`Reviewed AI summary for ${patient.patientName}`),
+        summaryText: patient.aiSummary,
+        patientId: patient.id,
+        patientName: patient.patientName,
+        sourceType: 'summary',
+        date: formatHistoryDate(),
+      });
+
+      store.setSelectedSummary(item);
+      store.recordHistoryItem(item);
+      return item;
+    },
+    [patientsList, store],
   );
 
   return {

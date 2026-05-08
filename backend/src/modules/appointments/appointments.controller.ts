@@ -15,43 +15,6 @@ import { JwtAuthGuard } from '../../common/auth/jwt-auth.guard';
 import { PrismaService } from '../../prisma/prisma.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Roles } from '../../common/auth/roles.decorator';
-import {
-  hasDoctorReachedDailyLimit,
-  hasDoctorTimeConflict,
-  isDoctorAvailableForRange,
-  parseDoctorAvailabilitySettings,
-} from '../doctors/schedule';
-
-type DoctorBookingReader = Pick<PrismaService, 'user'>;
-
-async function getDoctorBookingContext(prisma: DoctorBookingReader, doctorId: string) {
-  const doctor = await prisma.user.findFirst({
-    where: { id: doctorId, role: 'DOCTOR' },
-    select: {
-      doctorProfile: {
-        select: {
-          availabilitySettings: true,
-        },
-      },
-      appointmentsAsDoctor: {
-        where: { status: 'UPCOMING' },
-        select: {
-          id: true,
-          startsAt: true,
-          endsAt: true,
-          status: true,
-        },
-      },
-    },
-  });
-
-  return {
-    settings: parseDoctorAvailabilitySettings(
-      doctor?.doctorProfile?.availabilitySettings,
-    ),
-    appointments: doctor?.appointmentsAsDoctor ?? [],
-  };
-}
 
 function bookingConflictError(error: unknown) {
   if (
@@ -117,12 +80,59 @@ export class AppointmentsController {
         | Record<string, unknown>
         | null
         | undefined;
-      const patientAvatarUri =
-        (patientProfileData &&
-        typeof patientProfileData === 'object' &&
-        typeof (patientProfileData as { avatarUri?: unknown }).avatarUri === 'string'
-          ? (patientProfileData as { avatarUri?: string }).avatarUri
-          : null) ?? null;
+
+      const patientAvatarUri = (() => {
+        if (!patientProfileData || typeof patientProfileData !== 'object') return null;
+        const overview =
+          (patientProfileData as { profileOverview?: unknown }).profileOverview;
+        const fromOverview =
+          overview &&
+          typeof overview === 'object' &&
+          typeof (overview as { avatarUri?: unknown }).avatarUri === 'string'
+            ? (overview as { avatarUri?: string }).avatarUri ?? null
+            : null;
+        const fromTop =
+          typeof (patientProfileData as { avatarUri?: unknown }).avatarUri === 'string'
+            ? (patientProfileData as { avatarUri?: string }).avatarUri ?? null
+            : null;
+        return fromOverview ?? fromTop ?? null;
+      })();
+
+      const patientAge = (() => {
+        if (!patientProfileData || typeof patientProfileData !== 'object') return null;
+        const dob = (patientProfileData as { dateOfBirth?: unknown }).dateOfBirth;
+        if (typeof dob === 'string') {
+          const m1 = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dob.trim());
+          const m3 = /^(\d{2})(\d{2})(\d{4})$/.exec(dob.trim());
+          const m2 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dob.trim());
+          let yyyy: number | null = null;
+          let mm: number | null = null;
+          let dd: number | null = null;
+          if (m1) { dd = Number(m1[1]); mm = Number(m1[2]); yyyy = Number(m1[3]); }
+          else if (m3) { dd = Number(m3[1]); mm = Number(m3[2]); yyyy = Number(m3[3]); }
+          else if (m2) { yyyy = Number(m2[1]); mm = Number(m2[2]); dd = Number(m2[3]); }
+          if (yyyy && mm && dd) {
+            const today = new Date();
+            let age = today.getUTCFullYear() - yyyy;
+            const beforeBirthday =
+              today.getUTCMonth() < mm - 1 ||
+              (today.getUTCMonth() === mm - 1 && today.getUTCDate() < dd);
+            if (beforeBirthday) age -= 1;
+            if (Number.isFinite(age) && age >= 0 && age <= 130) return age;
+          }
+        }
+        const overview =
+          (patientProfileData as { profileOverview?: unknown }).profileOverview;
+        if (overview && typeof overview === 'object') {
+          const raw = (overview as { age?: unknown }).age;
+          if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
+          if (typeof raw === 'string') {
+            const m = raw.match(/(\d{1,3})/);
+            if (m) return Number(m[1]);
+          }
+        }
+        return null;
+      })();
 
       const isPast = item.endsAt.getTime() <= now;
       const computedStatus =
@@ -142,6 +152,7 @@ export class AppointmentsController {
               firstName: patient.firstName,
               lastName: patient.lastName,
               avatarUri: patientAvatarUri,
+              age: patientAge,
             }
           : null,
       };
@@ -217,54 +228,20 @@ export class AppointmentsController {
     }
 
     try {
-      const appointment = await this.prisma.$transaction(async (tx) => {
-        const doctorContext = await getDoctorBookingContext(tx, doctorId);
-        if (!doctorContext.settings) {
-          throw new BadRequestException(
-            'This doctor has not set availability yet.',
-          );
-        }
-        if (!isDoctorAvailableForRange(doctorContext.settings, startsAt, endsAt)) {
-          throw new BadRequestException(
-            'This doctor is not available at the selected time.',
-          );
-        }
-        const bufferMinutes = doctorContext.settings.bookingLimits.bufferEnabled
-          ? doctorContext.settings.bookingLimits.bufferDurationMinutes
-          : 0;
-        if (
-          hasDoctorTimeConflict(
-            doctorContext.appointments,
-            startsAt,
-            endsAt,
-            bufferMinutes,
-          )
-        ) {
-          throw new BadRequestException(
-            'This time slot has already been booked.',
-          );
-        }
-        if (
-          hasDoctorReachedDailyLimit(
-            doctorContext.settings,
-            doctorContext.appointments,
-            startsAt,
-          )
-        ) {
-          throw new BadRequestException(
-            'This doctor has reached the booking limit for that day.',
-          );
-        }
+      const doctor = await this.prisma.user.findFirst({
+        where: { id: doctorId, role: 'DOCTOR' },
+        select: { id: true },
+      });
+      if (!doctor) throw new BadRequestException('doctor_not_found');
 
-        return tx.appointment.create({
-          data: {
-            patientId,
-            doctorId,
-            startsAt,
-            endsAt,
-            reason,
-          },
-        });
+      const appointment = await this.prisma.appointment.create({
+        data: {
+          patientId,
+          doctorId,
+          startsAt,
+          endsAt,
+          reason,
+        },
       });
 
       await this.notifications.createForUsers([patientId, doctorId], {
@@ -345,55 +322,12 @@ export class AppointmentsController {
     }
 
     try {
-      await this.prisma.$transaction(async (tx) => {
-        const doctorContext = await getDoctorBookingContext(
-          tx,
-          appointment.doctorId,
-        );
-        if (!doctorContext.settings) {
-          throw new BadRequestException(
-            'This doctor has not set availability yet.',
-          );
-        }
-        if (!isDoctorAvailableForRange(doctorContext.settings, startsAt, endsAt)) {
-          throw new BadRequestException(
-            'This doctor is not available at the selected time.',
-          );
-        }
-        const bufferMinutes = doctorContext.settings.bookingLimits.bufferEnabled
-          ? doctorContext.settings.bookingLimits.bufferDurationMinutes
-          : 0;
-        if (
-          hasDoctorTimeConflict(
-            doctorContext.appointments.filter((item) => item.id !== appointment.id),
-            startsAt,
-            endsAt,
-            bufferMinutes,
-          )
-        ) {
-          throw new BadRequestException(
-            'This time slot has already been booked.',
-          );
-        }
-        if (
-          hasDoctorReachedDailyLimit(
-            doctorContext.settings,
-            doctorContext.appointments.filter((item) => item.id !== appointment.id),
-            startsAt,
-          )
-        ) {
-          throw new BadRequestException(
-            'This doctor has reached the booking limit for that day.',
-          );
-        }
-
-        await tx.appointment.update({
-          where: { id },
-          data: {
-            startsAt,
-            endsAt,
-          },
-        });
+      await this.prisma.appointment.update({
+        where: { id },
+        data: {
+          startsAt,
+          endsAt,
+        },
       });
     } catch (error) {
       throw bookingConflictError(error);
@@ -412,6 +346,21 @@ export class AppointmentsController {
     return { ok: true };
   }
 
+  @Get(':id/soap')
+  @UseGuards(JwtAuthGuard)
+  async getSoap(@Req() req: any, @Param('id') id: string) {
+    const userId = req.user?.sub as string | undefined;
+    if (!userId) throw new Error('missing_user');
+
+    const appt = await this.prisma.appointment.findUnique({ where: { id } });
+    if (!appt) return null;
+    if (appt.patientId !== userId && appt.doctorId !== userId) {
+      throw new BadRequestException('forbidden');
+    }
+
+    return this.prisma.soapNote.findUnique({ where: { appointmentId: id } });
+  }
+
   @Post(':id/soap')
   @UseGuards(JwtAuthGuard)
   @Roles('DOCTOR')
@@ -426,21 +375,37 @@ export class AppointmentsController {
     const appt = await this.prisma.appointment.findUnique({ where: { id } });
     if (!appt || appt.doctorId !== doctorId) throw new Error('forbidden');
 
+    const rawBody = (body ?? {}) as Record<string, unknown>;
+    const diagnosesArray = Array.isArray(rawBody.diagnoses)
+      ? (rawBody.diagnoses as unknown[]).filter(
+          (entry) => entry && typeof entry === 'object',
+        )
+      : null;
+    const recommendedTestsArray = Array.isArray(rawBody.recommendedTests)
+      ? (rawBody.recommendedTests as unknown[]).filter(
+          (entry) => entry && typeof entry === 'object',
+        )
+      : null;
+
+    const data = {
+      subjective: (rawBody.subjective as string | null | undefined) ?? null,
+      objective: (rawBody.objective as string | null | undefined) ?? null,
+      assessment: (rawBody.assessment as string | null | undefined) ?? null,
+      plan: (rawBody.plan as string | null | undefined) ?? null,
+      diagnoses:
+        diagnosesArray === null
+          ? Prisma.JsonNull
+          : (diagnosesArray as Prisma.InputJsonValue),
+      recommendedTests:
+        recommendedTestsArray === null
+          ? Prisma.JsonNull
+          : (recommendedTestsArray as Prisma.InputJsonValue),
+    };
+
     const soap = await this.prisma.soapNote.upsert({
       where: { appointmentId: id },
-      create: {
-        appointmentId: id,
-        subjective: body.subjective ?? null,
-        objective: body.objective ?? null,
-        assessment: body.assessment ?? null,
-        plan: body.plan ?? null,
-      },
-      update: {
-        subjective: body.subjective ?? null,
-        objective: body.objective ?? null,
-        assessment: body.assessment ?? null,
-        plan: body.plan ?? null,
-      },
+      create: { appointmentId: id, ...data },
+      update: data,
     });
 
     await this.notifications.createForUsers([appt.patientId], {

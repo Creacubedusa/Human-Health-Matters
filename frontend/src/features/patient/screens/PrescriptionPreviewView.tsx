@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -5,13 +6,8 @@ import { primitiveColors } from '@design/tokens';
 import { Button } from '@shared/components/ui/Button';
 import { AppointmentBookingHeader } from '../components/booking/AppointmentBookingHeader';
 import { usePrescriptions } from '../hooks/usePrescriptions';
-
-// Mock patient data — replace with real patient profile store when available
-const MOCK_PATIENT = {
-  name: 'Angela Dairo',
-  dob: 'Jun 12, 1988',
-  memberId: 'U98765432100',
-};
+import { usePatientStore } from '../store/patient.store';
+import type { PrescriptionDetail } from '../types/prescription.types';
 
 export interface PrescriptionPreviewViewProps {
   prescriptionId: string;
@@ -23,15 +19,34 @@ export function PrescriptionPreviewView({
   onBack,
 }: PrescriptionPreviewViewProps) {
   const { t } = useTranslation();
-  const { status, getDetailById, simulateDownload, isDownloading, downloadSuccess } =
+  const { status, fetchDetail, simulateDownload, isDownloading, downloadSuccess } =
     usePrescriptions();
-  const detail = getDetailById(prescriptionId);
+  const profileOverview = usePatientStore((s) => s.profileOverview);
+  const [detail, setDetail] = useState<PrescriptionDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    void fetchDetail(prescriptionId).then((value) => {
+      if (cancelled) return;
+      setDetail(value);
+      setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [prescriptionId, fetchDetail]);
+
+  const patientName = profileOverview?.name || '—';
+  const patientDob = profileOverview?.dateOfBirth || '—';
+  const patientMemberId = '—';
 
   const header = (
     <AppointmentBookingHeader title={t('prescription.detail.headerTitle')} onBack={onBack} />
   );
 
-  if (status === 'loading') {
+  if (loading || status === 'loading') {
     return (
       <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
         {header}
@@ -117,13 +132,13 @@ export function PrescriptionPreviewView({
                   {t('prescription.preview.patientSection')}
                 </Text>
                 <Text className="text-s2 font-semibold font-sans text-grey-900">
-                  {MOCK_PATIENT.name}
+                  {patientName}
                 </Text>
                 <Text className="text-c1 font-sans text-grey-500">
-                  {t('prescription.preview.dob')}: {MOCK_PATIENT.dob}
+                  {t('prescription.preview.dob')}: {patientDob}
                 </Text>
                 <Text className="text-c1 font-sans text-grey-500">
-                  {t('prescription.preview.memberId')} · {MOCK_PATIENT.memberId}
+                  {t('prescription.preview.memberId')} · {patientMemberId}
                 </Text>
               </View>
 

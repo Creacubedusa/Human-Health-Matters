@@ -15,10 +15,37 @@ export type DoctorPatientListItem = {
   name: string;
   lastVisit: string;
   avatarUri: string | null;
+  age: number | null;
+  gender: string | null;
 };
 
 export async function fetchDoctorPatients(): Promise<DoctorPatientListItem[]> {
   const res = await http.get<DoctorPatientListItem[]>('/doctor/patients');
+  return res.data;
+}
+
+export interface DoctorPatientDetail {
+  id: string;
+  firstName: string;
+  lastName: string;
+  name: string;
+  email: string;
+  phone: string;
+  avatarUri: string | null;
+  age: number | null;
+  gender: string | null;
+  height: string | null;
+  weight: string | null;
+  address: string;
+  nationality: string;
+  lastVisit: string;
+  profile: unknown;
+}
+
+export async function fetchDoctorPatientById(
+  patientId: string,
+): Promise<DoctorPatientDetail> {
+  const res = await http.get<DoctorPatientDetail>(`/doctor/patients/${patientId}`);
   return res.data;
 }
 
@@ -32,6 +59,7 @@ export type DoctorAppointment = {
     firstName: string;
     lastName: string;
     avatarUri?: string | null;
+    age?: number | null;
   };
 };
 
@@ -67,6 +95,7 @@ export async function fetchDoctorManagedAppointments(): Promise<DoctorManagedApp
       patientId: a.patient?.id,
       patientName,
       patientAvatar: a.patient?.avatarUri ?? FALLBACK_PATIENT_AVATAR,
+      patientAge: a.patient?.age ?? null,
       specialty: '',
       startsAt: a.startsAt,
       endsAt: a.endsAt,
@@ -241,11 +270,25 @@ export function buildDailyJoinUrl(roomUrl: string, token: string): string {
 
 // ── SOAP Note ─────────────────────────────────────────────────────────────────
 
+export interface SoapDiagnosisPayload {
+  id?: string;
+  name: string;
+  icd10Code?: string;
+  priority?: 'primary' | 'secondary';
+}
+
+export interface SoapRecommendedTestPayload {
+  id?: string;
+  name: string;
+}
+
 export interface SoapNotePayload {
   subjective?: string;
   objective?: string;
   assessment?: string;
   plan?: string;
+  diagnoses?: SoapDiagnosisPayload[];
+  recommendedTests?: SoapRecommendedTestPayload[];
 }
 
 export async function upsertDoctorSoapNote(
@@ -253,4 +296,118 @@ export async function upsertDoctorSoapNote(
   payload: SoapNotePayload,
 ): Promise<void> {
   await http.post(`/appointments/${appointmentId}/soap`, payload);
+}
+
+// ── Prescriptions ─────────────────────────────────────────────────────────────
+
+export interface DoctorPrescriptionPayload {
+  medication: string;
+  brandName?: string;
+  dose: string;
+  frequency: string;
+  duration: string;
+  route: string;
+  refillsLeft?: string | number;
+  notes?: string;
+}
+
+export interface DoctorRemotePrescription {
+  id: string;
+  patientId: string;
+  doctorId: string;
+  appointmentId: string | null;
+  doctorName: string;
+  doctorAvatarUri: string | null;
+  specialty: string;
+  patientName: string;
+  medication: string;
+  brandName: string | null;
+  dose: string;
+  frequency: string;
+  duration: string;
+  route: string;
+  refillsLeft: number;
+  totalRefills: number;
+  notes: string | null;
+  status: 'active' | 'inactive';
+  rxNumber: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function createDoctorPrescriptions(
+  args: { patientId?: string; appointmentId?: string },
+  prescriptions: DoctorPrescriptionPayload[],
+): Promise<DoctorRemotePrescription[]> {
+  const res = await http.post<DoctorRemotePrescription[]>(`/prescriptions`, {
+    patientId: args.patientId,
+    appointmentId: args.appointmentId,
+    prescriptions,
+  });
+  return res.data;
+}
+
+export async function fetchDoctorPrescriptions(): Promise<DoctorRemotePrescription[]> {
+  const res = await http.get<DoctorRemotePrescription[]>(`/prescriptions`);
+  return res.data;
+}
+
+// ── Lab Orders ────────────────────────────────────────────────────────────────
+
+export interface DoctorLabOrderPayload {
+  patientId?: string;
+  appointmentId?: string;
+  testName: string;
+  testType?: string;
+  priority?: string;
+  sampleType?: string;
+  collectionInstruction?: string;
+  additionalComment?: string;
+}
+
+export interface DoctorRemoteLabOrderFile {
+  name: string;
+  url: string;
+  mimeType?: string | null;
+  sizeBytes?: number | null;
+}
+
+export interface DoctorRemoteLabOrder {
+  id: string;
+  patientId: string;
+  doctorId: string;
+  appointmentId: string | null;
+  testName: string;
+  testType: string | null;
+  priority: string | null;
+  sampleType: string | null;
+  collectionInstruction: string | null;
+  additionalComment: string | null;
+  status: 'ongoing' | 'completed';
+  rawStatus: 'PENDING' | 'SUBMITTED' | 'COMPLETED';
+  submittedFiles: DoctorRemoteLabOrderFile[];
+  submittedAt: string | null;
+  doctorName: string;
+  doctorAvatarUri: string | null;
+  specialty: string;
+  patientName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function createDoctorLabOrder(
+  payload: DoctorLabOrderPayload,
+): Promise<DoctorRemoteLabOrder> {
+  const res = await http.post<DoctorRemoteLabOrder>(`/lab-orders`, payload);
+  return res.data;
+}
+
+export async function fetchDoctorLabOrders(): Promise<DoctorRemoteLabOrder[]> {
+  const res = await http.get<DoctorRemoteLabOrder[]>(`/lab-orders`);
+  return res.data;
+}
+
+export async function fetchDoctorLabOrderById(id: string): Promise<DoctorRemoteLabOrder> {
+  const res = await http.get<DoctorRemoteLabOrder>(`/lab-orders/${id}`);
+  return res.data;
 }

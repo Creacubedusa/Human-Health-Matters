@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import { Image, Pressable, Text, View } from 'react-native';
-
-const NURA_ICON = 'https://www.figma.com/api/mcp/asset/c7be1a2b-b40a-424d-88dc-5025a3abd92e';
+import { Pressable, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { primitiveColors } from '@design/tokens';
 
 interface Props {
   onCheckSymptoms: () => void;
@@ -39,7 +39,7 @@ export function EmptyActivityState({ onCheckSymptoms }: Props) {
             accessibilityRole="button"
           >
             <View className="flex-row items-center gap-2">
-              <Image source={{ uri: NURA_ICON }} style={{ width: 24, height: 24 }} resizeMode="contain" />
+              <Ionicons name="sparkles" size={20} color={primitiveColors['white']} />
               <Text className="text-btn-medium font-sans text-white">
                 {t('patientHome.checkSymptoms')}
               </Text>

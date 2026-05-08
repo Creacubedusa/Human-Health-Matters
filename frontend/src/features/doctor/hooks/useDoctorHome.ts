@@ -36,6 +36,7 @@ function buildQueueItem(appointment: {
   patientId?: string;
   patientName: string;
   patientAvatar: string;
+  patientAge?: number | null;
   time: string;
 }): PatientInQueue {
   return {
@@ -43,7 +44,7 @@ function buildQueueItem(appointment: {
     appointmentId: appointment.id,
     name: appointment.patientName || 'Patient',
     gender: 'Patient',
-    age: 0,
+    age: appointment.patientAge ?? 0,
     urgency: 'emergency',
     timeSlot: appointment.time,
     aiSummary:
@@ -59,6 +60,7 @@ function deriveHomeDashboard(
     patientId?: string;
     patientName: string;
     patientAvatar: string;
+    patientAge?: number | null;
     startsAt: string;
     endsAt: string;
     date: string;

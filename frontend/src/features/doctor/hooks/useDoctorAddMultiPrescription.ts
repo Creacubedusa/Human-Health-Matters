@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { toast } from '@shared/components/ui/toast';
 import { useDoctorPatientsStore } from '../store/doctorPatients.store';
 import { useDoctorConsultationStore } from '../store/doctorConsultation.store';
+import { createDoctorPrescriptions } from '../services/doctor.service';
 import type { DoctorPrescriptionDraft } from '../types/doctor.types';
 
 const BLANK_DRAFT: DoctorPrescriptionDraft = {
@@ -71,7 +73,26 @@ export function useDoctorAddMultiPrescription(patientId: string, returnTo?: stri
     if (hasError) return false;
 
     setIsSubmitting(true);
-    await new Promise<void>((resolve) => setTimeout(resolve, 300));
+    try {
+      await createDoctorPrescriptions(
+        { patientId },
+        blocks.map((block) => ({
+          medication: block.medication,
+          brandName: block.brandName || undefined,
+          dose: block.dose,
+          frequency: block.frequency,
+          duration: block.duration,
+          route: block.route,
+          refillsLeft: block.refillsLeft,
+          notes: block.notes || undefined,
+        })),
+      );
+    } catch (e) {
+      setIsSubmitting(false);
+      const msg = (e as Error)?.message ?? 'Failed to save prescription';
+      toast.error(msg);
+      return false;
+    }
 
     blocks.forEach((block) => addPrescription(patientId, block));
 

@@ -2,7 +2,7 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { ScreenHeader } from '@shared/components/ui/ScreenHeader';
 import { StepProgressBar } from '@shared/components/ui/StepProgressBar';
 import { Button } from '@shared/components/ui/Button';
 import { ProfileSetupStep } from '../types/doctorProfileSetup.types';
@@ -145,20 +145,11 @@ export function DoctorProfileSetupWizardView({ onComplete }: DoctorProfileSetupW
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* Header */}
-      <View className="bg-primary-50 px-4 pb-4 pt-2">
-        <View className="flex-row items-center justify-between h-[29px]">
-          <HeaderBackButton
-            onPress={goBack}
-            accessibilityLabel={t('common.back')}
-            hidden={!canGoBack}
-          />
-          <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-            {t(HEADER_TITLE_KEY[currentStep])}
-          </Text>
-          <View className="w-[29px]" />
-        </View>
-      </View>
+      <ScreenHeader
+        title={t(HEADER_TITLE_KEY[currentStep])}
+        onBackPress={goBack}
+        hideBack={!canGoBack}
+      />
 
       {/* Progress bar */}
       {SHOW_PROGRESS.has(currentStep) && (

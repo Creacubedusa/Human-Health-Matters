@@ -3,6 +3,7 @@ import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
+import { capitalizeFirst } from '@shared/utils/text';
 import type { DoctorPatientListItem } from '../../types/doctor.types';
 
 export interface DoctorPatientCardProps {
@@ -42,7 +43,7 @@ export function DoctorPatientCard({
           <View className="flex-1 gap-2">
             <Text className="text-s2 font-semibold font-sans text-grey-900">{patient.name}</Text>
             <Text className="text-c1 font-sans text-grey-500">
-              {patient.gender}
+              {capitalizeFirst(patient.gender)}
               {'   ·   '}
               {patient.age} {t('doctorPatients.years')}
             </Text>

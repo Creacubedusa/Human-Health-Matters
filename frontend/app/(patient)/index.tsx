@@ -17,7 +17,7 @@ export default function PatientHomeScreen() {
       onBook={() => router.push('/(patient)/book-appointment')}
       onDiagnosis={() => router.push('/(patient)/care')}
       onPrescription={() => router.push('/(patient)/prescriptions')}
-      onTest={() => router.push('/(patient)/tests')}
+      onTest={() => router.push('/(patient)/orders')}
       onJoinConsultation={(appointmentId) =>
         router.push({
           pathname: '/(patient)/consultations',

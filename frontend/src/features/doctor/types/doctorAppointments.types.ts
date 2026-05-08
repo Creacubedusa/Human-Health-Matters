@@ -6,6 +6,7 @@ export interface DoctorManagedAppointment {
   patientId?: string;
   patientName: string;
   patientAvatar: string;
+  patientAge?: number | null;
   specialty: string;
   startsAt: string;
   endsAt: string;

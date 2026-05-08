@@ -1,5 +1,6 @@
 import { Image, Text, View } from 'react-native';
 import { Button } from '@shared/components/ui/Button';
+import { capitalizeFirst } from '@shared/utils/text';
 import type { PatientProfileOverview } from '../../types/profileOverview.types';
 import { ProfileMetricRow } from './ProfileMetricRow';
 
@@ -30,7 +31,7 @@ export function ProfileCard({ profile, labels, onEdit }: ProfileCardProps) {
             <Text className="text-s2 font-semibold font-sans text-grey-900 text-center">
               {profile.name}
             </Text>
-            <Text className="text-c1 font-sans text-grey-600 text-center">{profile.gender}</Text>
+            <Text className="text-c1 font-sans text-grey-600 text-center">{capitalizeFirst(profile.gender)}</Text>
           </View>
 
           <ProfileMetricRow

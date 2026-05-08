@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
@@ -16,7 +16,8 @@ export interface PrescriptionListViewProps {
 
 export function PrescriptionListView({ onBack, onSelectPrescription }: PrescriptionListViewProps) {
   const { t } = useTranslation();
-  const { status, filter, filteredPrescriptions, setFilter, retry } = usePrescriptions();
+  const { status, filter, filteredPrescriptions, setFilter, retry, refresh, refreshing } =
+    usePrescriptions();
 
   const filterOptions: Array<{ label: string; value: PrescriptionFilter }> = [
     { label: t('prescription.filterAll'), value: 'all' },
@@ -57,7 +58,7 @@ export function PrescriptionListView({ onBack, onSelectPrescription }: Prescript
           <Text className="text-b3 font-sans text-grey-500 text-center">
             {t('prescription.errorDescription')}
           </Text>
-          <Button label={t('common.retry')} onPress={retry} size="medium" />
+          <Button label={t('common.retry')} onPress={() => void retry()} size="medium" />
         </View>
       </SafeAreaView>
     );
@@ -69,6 +70,14 @@ export function PrescriptionListView({ onBack, onSelectPrescription }: Prescript
       <ScrollView
         contentContainerClassName="px-4 pt-6 pb-8 gap-8"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refresh()}
+            tintColor={primitiveColors['primary-500']}
+            colors={[primitiveColors['primary-500']]}
+          />
+        }
       >
         {/* Page title */}
         <Text className="text-h5 font-semibold font-sans text-grey-900">

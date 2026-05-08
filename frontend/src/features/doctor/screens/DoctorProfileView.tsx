@@ -17,6 +17,7 @@ import { primitiveColors } from '@design/tokens';
 import { uploadImageToCloudinary } from '@shared/api/cloudinary';
 import { kvDelete } from '@shared/storage/kv';
 import { useAuthStore } from '@shared/store/auth.store';
+import { capitalizeFirst } from '@shared/utils/text';
 import { useDoctorStore } from '../store/doctor.store';
 import { useDoctorProfileSetupStore } from '../store/doctorProfileSetup.store';
 import { fetchDoctorProfile, updateDoctorProfile } from '../services/doctor.service';
@@ -501,7 +502,7 @@ export function DoctorProfileView() {
           />
           <InfoRow
             label={t('doctorProfile.genderLabel')}
-            value={displayGender || dash}
+            value={capitalizeFirst(displayGender) || dash}
             onPress={() => setEditField('gender')}
           />
           <InfoRow

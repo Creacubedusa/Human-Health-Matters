@@ -9,6 +9,7 @@ import { Input } from '@shared/components/ui/Input';
 import { ProfileHeader } from '@features/patient/components/profile/ProfileHeader';
 import { useDoctorPatientsStore } from '../store/doctorPatients.store';
 import { useDoctorConsultationStore } from '../store/doctorConsultation.store';
+import { createDoctorLabOrder } from '../services/doctor.service';
 import type { DoctorOrderDraft } from '../types/doctor.types';
 
 export interface DoctorCreateOrderViewProps {
@@ -49,7 +50,21 @@ export function DoctorCreateOrderView({ patientId, returnTo }: DoctorCreateOrder
 
     setErrorKey(null);
     setSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    try {
+      await createDoctorLabOrder({
+        patientId,
+        testName: form.testName,
+        testType: form.sampleType,
+        priority: form.priority,
+        sampleType: form.sampleType,
+        collectionInstruction: form.collectionInstruction,
+        additionalComment: form.additionalComment,
+      });
+    } catch (error) {
+      setSubmitting(false);
+      setErrorKey('doctorPatients.errors.saveFailed');
+      return;
+    }
     addOrder(patientId, form);
     if (returnTo === 'post-session-care-plan') {
       if (updateDraftTests.draft) {

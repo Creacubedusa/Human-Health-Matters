@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
@@ -26,6 +26,8 @@ export function OrderListView({ onBack, onSelectOrder }: OrderListViewProps) {
     completionPercent,
     setFilter,
     retry,
+    refresh,
+    refreshing,
   } = useOrders();
 
   const filterOptions: Array<{ label: string; value: OrderFilter }> = [
@@ -71,7 +73,7 @@ export function OrderListView({ onBack, onSelectOrder }: OrderListViewProps) {
           <Text className="text-b3 font-sans text-grey-500 text-center">
             {t('order.errorDescription')}
           </Text>
-          <Button label={t('common.retry')} onPress={retry} size="medium" />
+          <Button label={t('common.retry')} onPress={() => void retry()} size="medium" />
         </View>
       </SafeAreaView>
     );
@@ -83,6 +85,14 @@ export function OrderListView({ onBack, onSelectOrder }: OrderListViewProps) {
       <ScrollView
         contentContainerClassName="px-4 pt-3 pb-8 gap-4"
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refresh()}
+            tintColor={primitiveColors['primary-500']}
+            colors={[primitiveColors['primary-500']]}
+          />
+        }
       >
         {/* Overview card */}
         <OrderOverviewCard

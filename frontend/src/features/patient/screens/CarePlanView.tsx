@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
@@ -22,6 +22,8 @@ export function CarePlanView({ onBack, onViewCarePlan }: CarePlanViewProps) {
     selectedCarePlans,
     setActiveStatus,
     retry,
+    refresh,
+    refreshing,
   } = useCarePlans();
 
   const header = (
@@ -51,7 +53,7 @@ export function CarePlanView({ onBack, onViewCarePlan }: CarePlanViewProps) {
           <Text className="text-b3 font-sans text-grey-700 text-center">
             {t('carePlan.errorMessage')}
           </Text>
-          <Button label={t('common.retry')} onPress={retry} size="medium" />
+          <Button label={t('common.retry')} onPress={() => void retry()} size="medium" />
         </View>
       </SafeAreaView>
     );
@@ -67,6 +69,14 @@ export function CarePlanView({ onBack, onViewCarePlan }: CarePlanViewProps) {
         showsVerticalScrollIndicator={false}
         data={selectedCarePlans}
         keyExtractor={(item: CarePlan) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refresh()}
+            tintColor={primitiveColors['primary-500']}
+            colors={[primitiveColors['primary-500']]}
+          />
+        }
         ListHeaderComponent={
           <View className="gap-6">
             <Text className="text-h5 font-semibold font-sans text-grey-900">

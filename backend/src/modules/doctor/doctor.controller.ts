@@ -10,6 +10,100 @@ import { DoctorProfileSetupDto } from './dto/doctor-profile-setup.dto';
 import { UpdateDoctorAvailabilityDto } from './dto/update-doctor-availability.dto';
 import { UpdateDoctorProfileDto } from './dto/update-doctor-profile.dto';
 
+function parseDob(dob: string): Date | null {
+  const text = dob.trim();
+  if (!text) return null;
+  const tryDate = (yyyy: number, mm: number, dd: number) => {
+    const d = new Date(Date.UTC(yyyy, mm - 1, dd));
+    if (
+      Number.isFinite(d.getTime()) &&
+      d.getUTCFullYear() === yyyy &&
+      d.getUTCMonth() === mm - 1 &&
+      d.getUTCDate() === dd
+    ) {
+      return d;
+    }
+    return null;
+  };
+
+  const m1 = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(text);
+  if (m1) return tryDate(Number(m1[3]), Number(m1[2]), Number(m1[1]));
+  const m3 = /^(\d{2})(\d{2})(\d{4})$/.exec(text);
+  if (m3) return tryDate(Number(m3[3]), Number(m3[2]), Number(m3[1]));
+  const m2 = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
+  if (m2) return tryDate(Number(m2[1]), Number(m2[2]), Number(m2[3]));
+  return null;
+}
+
+function computeAgeYears(dateOfBirth: unknown): number | null {
+  if (typeof dateOfBirth !== 'string') return null;
+  const dob = parseDob(dateOfBirth);
+  if (!dob) return null;
+  const now = new Date();
+  const nowUtc = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+  let age = nowUtc.getUTCFullYear() - dob.getUTCFullYear();
+  const beforeBirthday =
+    nowUtc.getUTCMonth() < dob.getUTCMonth() ||
+    (nowUtc.getUTCMonth() === dob.getUTCMonth() && nowUtc.getUTCDate() < dob.getUTCDate());
+  if (beforeBirthday) age -= 1;
+  if (!Number.isFinite(age) || age < 0 || age > 130) return null;
+  return age;
+}
+
+type PatientProfileSnapshot = {
+  age: number | null;
+  gender: string | null;
+  height: string | null;
+  weight: string | null;
+  address: string | null;
+  nationality: string | null;
+  phone: string | null;
+  email: string | null;
+  avatarUri: string | null;
+};
+
+function readString(value: unknown): string | null {
+  return typeof value === 'string' && value.trim() ? value : null;
+}
+
+function buildPatientProfileSnapshot(
+  profileData: unknown,
+): PatientProfileSnapshot {
+  const obj =
+    profileData && typeof profileData === 'object'
+      ? (profileData as Record<string, unknown>)
+      : {};
+  const overview =
+    obj.profileOverview && typeof obj.profileOverview === 'object'
+      ? (obj.profileOverview as Record<string, unknown>)
+      : {};
+  const ageFromDob = computeAgeYears(obj.dateOfBirth);
+  const ageFromOverview = (() => {
+    const raw = overview.age;
+    if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
+    if (typeof raw === 'string') {
+      const m = raw.match(/(\d{1,3})/);
+      if (m) return Number(m[1]);
+    }
+    return null;
+  })();
+  return {
+    age: ageFromDob ?? ageFromOverview,
+    gender:
+      readString(obj.gender) ?? readString(overview.gender) ?? null,
+    height: readString(overview.height),
+    weight: readString(overview.weight),
+    address: readString(obj.address) ?? readString(overview.address),
+    nationality:
+      readString(obj.nationality) ?? readString(overview.nationality),
+    phone: readString(overview.phone),
+    email: readString(overview.email),
+    avatarUri:
+      readString(overview.avatarUri) ??
+      readString((obj as { avatarUri?: unknown }).avatarUri),
+  };
+}
+
 @ApiTags('doctor')
 @Controller('doctor')
 export class DoctorController {
@@ -154,27 +248,24 @@ export class DoctorController {
         name: string;
         lastVisit: string;
         avatarUri: string | null;
+        age: number | null;
+        gender: string | null;
       }
     >();
     for (const a of appts) {
       if (map.has(a.patient.id)) continue;
-      const profileData = a.patient.patientProfile?.profileData as
-        | Record<string, unknown>
-        | null
-        | undefined;
-      const avatarUri =
-        profileData &&
-        typeof profileData === 'object' &&
-        typeof (profileData as { avatarUri?: unknown }).avatarUri === 'string'
-          ? ((profileData as { avatarUri?: string }).avatarUri ?? null)
-          : null;
+      const snapshot = buildPatientProfileSnapshot(
+        a.patient.patientProfile?.profileData,
+      );
       map.set(a.patient.id, {
         id: a.patient.id,
         name: [a.patient.firstName, a.patient.lastName]
           .filter(Boolean)
           .join(' '),
         lastVisit: a.startsAt.toISOString(),
-        avatarUri,
+        avatarUri: snapshot.avatarUri,
+        age: snapshot.age,
+        gender: snapshot.gender,
       });
     }
 
@@ -191,21 +282,54 @@ export class DoctorController {
 
     const has = await this.prisma.appointment.findFirst({
       where: { doctorId, patientId },
-      select: { id: true },
+      select: { id: true, startsAt: true },
+      orderBy: { startsAt: 'desc' },
     });
     if (!has) throw new Error('forbidden');
 
     const patient = await this.prisma.user.findUnique({
       where: { id: patientId },
-      select: { id: true, firstName: true, lastName: true },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        phoneCountryCode: true,
+        patientProfile: { select: { profileData: true } },
+      },
     });
 
-    const profile = await this.prisma.patientProfile.findUnique({
-      where: { userId: patientId },
-      select: { profileData: true },
-    });
+    if (!patient) throw new Error('patient_not_found');
 
-    return { patient, profile: profile?.profileData ?? null };
+    const snapshot = buildPatientProfileSnapshot(
+      patient.patientProfile?.profileData,
+    );
+
+    const fullName = [patient.firstName, patient.lastName]
+      .filter(Boolean)
+      .join(' ');
+    const phoneFromUser = patient.phone
+      ? `${patient.phoneCountryCode ?? ''}${patient.phone}`.trim()
+      : null;
+
+    return {
+      id: patient.id,
+      firstName: patient.firstName,
+      lastName: patient.lastName,
+      name: fullName,
+      email: patient.email ?? snapshot.email ?? '',
+      phone: phoneFromUser ?? snapshot.phone ?? '',
+      avatarUri: snapshot.avatarUri,
+      age: snapshot.age,
+      gender: snapshot.gender,
+      height: snapshot.height,
+      weight: snapshot.weight,
+      address: snapshot.address ?? '',
+      nationality: snapshot.nationality ?? '',
+      lastVisit: has.startsAt.toISOString(),
+      profile: patient.patientProfile?.profileData ?? null,
+    };
   }
 
   @Get('profile')

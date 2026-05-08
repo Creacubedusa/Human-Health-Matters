@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { primitiveColors } from '@design/tokens';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { ScreenHeader } from '@shared/components/ui/ScreenHeader';
 import { OrderCard } from '@features/patient/components/order/OrderCard';
 import { PrescriptionCard } from '@features/patient/components/prescription/PrescriptionCard';
 import { TestResultCard } from '@features/patient/components/tests/TestResultCard';
-import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
 import { useDoctorPatientProfile } from '../hooks/useDoctorPatientProfile';
 import {
   DoctorReadOnlyHistoryCard,
@@ -130,7 +130,7 @@ export function DoctorPatientRecordDetailView({
 }: DoctorPatientRecordDetailViewProps) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { patient } = useDoctorPatientProfile(patientId);
+  const { patient, refresh, refreshing } = useDoctorPatientProfile(patientId);
 
   const [orderTab, setOrderTab] = useState<'Ongoing' | 'Completed'>('Ongoing');
   const [testTab, setTestTab] = useState<'Lab Tests' | 'Medical images'>('Lab Tests');
@@ -139,21 +139,27 @@ export function DoctorPatientRecordDetailView({
 
   const headerTitle = t(HEADER_TITLE_KEY[recordId]);
 
+  const refreshControl = (
+    <RefreshControl
+      refreshing={refreshing}
+      onRefresh={() => void refresh()}
+      tintColor={primitiveColors['primary-500']}
+      colors={[primitiveColors['primary-500']]}
+    />
+  );
+
+  const fallbackHref = `/(doctor)/patients/${patientId}` as const;
+
   if (!patient) {
     return (
       <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-        <View className="bg-primary-50 h-[66px] justify-end">
-          <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
-            <HeaderBackButton
-              onPress={() => goBackOrReplace(router, '/(doctor)/patients')}
-              accessibilityLabel={t('common.back')}
-            />
-            <Text className="text-[16px] font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-              {headerTitle}
-            </Text>
-            <View className="w-[29px]" />
-          </View>
-        </View>
+        <ScreenHeader
+          title={headerTitle}
+          fallbackHref={fallbackHref}
+          containerClassName="bg-primary-50 h-[66px] justify-end"
+          rowClassName="flex-row items-center justify-between px-4 pb-3 h-[48px]"
+          titleClassName="text-[16px] font-semibold font-sans text-grey-900"
+        />
         <View className="flex-1 items-center justify-center px-6">
           <Text className="text-[16px] font-semibold font-sans text-grey-900 text-center">
             {t('doctorPatients.patientNotFound')}
@@ -167,19 +173,13 @@ export function DoctorPatientRecordDetailView({
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-      {/* Header */}
-      <View className="bg-primary-50 h-[66px] justify-end">
-        <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
-          <HeaderBackButton
-            onPress={() => goBackOrReplace(router, '/(doctor)/patients')}
-            accessibilityLabel={t('common.back')}
-          />
-          <Text className="text-[16px] font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-            {headerTitle}
-          </Text>
-          <View className="w-[29px]" />
-        </View>
-      </View>
+      <ScreenHeader
+        title={headerTitle}
+        fallbackHref={fallbackHref}
+        containerClassName="bg-primary-50 h-[66px] justify-end"
+        rowClassName="flex-row items-center justify-between px-4 pb-3 h-[48px]"
+        titleClassName="text-[16px] font-semibold font-sans text-grey-900"
+      />
 
       {/* ── Patient History ───────────────────────────────────────────────────── */}
       {recordId === 'patient-history' ? (
@@ -187,6 +187,7 @@ export function DoctorPatientRecordDetailView({
           className="flex-1"
           contentContainerClassName="px-4 pt-6 pb-24 gap-6"
           showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
         >
           <Text className="text-[24px] font-semibold font-sans text-grey-900">
             {t('doctorPatients.patientHistoryScreenTitle')}
@@ -227,6 +228,7 @@ export function DoctorPatientRecordDetailView({
           className="flex-1"
           contentContainerClassName="px-4 pt-6 pb-24 gap-6"
           showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
         >
           <Text className="text-[24px] font-semibold font-sans text-grey-900">
             {t('doctorPatients.medicationTitle')}
@@ -252,6 +254,7 @@ export function DoctorPatientRecordDetailView({
           className="flex-1"
           contentContainerClassName="px-4 pt-4 pb-24 gap-4"
           showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
         >
           <OrderOverviewCard
             ongoingCount={records.orders.filter((o) => o.status === 'ongoing').length}
@@ -319,6 +322,7 @@ export function DoctorPatientRecordDetailView({
           className="flex-1"
           contentContainerClassName="px-4 pt-6 pb-24 gap-6"
           showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
         >
           <Text className="text-[24px] font-semibold font-sans text-grey-900">
             {t('doctorPatients.testsTitle')}
@@ -378,6 +382,7 @@ export function DoctorPatientRecordDetailView({
           className="flex-1"
           contentContainerClassName="px-4 pt-6 pb-24 gap-6"
           showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
         >
           <View className="flex-row items-center justify-between">
             <Text className="text-[24px] font-semibold font-sans text-grey-900">
@@ -454,6 +459,7 @@ export function DoctorPatientRecordDetailView({
           className="flex-1"
           contentContainerClassName="px-4 pt-6 pb-24 gap-6"
           showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
         >
           <Text className="text-[24px] font-semibold font-sans text-grey-900">
             {t('doctorPatients.yourCarePlan')}

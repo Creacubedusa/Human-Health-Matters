@@ -7,7 +7,7 @@ import { Alert } from '@shared/components/ui/Alert';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { SelectInput } from '@shared/components/ui/SelectInput';
-import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { ScreenHeader } from '@shared/components/ui/ScreenHeader';
 import { DoctorPatientCard } from '../components/patients/DoctorPatientCard';
 import { DoctorPatientEmptyState } from '../components/patients/DoctorPatientEmptyState';
 import { useDoctorCreateOrderWizard, type CreateOrderStep } from '../hooks/useDoctorCreateOrderWizard';
@@ -113,16 +113,13 @@ export function DoctorCreateOrderWizardView({
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-      {/* Header */}
-      <View className="bg-primary-50 h-[66px] justify-end">
-        <View className="flex-row items-center justify-between px-4 pb-3 h-[48px]">
-          <HeaderBackButton onPress={handleBack} accessibilityLabel={t('common.back')} />
-          <Text className="text-[16px] font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-            {t('createOrderWizard.headerTitle')}
-          </Text>
-          <View className="w-[29px]" />
-        </View>
-      </View>
+      <ScreenHeader
+        title={t('createOrderWizard.headerTitle')}
+        onBackPress={handleBack}
+        containerClassName="bg-primary-50 h-[66px] justify-end"
+        rowClassName="flex-row items-center justify-between px-4 pb-3 h-[48px]"
+        titleClassName="text-[16px] font-semibold font-sans text-grey-900"
+      />
 
       <StepIndicator currentStep={step} />
 

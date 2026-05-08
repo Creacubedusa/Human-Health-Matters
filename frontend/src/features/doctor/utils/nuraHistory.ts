@@ -1,4 +1,4 @@
-import type { DoctorPatientProfile } from '../types/doctor.types';
+import type { DoctorPatientListItem, DoctorPatientProfile } from '../types/doctor.types';
 import type { DoctorAIHistoryItem, DoctorAIPatient } from '../types/doctorNuraAI.types';
 
 function titleCase(value: string) {
@@ -49,6 +49,17 @@ export function getLatestPatientActivityDate(patient: DoctorPatientProfile) {
 }
 
 export function buildNuraPatientFromProfile(patient: DoctorPatientProfile): DoctorAIPatient {
+  return {
+    id: patient.id,
+    patientName: patient.name,
+    condition: getPatientCondition(patient),
+    urgency: patient.severity,
+    timeSlot: patient.appointmentTime,
+    aiSummary: patient.aiSummary.summary,
+  };
+}
+
+export function buildNuraPatientFromListItem(patient: DoctorPatientListItem): DoctorAIPatient {
   return {
     id: patient.id,
     patientName: patient.name,

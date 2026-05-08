@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { toast } from '@shared/components/ui/toast';
 import { useDoctorPatientsStore } from '../store/doctorPatients.store';
 import { useDoctorPatients } from './useDoctorPatients';
+import { createDoctorLabOrder } from '../services/doctor.service';
 import type { DoctorPatientListItem } from '../types/doctor.types';
 
 export type CreateOrderStep = 1 | 2 | 3;
@@ -80,7 +82,15 @@ export function useDoctorCreateOrderWizard(preselectedPatientId?: string) {
 
     setIsSubmitting(true);
     try {
-      await new Promise<void>((resolve) => setTimeout(resolve, 400));
+      await createDoctorLabOrder({
+        patientId: selectedPatient.id,
+        testName: testInfo.testName,
+        testType: testInfo.testType,
+        priority: testInfo.priority,
+        sampleType: testInfo.testType,
+        collectionInstruction: testInfo.collectionInstruction,
+        additionalComment: testInfo.additionalComment,
+      });
       store.addOrder(selectedPatient.id, {
         testName: testInfo.testName,
         priority: testInfo.priority,
@@ -89,6 +99,9 @@ export function useDoctorCreateOrderWizard(preselectedPatientId?: string) {
         additionalComment: testInfo.additionalComment,
       });
       setIsSuccess(true);
+    } catch (e) {
+      const msg = (e as Error)?.message ?? 'Failed to create lab order';
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }

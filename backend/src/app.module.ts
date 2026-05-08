@@ -16,6 +16,9 @@ import { RolesGuard } from './common/auth/roles.guard';
 import { DoctorsModule } from './modules/doctors/doctors.module';
 import { VideoModule } from './modules/video/video.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { PrescriptionsModule } from './modules/prescriptions/prescriptions.module';
+import { LabOrdersModule } from './modules/lab-orders/lab-orders.module';
+import { CarePlansModule } from './modules/care-plans/care-plans.module';
 
 @Module({
   imports: [
@@ -34,6 +37,9 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     NotificationsModule,
     VideoModule,
     UploadsModule,
+    PrescriptionsModule,
+    LabOrdersModule,
+    CarePlansModule,
   ],
   controllers: [AppController],
   providers: [

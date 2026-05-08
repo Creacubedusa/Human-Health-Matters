@@ -3,6 +3,7 @@ import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
+import { capitalizeFirst } from '@shared/utils/text';
 import type { PatientInQueue, PatientUrgency } from '../../types/doctor.types';
 
 export interface PatientQueueCardProps {
@@ -39,6 +40,7 @@ export function PatientQueueCard({
   const { t } = useTranslation();
   const badge = URGENCY_BADGE[patient.urgency];
   const avatarUri = patient.avatarUri ?? `https://i.pravatar.cc/200?u=doctor-home-queue-${patient.id}`;
+  const genderLabel = capitalizeFirst(patient.gender);
 
   return (
     <View
@@ -46,7 +48,7 @@ export function PatientQueueCard({
       testID={testID}
       accessible
       accessibilityRole="summary"
-      accessibilityLabel={`${patient.name}, ${patient.gender}, ${patient.age} ${t('doctorHome.yearsOld')}`}
+      accessibilityLabel={`${patient.name}, ${genderLabel}, ${patient.age} ${t('doctorHome.yearsOld')}`}
     >
       {/* Patient info row */}
       <View className="gap-5">
@@ -60,7 +62,7 @@ export function PatientQueueCard({
             <View className="gap-2 flex-1">
               <Text className="text-s2 font-semibold font-sans text-grey-900">{patient.name}</Text>
               <Text className="text-c1 font-sans text-grey-500">
-                {patient.gender}
+                {genderLabel}
                 {'  ·  '}
                 {patient.age} {t('doctorHome.yearsOld')}
               </Text>

@@ -4,8 +4,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { primitiveColors } from '@design/tokens';
-import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
-import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
+import { ScreenHeader } from '@shared/components/ui/ScreenHeader';
 import { useDoctorPatients } from '../hooks/useDoctorPatients';
 import { DoctorPatientCard } from '../components/patients/DoctorPatientCard';
 import { DoctorPatientEmptyState } from '../components/patients/DoctorPatientEmptyState';
@@ -27,18 +26,7 @@ export function DoctorPatientsView() {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-      <View className="bg-primary-50 px-4 pb-4 pt-2">
-        <View className="flex-row items-center justify-between h-[29px]">
-          <HeaderBackButton
-            onPress={() => goBackOrReplace(router, '/(doctor)')}
-            accessibilityLabel={t('common.back')}
-          />
-          <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-            {t('doctorPatients.headerTitle')}
-          </Text>
-          <View className="w-[29px]" />
-        </View>
-      </View>
+      <ScreenHeader title={t('doctorPatients.headerTitle')} fallbackHref="/(doctor)" />
 
       <ScrollView
         className="flex-1"

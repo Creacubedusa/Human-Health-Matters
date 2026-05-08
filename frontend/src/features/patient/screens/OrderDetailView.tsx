@@ -1,15 +1,17 @@
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
+import { toast } from '@shared/components/ui/toast';
 import { Alert } from '@shared/components/ui/Alert';
 import { Button } from '@shared/components/ui/Button';
 import { AppointmentBookingHeader } from '../components/booking/AppointmentBookingHeader';
 import { PrescriptionDetailRow } from '../components/prescription/PrescriptionDetailRow';
-import { OrderUploadZone } from '../components/order/OrderUploadZone';
+import { OrderUploadZone, type OrderUploadZonePickedFile } from '../components/order/OrderUploadZone';
 import { OrderFileCard } from '../components/order/OrderFileCard';
 import { useOrders } from '../hooks/useOrders';
-import type { UploadedFile } from '../types/order.types';
+import type { OrderDetail } from '../types/order.types';
 
 export interface OrderDetailViewProps {
   orderId: string;
@@ -20,8 +22,9 @@ export function OrderDetailView({ orderId, onBack }: OrderDetailViewProps) {
   const { t } = useTranslation();
   const {
     status,
-    getDetailById,
-    simulateUpload,
+    fetchDetail,
+    getSubmittedFilesById,
+    uploadAndSubmit,
     isUploading,
     uploadSuccess,
     uploadedFile,
@@ -29,13 +32,30 @@ export function OrderDetailView({ orderId, onBack }: OrderDetailViewProps) {
     clearUpload,
   } = useOrders();
 
-  const detail = getDetailById(orderId);
+  const [detail, setDetail] = useState<OrderDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [pickedFile, setPickedFile] = useState<OrderUploadZonePickedFile | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    void fetchDetail(orderId).then((value) => {
+      if (cancelled) return;
+      setDetail(value);
+      setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId, fetchDetail]);
+
+  const submittedFiles = getSubmittedFilesById(orderId);
 
   const header = (
     <AppointmentBookingHeader title={t('order.detail.headerTitle')} onBack={onBack} />
   );
 
-  if (status === 'loading') {
+  if (loading || status === 'loading') {
     return (
       <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
         {header}
@@ -80,8 +100,28 @@ export function OrderDetailView({ orderId, onBack }: OrderDetailViewProps) {
     maxSizeValue: '15MB',
   };
 
-  function handleFileSelected(file: UploadedFile) {
-    setUploadedFile(file);
+  function handleFileSelected(file: OrderUploadZonePickedFile) {
+    setPickedFile(file);
+    setUploadedFile({ name: file.name, sizeMb: file.sizeMb, progress: 0 });
+  }
+
+  async function handleSubmit() {
+    if (!pickedFile) return;
+    try {
+      await uploadAndSubmit(orderId, {
+        uri: pickedFile.uri,
+        name: pickedFile.name,
+        mimeType: pickedFile.mimeType,
+        sizeBytes: pickedFile.sizeBytes,
+      });
+    } catch (e) {
+      toast.error((e as Error)?.message ?? 'Upload failed');
+    }
+  }
+
+  function handleCancel() {
+    setPickedFile(null);
+    clearUpload();
   }
 
   return (
@@ -154,7 +194,7 @@ export function OrderDetailView({ orderId, onBack }: OrderDetailViewProps) {
           <OrderUploadZone onSelectFile={handleFileSelected} labels={uploadLabels} />
 
           {uploadedFile && (
-            <OrderFileCard file={uploadedFile} onRemove={clearUpload} />
+            <OrderFileCard file={uploadedFile} onRemove={handleCancel} />
           )}
 
           {uploadedFile && (
@@ -163,7 +203,7 @@ export function OrderDetailView({ orderId, onBack }: OrderDetailViewProps) {
                 label={t('order.detail.cancelBtn')}
                 variant="outline"
                 size="large"
-                onPress={clearUpload}
+                onPress={handleCancel}
               />
               <View className="flex-1">
                 <Button
@@ -172,7 +212,7 @@ export function OrderDetailView({ orderId, onBack }: OrderDetailViewProps) {
                   size="large"
                   fullWidth
                   disabled={isUploading}
-                  onPress={simulateUpload}
+                  onPress={() => void handleSubmit()}
                 />
               </View>
             </View>
@@ -183,6 +223,24 @@ export function OrderDetailView({ orderId, onBack }: OrderDetailViewProps) {
               <Text className="text-b4 font-medium font-sans text-green-700 text-center">
                 {t('order.detail.saveSuccess')}
               </Text>
+            </View>
+          )}
+
+          {submittedFiles.length > 0 && (
+            <View className="gap-2">
+              <Text className="text-s2 font-semibold font-sans text-grey-900">
+                {t('order.detail.submittedFiles', { defaultValue: 'Submitted files' })}
+              </Text>
+              {submittedFiles.map((file) => (
+                <View key={file.url} className="bg-grey-50 rounded-2xl px-4 py-3">
+                  <Text className="text-b3 font-medium font-sans text-grey-900" numberOfLines={1}>
+                    {file.name}
+                  </Text>
+                  <Text className="text-c1 font-sans text-grey-500" numberOfLines={1}>
+                    {file.url}
+                  </Text>
+                </View>
+              ))}
             </View>
           )}
         </View>

@@ -2,7 +2,7 @@ import { FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
-import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { ScreenHeader } from '@shared/components/ui/ScreenHeader';
 import { useDoctorNuraAI } from '../hooks/useDoctorNuraAI';
 import { DoctorHistoryItem } from '../components/nura/DoctorHistoryItem';
 import type { DoctorAIHistoryItem } from '../types/doctorNuraAI.types';
@@ -19,19 +19,7 @@ export function DoctorNuraAIHistoryView() {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-      {/* Header */}
-      <View className="bg-primary-50 px-4 pb-4 pt-2">
-        <View className="flex-row items-center justify-between h-[29px]">
-          <HeaderBackButton
-            onPress={() => router.back()}
-            accessibilityLabel={t('common.back')}
-          />
-          <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-            {t('doctorNuraAI.historyTitle')}
-          </Text>
-          <View className="w-[29px]" />
-        </View>
-      </View>
+      <ScreenHeader title={t('doctorNuraAI.historyTitle')} fallbackHref="/(doctor)/nura-ai" />
 
       {historyList.length === 0 ? (
         <View className="flex-1 items-center justify-center px-6">

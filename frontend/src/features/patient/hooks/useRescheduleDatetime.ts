@@ -15,8 +15,11 @@ export function useRescheduleDatetime() {
   const [timeSlotsByDate, setTimeSlotsByDate] = useState<Record<string, AppointmentTimeSlot[]>>({});
   const [cursor, setCursor] = useState<{ year: number; month: number } | null>(null);
 
+  const selectedAppointment = store.appointments.find((a) => a.id === store.selectedId) ?? null;
+  const doctorId = selectedAppointment?.doctorId ?? null;
+
   async function loadSchedule(next?: { year: number; month: number }) {
-    if (!store.selectedId) {
+    if (!store.selectedId || !doctorId) {
       setCalendarMonth(null);
       setTimeSlotsByDate({});
       setStatus('error');
@@ -27,7 +30,7 @@ export function useRescheduleDatetime() {
     try {
       const now = new Date();
       const requested = next ?? cursor ?? { year: now.getFullYear(), month: now.getMonth() + 1 };
-      const schedule = await fetchRescheduleSchedule(store.selectedId, requested);
+      const schedule = await fetchRescheduleSchedule(doctorId, requested);
       setCalendarMonth(schedule.month);
       setTimeSlotsByDate(schedule.timeSlotsByDate);
       setCursor(requested);
@@ -41,7 +44,7 @@ export function useRescheduleDatetime() {
 
   useEffect(() => {
     void loadSchedule();
-  }, [store.selectedId]);
+  }, [store.selectedId, doctorId]);
 
   const timeSlots = store.selectedDate
     ? (timeSlotsByDate[store.selectedDate] ?? [])

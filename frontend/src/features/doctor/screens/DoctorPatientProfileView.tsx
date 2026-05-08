@@ -1,13 +1,13 @@
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@shared/components/ui/Alert';
-import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { ScreenHeader } from '@shared/components/ui/ScreenHeader';
 import { primitiveColors } from '@design/tokens';
-import { goBackOrReplace } from '@shared/navigation/goBackOrReplace';
+import { capitalizeFirst } from '@shared/utils/text';
 import { useDoctorPatientProfile } from '../hooks/useDoctorPatientProfile';
 import type { DoctorPatientProfile } from '../types/doctor.types';
 import type { DoctorRecordDetailId } from './DoctorPatientRecordDetailView';
@@ -25,15 +25,6 @@ function StatColumn({ label, value, bordered = true }: { label: string; value: s
     <View className={['w-[76px] items-center px-2', bordered ? 'border-r border-[#D2D5DB]' : ''].join(' ')}>
       <Text className="text-c1 font-sans text-grey-500">{label}</Text>
       <Text className="mt-1 text-s2 font-semibold font-sans text-[#814EFF]">{value}</Text>
-    </View>
-  );
-}
-
-function PersonalDetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View className="px-2 py-[9px] gap-1">
-      <Text className="text-[14px] leading-5 font-medium font-sans text-grey-900">{label}</Text>
-      <Text className="text-c1 font-sans text-grey-500">{value}</Text>
     </View>
   );
 }
@@ -61,7 +52,7 @@ function MedicalRecordLinkRow({
 export function DoctorPatientProfileView({ patientId }: DoctorPatientProfileViewProps) {
   const { t } = useTranslation();
   const router = useRouter();
-  const { patient, successKey, clearSuccess } = useDoctorPatientProfile(patientId);
+  const { patient, loading, successKey, clearSuccess } = useDoctorPatientProfile(patientId);
 
   const medicalRecordRows: Array<{ id: DoctorRecordDetailId; label: string }> = [
     { id: 'patient-history', label: t('doctorPatients.patientHistoryTitle') },
@@ -75,45 +66,27 @@ export function DoctorPatientProfileView({ patientId }: DoctorPatientProfileView
   if (!patient) {
     return (
       <SafeAreaView className="flex-1 bg-white">
-        <View className="bg-primary-50 px-4 pb-4 pt-2">
-          <View className="flex-row items-center justify-between h-[29px]">
-            <HeaderBackButton
-              onPress={() => goBackOrReplace(router, '/(doctor)/patients')}
-              accessibilityLabel={t('common.back')}
-            />
-            <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-              Profile
-            </Text>
-            <View className="w-[29px]" />
-          </View>
-        </View>
+        <ScreenHeader title={t('doctorPatients.profileTitle', { defaultValue: 'Profile' })} fallbackHref="/(doctor)/patients" />
 
         <View className="flex-1 items-center justify-center px-6">
-          <Text className="text-s2 font-semibold font-sans text-grey-900 text-center">
-            {t('doctorPatients.patientNotFound')}
-          </Text>
+          {loading ? (
+            <ActivityIndicator color={primitiveColors['primary-500']} />
+          ) : (
+            <Text className="text-s2 font-semibold font-sans text-grey-900 text-center">
+              {t('doctorPatients.patientNotFound')}
+            </Text>
+          )}
         </View>
       </SafeAreaView>
     );
   }
 
-  const profileSubtitle = patient.gender;
+  const profileSubtitle = capitalizeFirst(patient.gender);
   const ageLabel = `${patient.age} ${t('doctorPatients.years')}`;
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="bg-primary-50 px-4 pb-4 pt-2">
-        <View className="flex-row items-center justify-between h-[29px]">
-          <HeaderBackButton
-            onPress={() => goBackOrReplace(router, '/(doctor)/patients')}
-            accessibilityLabel={t('common.back')}
-          />
-          <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-            Profile
-          </Text>
-          <View className="w-[29px]" />
-        </View>
-      </View>
+      <ScreenHeader title={t('doctorPatients.profileTitle', { defaultValue: 'Profile' })} fallbackHref="/(doctor)/patients" />
 
       <ScrollView
         className="flex-1"
@@ -148,17 +121,6 @@ export function DoctorPatientProfileView({ patientId }: DoctorPatientProfileView
             <StatColumn label="Height" value={patient.height} />
             <StatColumn label="Weight" value={patient.weight} />
             <StatColumn label="Age" value={ageLabel} bordered={false} />
-          </View>
-        </View>
-
-        <View className="rounded-2xl border border-[#EEEEEE] bg-white p-4 gap-2">
-          <Text className="text-s2 font-semibold font-sans text-grey-900">Personal details</Text>
-
-          <View>
-            <PersonalDetailRow label="Phone number" value={patient.phone} />
-            <PersonalDetailRow label="Email address" value={patient.email} />
-            <PersonalDetailRow label="Address" value={patient.address} />
-            <PersonalDetailRow label="Nationality" value={patient.nationality} />
           </View>
         </View>
 

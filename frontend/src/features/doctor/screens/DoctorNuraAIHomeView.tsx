@@ -1,11 +1,12 @@
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { primitiveColors } from '@design/tokens';
-import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { ScreenHeader } from '@shared/components/ui/ScreenHeader';
 import { useDoctorNuraAI } from '../hooks/useDoctorNuraAI';
+import { useDoctorPatients } from '../hooks/useDoctorPatients';
 import { DoctorAIChatInput } from '../components/nura/DoctorAIChatInput';
 import { DoctorMenuModal } from '../components/nura/DoctorMenuModal';
 import { DoctorPatientAICard } from '../components/nura/DoctorPatientAICard';
@@ -14,6 +15,7 @@ import type { DoctorAIPatient } from '../types/doctorNuraAI.types';
 export function DoctorNuraAIHomeView() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { patients: realPatients, status, refreshing, refresh } = useDoctorPatients();
   const {
     patientsList,
     isMenuOpen,
@@ -22,7 +24,7 @@ export function DoctorNuraAIHomeView() {
     startPatientChat,
     startNewChat,
     openReportChat,
-  } = useDoctorNuraAI();
+  } = useDoctorNuraAI(realPatients);
 
   function handleNewChat() {
     startNewChat();
@@ -56,25 +58,34 @@ export function DoctorNuraAIHomeView() {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-      {/* Header */}
-      <View className="bg-primary-50 px-4 pb-4 pt-2">
-        <View className="flex-row items-center justify-between h-[29px]">
-          <HeaderBackButton
-            onPress={() => router.back()}
-            accessibilityLabel={t('common.back')}
-          />
-          <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-            {t('doctorNuraAI.title')}
-          </Text>
-          <View className="w-[29px]" />
-        </View>
-      </View>
+      <ScreenHeader title={t('doctorNuraAI.title')} fallbackHref="/(doctor)" />
 
       <FlatList
         data={patientsList}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerClassName="px-4 pt-4 pb-8 gap-6"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => void refresh()}
+            tintColor={primitiveColors['primary-500']}
+            colors={[primitiveColors['primary-500']]}
+          />
+        }
+        ListEmptyComponent={
+          status === 'loading' ? (
+            <View className="items-center justify-center py-8">
+              <ActivityIndicator color={primitiveColors['primary-500']} />
+            </View>
+          ) : (
+            <View className="items-center justify-center py-8">
+              <Text className="text-c1 font-sans text-grey-500 text-center">
+                {t('doctorNuraAI.emptyPatients', { defaultValue: 'No patients yet. Patients will appear here once they have an appointment with you.' })}
+              </Text>
+            </View>
+          )
+        }
         ListHeaderComponent={
           <>
             {/* Hamburger + Language row */}

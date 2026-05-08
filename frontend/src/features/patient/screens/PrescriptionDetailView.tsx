@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +8,7 @@ import { AppointmentBookingHeader } from '../components/booking/AppointmentBooki
 import { PrescriptionDetailRow } from '../components/prescription/PrescriptionDetailRow';
 import { PrescriptionDirectionsCard } from '../components/prescription/PrescriptionDirectionsCard';
 import { usePrescriptions } from '../hooks/usePrescriptions';
+import type { PrescriptionDetail } from '../types/prescription.types';
 
 export interface PrescriptionDetailViewProps {
   prescriptionId: string;
@@ -20,14 +22,28 @@ export function PrescriptionDetailView({
   onPreview,
 }: PrescriptionDetailViewProps) {
   const { t } = useTranslation();
-  const { status, getDetailById } = usePrescriptions();
-  const detail = getDetailById(prescriptionId);
+  const { status, fetchDetail } = usePrescriptions();
+  const [detail, setDetail] = useState<PrescriptionDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    void fetchDetail(prescriptionId).then((value) => {
+      if (cancelled) return;
+      setDetail(value);
+      setLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [prescriptionId, fetchDetail]);
 
   const header = (
     <AppointmentBookingHeader title={t('prescription.detail.headerTitle')} onBack={onBack} />
   );
 
-  if (status === 'loading') {
+  if (loading || status === 'loading') {
     return (
       <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
         {header}

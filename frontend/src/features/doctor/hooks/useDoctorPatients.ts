@@ -10,12 +10,14 @@ function buildPatientItem(remote: {
   name: string;
   lastVisit: string;
   avatarUri: string | null;
+  age: number | null;
+  gender: string | null;
 }): DoctorPatientListItem {
   return {
     id: remote.id,
     name: remote.name || 'Patient',
-    age: 0,
-    gender: 'Patient',
+    age: remote.age ?? 0,
+    gender: remote.gender || 'Patient',
     appointmentTime: format(new Date(remote.lastVisit), 'MMM d, yyyy'),
     severity: 'low',
     aiSummary: {

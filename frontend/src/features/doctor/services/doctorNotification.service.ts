@@ -1,59 +1,70 @@
-import type { DoctorNotification } from '../types/doctorNotification.types';
+import { z } from 'zod';
+import { http } from '@shared/api/http';
+import type {
+  DoctorNotification,
+  DoctorNotificationType,
+} from '../types/doctorNotification.types';
 
-const MOCK_DOCTOR_NOTIFICATIONS: DoctorNotification[] = [
-  {
-    id: 'doctor-notification-1',
-    type: 'consultation',
-    message: 'Your 10:00 AM consultation with Angela Dairo is ready to begin.',
-    timestamp: 'Today, 9:45 AM',
-    isRead: false,
-    metadata: {
-      appointmentId: 'appointment-angela-1',
-      patientId: '1',
-    },
-  },
-  {
-    id: 'doctor-notification-2',
-    type: 'patient_assigned',
-    message: 'David Hassan has been added to your patient queue for follow-up review.',
-    timestamp: 'Today, 8:20 AM',
-    isRead: false,
-    metadata: {
-      patientId: '2',
-    },
-  },
-  {
-    id: 'doctor-notification-3',
-    type: 'ai_summary',
-    message: 'A new AI pre-visit summary is available for Halima Yusuf.',
-    timestamp: 'Yesterday, 6:10 PM',
-    isRead: true,
-    metadata: {
-      patientId: '3',
-      reportId: 'ai-summary-halima',
-    },
-  },
-  {
-    id: 'doctor-notification-4',
-    type: 'test_result',
-    message: 'New test results were uploaded to Angela Dairo’s medical record.',
-    timestamp: 'Yesterday, 2:05 PM',
-    isRead: true,
-    metadata: {
-      patientId: '1',
-    },
-  },
-];
+type ApiNotification = {
+  id: string;
+  type: string;
+  status: 'UNREAD' | 'READ';
+  message: string;
+  title: string;
+  data: unknown;
+  createdAt: string;
+};
 
-function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+const metaSchema = z
+  .object({
+    patientId: z.string().optional(),
+    appointmentId: z.string().nullable().optional(),
+    reportId: z.string().optional(),
+    reviewId: z.string().optional(),
+    labOrderId: z.string().optional(),
+    instant: z.boolean().optional(),
+  })
+  .passthrough();
+
+function mapType(apiType: string): DoctorNotificationType {
+  switch (apiType) {
+    case 'APPOINTMENT_BOOKED':
+    case 'APPOINTMENT_RESCHEDULED':
+    case 'APPOINTMENT_CANCELLED':
+      return 'consultation';
+    case 'LAB_ORDER_SUBMITTED':
+      return 'patient_assigned';
+    default:
+      return 'patient_assigned';
+  }
+}
+
+function formatTimestamp(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  return date.toLocaleString();
 }
 
 export async function fetchDoctorNotifications(): Promise<DoctorNotification[]> {
-  await delay(250);
-  return MOCK_DOCTOR_NOTIFICATIONS;
+  const res = await http.get<ApiNotification[]>('/notifications');
+  return res.data.map((n) => {
+    const parsedMeta = metaSchema.safeParse(n.data ?? {});
+    const metadata = parsedMeta.success ? parsedMeta.data : {};
+    return {
+      id: n.id,
+      type: mapType(n.type),
+      message: n.message || n.title,
+      timestamp: formatTimestamp(n.createdAt),
+      isRead: n.status === 'READ',
+      metadata: {
+        patientId: metadata.patientId,
+        appointmentId: metadata.appointmentId ?? undefined,
+        reportId: metadata.reportId,
+      },
+    };
+  });
 }
 
-export async function markDoctorNotificationRead(_id: string): Promise<void> {
-  await delay(120);
+export async function markDoctorNotificationRead(id: string): Promise<void> {
+  await http.post(`/notifications/${id}/read`);
 }

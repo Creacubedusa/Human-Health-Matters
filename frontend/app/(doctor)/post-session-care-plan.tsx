@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { toast } from '@shared/components/ui/toast';
 import { DoctorPostSessionCarePlanView } from '@features/doctor/screens/DoctorPostSessionCarePlanView';
@@ -7,11 +7,14 @@ import { useDoctorConsultationStore } from '@features/doctor/store/doctorConsult
 import { useDoctorPatientsStore } from '@features/doctor/store/doctorPatients.store';
 import { useDoctorAppointmentsStore } from '@features/doctor/store/doctorAppointments.store';
 import { createPatientCarePlanFromDraft } from '@features/doctor/utils/postSessionCarePlan';
-import { upsertDoctorSoapNote } from '@features/doctor/services/doctor.service';
+import {
+  createDoctorPrescriptions,
+  fetchDoctorProfile,
+  upsertDoctorSoapNote,
+  type DoctorPrescriptionPayload,
+  type DoctorProfileResponse,
+} from '@features/doctor/services/doctor.service';
 import { useCarePlanStore } from '@features/patient/store/carePlan.store';
-
-const DOCTOR_NAME = 'Doctor Paul Grant';
-const DOCTOR_SPECIALTY = 'Cardiologist';
 
 export default function DoctorPostSessionCarePlanScreen() {
   const router = useRouter();
@@ -25,6 +28,32 @@ export default function DoctorPostSessionCarePlanScreen() {
   const addCarePlan = useCarePlanStore((state) => state.addCarePlan);
   const [completionModalOpen, setCompletionModalOpen] = useState(false);
   const [carePlanSaved, setCarePlanSaved] = useState(false);
+  const [doctorProfile, setDoctorProfile] = useState<DoctorProfileResponse | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchDoctorProfile()
+      .then((value) => {
+        if (cancelled) return;
+        setDoctorProfile(value);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const doctorName = useMemo(() => {
+    const first = doctorProfile?.user?.firstName ?? '';
+    const last = doctorProfile?.user?.lastName ?? '';
+    const combined = [first, last].filter(Boolean).join(' ').trim();
+    return combined ? `Doctor ${combined}` : 'Doctor';
+  }, [doctorProfile?.user?.firstName, doctorProfile?.user?.lastName]);
+
+  const doctorSpecialty = useMemo(
+    () => doctorProfile?.profile?.specialties?.[0] ?? 'General Practice',
+    [doctorProfile?.profile?.specialties],
+  );
 
   useEffect(() => {
     if (!draft) {
@@ -43,15 +72,58 @@ export default function DoctorPostSessionCarePlanScreen() {
 
     setSoapSubmitting(true);
     try {
-      await upsertDoctorSoapNote(activeDraft.appointmentId, activeDraft.soap);
-      const carePlan = createPatientCarePlanFromDraft(activeDraft, DOCTOR_NAME, DOCTOR_SPECIALTY);
+      await upsertDoctorSoapNote(activeDraft.appointmentId, {
+        subjective: activeDraft.soap.subjective,
+        objective: activeDraft.soap.objective,
+        assessment: activeDraft.soap.assessment,
+        plan: activeDraft.soap.plan,
+        diagnoses: activeDraft.diagnoses
+          .filter((diagnosis) => diagnosis.name.trim().length > 0)
+          .map((diagnosis) => ({
+            id: diagnosis.id,
+            name: diagnosis.name,
+            icd10Code: diagnosis.icd10Code,
+            priority: diagnosis.priority,
+          })),
+        recommendedTests: activeDraft.recommendedTests
+          .filter((test) => test.name.trim().length > 0)
+          .map((test) => ({ id: test.id, name: test.name })),
+      });
+
+      const newPrescriptions: DoctorPrescriptionPayload[] = activeDraft.prescriptions
+        .filter(
+          (rx) =>
+            rx.medication.trim().length > 0 &&
+            rx.dose.trim().length > 0 &&
+            rx.frequency.trim().length > 0 &&
+            rx.duration.trim().length > 0 &&
+            rx.route.trim().length > 0,
+        )
+        .map((rx) => ({
+          medication: rx.medication,
+          brandName: rx.brandName || undefined,
+          dose: rx.dose,
+          frequency: rx.frequency,
+          duration: rx.duration,
+          route: rx.route,
+          refillsLeft: rx.refillsLeft,
+          notes: rx.notes || undefined,
+        }));
+      if (newPrescriptions.length > 0) {
+        await createDoctorPrescriptions(
+          { appointmentId: activeDraft.appointmentId },
+          newPrescriptions,
+        );
+      }
+
+      const carePlan = createPatientCarePlanFromDraft(activeDraft, doctorName, doctorSpecialty);
       addCarePlan(carePlan);
       addCarePlanSummary(activeDraft.patientId, {
         id: carePlan.id,
         status: carePlan.status,
         title: carePlan.consultationTitle,
-        doctorName: DOCTOR_NAME,
-        specialty: DOCTOR_SPECIALTY,
+        doctorName,
+        specialty: doctorSpecialty,
         date: carePlan.consultationDate,
       });
       setCarePlanSaved(true);

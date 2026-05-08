@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { primitiveColors } from '@design/tokens';
-import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
+import { ScreenHeader } from '@shared/components/ui/ScreenHeader';
 import { ChatBubble } from '@shared/components/ui/ChatBubble';
 import { TypingIndicator } from '@shared/components/ui/TypingIndicator';
 import { SuggestionChip } from '@shared/components/ui/SuggestionChip';
 import { useDoctorNuraAI } from '../hooks/useDoctorNuraAI';
+import { useDoctorPatients } from '../hooks/useDoctorPatients';
 import { DoctorAIChatInput } from '../components/nura/DoctorAIChatInput';
 import { DoctorMenuModal } from '../components/nura/DoctorMenuModal';
 
@@ -17,6 +18,7 @@ const SUGGESTION_KEYS = ['suggestion1', 'suggestion2'] as const;
 export function DoctorNuraAIChatView() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { patients: realPatients } = useDoctorPatients();
   const {
     chatMessages,
     chatMode,
@@ -28,7 +30,7 @@ export function DoctorNuraAIChatView() {
     sendMessage,
     startNewChat,
     openReportChat,
-  } = useDoctorNuraAI();
+  } = useDoctorNuraAI(realPatients);
 
   const isEmpty = chatMessages.length === 0;
 
@@ -51,19 +53,7 @@ export function DoctorNuraAIChatView() {
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
-      {/* Header */}
-      <View className="bg-primary-50 px-4 pb-4 pt-2">
-        <View className="flex-row items-center justify-between h-[29px]">
-          <HeaderBackButton
-            onPress={() => router.back()}
-            accessibilityLabel={t('common.back')}
-          />
-          <Text className="text-s2 font-semibold font-sans text-grey-900 absolute left-0 right-0 text-center pointer-events-none">
-            {t('doctorNuraAI.title')}
-          </Text>
-          <View className="w-[29px]" />
-        </View>
-      </View>
+      <ScreenHeader title={t('doctorNuraAI.title')} fallbackHref="/(doctor)/nura-ai" />
 
       {/* Controls bar */}
       <View className="flex-row items-center justify-between px-4 py-3">
