@@ -1,7 +1,6 @@
 export type ProfileRecordId =
   | 'patient-history'
   | 'medication'
-  | 'appointment'
   | 'order'
   | 'tests'
   | 'prescription'

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { primitiveColors } from '@design/tokens';
+import { NuraMark } from './NuraMark';
 
 interface Props {
   variant: 'arrow' | 'start';
@@ -23,7 +24,7 @@ export function CheckSymptomsCard({ variant, onPress }: Props) {
     >
       <View className="flex-row items-center gap-4">
         <View className="w-12 h-12 rounded-full bg-primary-100 items-center justify-center shrink-0">
-          <Ionicons name="sparkles" size={24} color={primitiveColors['primary-500']} />
+          <NuraMark size={24} />
         </View>
 
         {/* Text */}

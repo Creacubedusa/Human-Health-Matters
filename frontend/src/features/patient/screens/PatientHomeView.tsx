@@ -19,10 +19,10 @@ import { CheckSymptomsCard } from '../components/CheckSymptomsCard';
 import { ActivityCard } from '../components/ActivityCard';
 import { CareFundingCard } from '../components/CareFundingCard';
 import { EmptyActivityState } from '../components/EmptyActivityState';
+import { NuraMark } from '../components/NuraMark';
 
 // Figma MCP assets — replace with local assets in production
 const AVATAR_URI = 'https://www.figma.com/api/mcp/asset/a0119cc5-c8fb-45dc-8a36-d9e3a03be586';
-const NURA_ICON_URI = 'https://www.figma.com/api/mcp/asset/c7be1a2b-b40a-424d-88dc-5025a3abd92e';
 
 export interface PatientHomeViewProps {
   onCalendar: () => void;
@@ -225,7 +225,7 @@ export function PatientHomeView({
             accessibilityRole="button"
           >
             <View className="flex-row items-center gap-2 justify-center">
-              <Ionicons name="sparkles" size={20} color={primitiveColors['white']} />
+              <NuraMark size={20} />
               <Text className="text-btn-medium font-sans text-white">
                 {t('patientHome.checkSymptoms')}
               </Text>

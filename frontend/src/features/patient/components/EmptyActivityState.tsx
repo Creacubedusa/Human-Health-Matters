@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Pressable, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { primitiveColors } from '@design/tokens';
+import { NuraMark } from './NuraMark';
 
 interface Props {
   onCheckSymptoms: () => void;
@@ -39,7 +38,7 @@ export function EmptyActivityState({ onCheckSymptoms }: Props) {
             accessibilityRole="button"
           >
             <View className="flex-row items-center gap-2">
-              <Ionicons name="sparkles" size={20} color={primitiveColors['white']} />
+              <NuraMark size={20} />
               <Text className="text-btn-medium font-sans text-white">
                 {t('patientHome.checkSymptoms')}
               </Text>

@@ -62,6 +62,7 @@ export function PersonalDetailsStep({
           value={data.dateOfBirth}
           onChange={(date) => onChange({ dateOfBirth: date })}
           placeholder={t('doctorProfileSetup.personal.dobPlaceholder')}
+          maximumDate={new Date()}
           testID="personal-dob"
         />
 

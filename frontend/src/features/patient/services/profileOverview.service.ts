@@ -85,12 +85,6 @@ export async function fetchPatientProfileOverview(): Promise<PatientProfileOverv
         details: [],
       },
       {
-        id: 'appointment',
-        title: 'Appointment',
-        summary: 'Recent and upcoming consultation activity',
-        details: [],
-      },
-      {
         id: 'medical-docs',
         title: 'Medical reports and docs',
         summary: 'Uploaded and generated medical documents',

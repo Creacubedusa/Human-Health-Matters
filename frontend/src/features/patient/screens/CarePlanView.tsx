@@ -1,5 +1,7 @@
+import { useCallback } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { Button } from '@shared/components/ui/Button';
@@ -25,6 +27,14 @@ export function CarePlanView({ onBack, onViewCarePlan }: CarePlanViewProps) {
     refresh,
     refreshing,
   } = useCarePlans();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (status !== 'loading') {
+        void refresh();
+      }
+    }, [refresh, status]),
+  );
 
   const header = (
     <CarePlanHeader

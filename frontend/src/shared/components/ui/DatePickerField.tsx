@@ -5,30 +5,66 @@ import { Ionicons } from '@expo/vector-icons';
 import { primitiveColors } from '@design/tokens';
 import type { InputStatus } from './Input';
 
+type DateOutputFormat = 'display' | 'iso';
+
 export interface DatePickerFieldProps {
   label?: string;
   value: string;
   onChange: (date: string) => void;
+  onBlur?: () => void;
   placeholder?: string;
   status?: InputStatus;
   helperText?: string;
   disabled?: boolean;
   testID?: string;
+  maximumDate?: Date;
+  minimumDate?: Date;
+  outputFormat?: DateOutputFormat;
 }
 
 function parseDate(value: string): Date {
-  const d = new Date(value);
-  return isNaN(d.getTime()) ? new Date() : d;
+  const raw = value.trim();
+  if (!raw) return new Date();
+
+  const displayMatch = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if (displayMatch) {
+    const [, day, month, year] = displayMatch;
+    const parsed = new Date(Number(year), Number(month) - 1, Number(day));
+    return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  }
+
+  const isoDateMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoDateMatch) {
+    const [, year, month, day] = isoDateMatch;
+    const parsed = new Date(Number(year), Number(month) - 1, Number(day));
+    return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+  }
+
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+}
+
+function formatDisplayFromDate(date: Date): string {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+function formatIsoFromDate(date: Date): string {
+  return new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0),
+  ).toISOString();
 }
 
 function formatDisplay(value: string): string {
   if (!value) return '';
-  const d = new Date(value);
-  if (isNaN(d.getTime())) return value;
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
+  const parsed = parseDate(value);
+  return Number.isNaN(parsed.getTime()) ? value : formatDisplayFromDate(parsed);
+}
+
+function formatOutput(date: Date, outputFormat: DateOutputFormat): string {
+  return outputFormat === 'iso' ? formatIsoFromDate(date) : formatDisplayFromDate(date);
 }
 
 const BORDER_CLASS: Record<'default' | 'error' | 'disabled', string> = {
@@ -47,11 +83,15 @@ export function DatePickerField({
   label,
   value,
   onChange,
+  onBlur,
   placeholder = 'DD/MM/YYYY',
   status = 'default',
   helperText,
   disabled = false,
   testID,
+  maximumDate,
+  minimumDate,
+  outputFormat = 'display',
 }: DatePickerFieldProps) {
   const [visible, setVisible] = useState(false);
   const [tempDate, setTempDate] = useState<Date>(() => parseDate(value));
@@ -62,14 +102,18 @@ export function DatePickerField({
   function handleChange(_: DateTimePickerEvent, selected?: Date) {
     if (Platform.OS === 'android') {
       setVisible(false);
-      if (selected) onChange(selected.toISOString());
+      if (selected) {
+        onChange(formatOutput(selected, outputFormat));
+        onBlur?.();
+      }
     } else {
       if (selected) setTempDate(selected);
     }
   }
 
   function handleConfirm() {
-    onChange(tempDate.toISOString());
+    onChange(formatOutput(tempDate, outputFormat));
+    onBlur?.();
     setVisible(false);
   }
 
@@ -130,7 +174,8 @@ export function DatePickerField({
                 mode="date"
                 display="spinner"
                 onChange={handleChange}
-                maximumDate={new Date()}
+                maximumDate={maximumDate}
+                minimumDate={minimumDate}
               />
             </View>
           </Pressable>
@@ -142,7 +187,8 @@ export function DatePickerField({
             mode="date"
             display="default"
             onChange={handleChange}
-            maximumDate={new Date()}
+            maximumDate={maximumDate}
+            minimumDate={minimumDate}
           />
         )
       )}

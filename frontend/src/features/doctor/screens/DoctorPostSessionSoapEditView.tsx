@@ -31,6 +31,8 @@ function SoapField({
           multiline
           value={value}
           onChangeText={onChangeText}
+          editable
+          scrollEnabled={false}
           className="text-[14px] font-sans leading-5 text-grey-900"
           placeholder=""
           textAlignVertical="top"

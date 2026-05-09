@@ -18,6 +18,16 @@ export function InAppCallWebView({ url, onBack }: InAppCallWebViewProps) {
     typeof WebView
   >['mediaCapturePermissionGrantType'] =
     Platform.OS === 'android' ? 'grant' : undefined;
+  const androidPermissionProps =
+    Platform.OS === 'android'
+      ? ({
+          // The installed WebView runtime supports this Android callback,
+          // but the current TypeScript definitions in the repo do not.
+          onPermissionRequest: (event: { grant?: () => void } | undefined) => {
+            event?.grant?.();
+          },
+        } as unknown as Partial<ComponentProps<typeof WebView>>)
+      : {};
 
   return (
     <SafeAreaView className="flex-1 bg-black" edges={['top']}>
@@ -55,10 +65,10 @@ export function InAppCallWebView({ url, onBack }: InAppCallWebViewProps) {
         allowsInlineMediaPlayback
         mediaPlaybackRequiresUserAction={false}
         mediaCapturePermissionGrantType={mediaCapturePermissionGrantType}
-        onPermissionRequest={(event) => event?.grant?.()}
         javaScriptEnabled
         domStorageEnabled
         originWhitelist={['*']}
+        {...androidPermissionProps}
       />
     </SafeAreaView>
   );

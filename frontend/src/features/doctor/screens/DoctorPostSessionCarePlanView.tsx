@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { Button } from '@shared/components/ui/Button';
 import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import type {
   DoctorPostSessionCarePlanDraft,
+  SoapNote,
 } from '../types/doctorConsultation.types';
 
 interface DoctorPostSessionCarePlanViewProps {
@@ -15,6 +16,7 @@ interface DoctorPostSessionCarePlanViewProps {
   submitting: boolean;
   onBack: () => void;
   onApprove: () => void;
+  onUpdateSoap: (field: keyof SoapNote, value: string) => void;
   onEditSoap: () => void;
   onEditDiagnoses: () => void;
   onEditRecommendedTests: () => void;
@@ -59,20 +61,33 @@ function SectionHeader({
   );
 }
 
-function ReadOnlyBox({
+function SoapInputField({
   label,
   value,
+  onChangeText,
   tall = false,
 }: {
   label: string;
   value: string;
+  onChangeText: (value: string) => void;
   tall?: boolean;
 }) {
   return (
     <View className="gap-2">
       <Text className="text-[16px] font-medium font-sans leading-6 text-grey-900">{label}</Text>
-      <View className={`rounded-[8px] bg-grey-50 px-4 py-3 ${tall ? 'min-h-[136px]' : 'min-h-[54px]'}`}>
-        <Text className="text-[14px] font-sans leading-5 text-grey-600">{value || ' '}</Text>
+      <View
+        className={`rounded-[8px] border border-grey-200 bg-grey-50 px-4 py-3 ${tall ? 'min-h-[136px]' : 'min-h-[54px]'}`}
+      >
+        <TextInput
+          multiline={tall}
+          value={value}
+          onChangeText={onChangeText}
+          editable
+          scrollEnabled={false}
+          textAlignVertical={tall ? 'top' : 'center'}
+          className="text-[14px] font-sans leading-5 text-grey-900"
+          placeholder=""
+        />
       </View>
     </View>
   );
@@ -98,6 +113,7 @@ export function DoctorPostSessionCarePlanView({
   submitting,
   onBack,
   onApprove,
+  onUpdateSoap,
   onEditSoap,
   onEditDiagnoses,
   onEditRecommendedTests,
@@ -203,10 +219,30 @@ export function DoctorPostSessionCarePlanView({
               onToggle={onEditSoap}
             />
             <View className="gap-4">
-              <ReadOnlyBox label="Subjective" value={draft.soap.subjective} tall />
-              <ReadOnlyBox label="Objective" value={draft.soap.objective} tall />
-              <ReadOnlyBox label="Assessment" value={draft.soap.assessment} tall />
-              <ReadOnlyBox label="Plan" value={draft.soap.plan} tall />
+              <SoapInputField
+                label="Subjective"
+                value={draft.soap.subjective}
+                onChangeText={(value) => onUpdateSoap('subjective', value)}
+                tall
+              />
+              <SoapInputField
+                label="Objective"
+                value={draft.soap.objective}
+                onChangeText={(value) => onUpdateSoap('objective', value)}
+                tall
+              />
+              <SoapInputField
+                label="Assessment"
+                value={draft.soap.assessment}
+                onChangeText={(value) => onUpdateSoap('assessment', value)}
+                tall
+              />
+              <SoapInputField
+                label="Plan"
+                value={draft.soap.plan}
+                onChangeText={(value) => onUpdateSoap('plan', value)}
+                tall
+              />
             </View>
           </View>
         </SectionCard>

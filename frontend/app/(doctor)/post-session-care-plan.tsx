@@ -22,6 +22,7 @@ export default function DoctorPostSessionCarePlanScreen() {
   const soapSubmitting = useDoctorConsultationStore((state) => state.soapSubmitting);
   const setSoapSubmitting = useDoctorConsultationStore((state) => state.setSoapSubmitting);
   const setPostSessionDraft = useDoctorConsultationStore((state) => state.setPostSessionDraft);
+  const updatePostSessionSoap = useDoctorConsultationStore((state) => state.updatePostSessionSoap);
   const addCarePlanSummary = useDoctorPatientsStore((state) => state.addCarePlanSummary);
   const recordInsuranceClaim = useDoctorPatientsStore((state) => state.recordInsuranceClaim);
   const completeAppointment = useDoctorAppointmentsStore((state) => state.completeAppointment);
@@ -174,6 +175,7 @@ export default function DoctorPostSessionCarePlanScreen() {
         submitting={soapSubmitting}
         onBack={() => router.back()}
         onApprove={() => void handleApprove()}
+        onUpdateSoap={(field, value) => updatePostSessionSoap(field, value)}
         onEditSoap={() => router.push('/(doctor)/post-session-care-plan-soap-edit')}
         onEditDiagnoses={() => router.push('/(doctor)/post-session-care-plan-diagnoses-edit')}
         onEditRecommendedTests={() =>

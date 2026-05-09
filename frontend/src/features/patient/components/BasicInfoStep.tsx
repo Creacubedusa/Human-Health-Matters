@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Text, View } from 'react-native';
 import { primitiveColors } from '@design/tokens';
 import { AvatarUpload } from '@shared/components/ui/AvatarUpload';
+import { DatePickerField } from '@shared/components/ui/DatePickerField';
 import { Input } from '@shared/components/ui/Input';
 import { SelectInput } from '@shared/components/ui/SelectInput';
 import type { ProfileForm } from '../types/profile.types';
@@ -51,21 +52,14 @@ export function BasicInfoStep({ form, errors, onChange, disabled }: Props) {
         />
 
         {/* Date of birth */}
-        <Input
+        <DatePickerField
           label={t('patientProfile.dobLabel')}
           placeholder="DD/MM/YYYY"
           value={form.dateOfBirth ?? ''}
-          onChangeText={(v) => onChange('dateOfBirth', v || null)}
-          iconLeft={
-            <Ionicons
-              name="calendar-outline"
-              size={20}
-              color={primitiveColors['grey-900']}
-            />
-          }
+          onChange={(v) => onChange('dateOfBirth', v || null)}
           status={errors.dateOfBirth ? 'error' : 'default'}
           helperText={errors.dateOfBirth ? t(errors.dateOfBirth) : undefined}
-          keyboardType="numbers-and-punctuation"
+          maximumDate={new Date()}
           disabled={disabled}
           testID="dob-input"
         />

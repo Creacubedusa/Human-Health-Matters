@@ -37,8 +37,16 @@ export default function PatientProfileScreen() {
       onPrivacy={() => router.push('/(patient)/privacy-policy')}
       onLogout={handleLogout}
       onRecord={(id: ProfileRecordId | 'support-report') => {
+        if (id === 'support-report') {
+          router.push('/(patient)/healthcare-support');
+          return;
+        }
         if (id === 'order') {
           router.push('/(patient)/orders');
+          return;
+        }
+        if (id === 'prescription') {
+          router.push('/(patient)/prescriptions');
           return;
         }
         if (id === 'tests') {

@@ -75,14 +75,17 @@ export function HealthcareSupportView({ onBack }: HealthcareSupportViewProps) {
         showsVerticalScrollIndicator={false}
       >
         {/* Summary card */}
-        <View className="bg-primary-500 rounded-2xl p-4 gap-2">
-          <Text className="text-b4 font-sans text-white/60">
+        <View
+          className="h-[129px] rounded-2xl border bg-primary-500 items-center justify-center px-4"
+          style={{ borderColor: '#D0FAE5', borderWidth: 0.8 }}
+        >
+          <Text className="text-b3 font-sans text-white/60 text-center">
             {t('healthcareSupport.totalLabel')}
           </Text>
-          <Text className="text-h3 font-semibold font-sans text-white">
+          <Text className="mt-2 text-h3 font-semibold font-sans text-white text-center">
             {data.totalSupportReceived}
           </Text>
-          <Text className="text-b4 font-medium font-sans text-white/60">
+          <Text className="mt-2 text-b4 font-medium font-sans text-white/60 text-center">
             {t('healthcareSupport.acrossVisits', { count: data.totalCareVisits })}
           </Text>
         </View>

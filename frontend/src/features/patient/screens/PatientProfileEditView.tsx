@@ -7,6 +7,7 @@ import { primitiveColors } from '@design/tokens';
 import { uploadImageToCloudinary } from '@shared/api/cloudinary';
 import { AvatarUpload } from '@shared/components/ui/AvatarUpload';
 import { Button } from '@shared/components/ui/Button';
+import { DatePickerField } from '@shared/components/ui/DatePickerField';
 import { Input } from '@shared/components/ui/Input';
 import { SelectInput } from '@shared/components/ui/SelectInput';
 import type { ProfileEditErrors } from '../hooks/usePatientProfileOverview';
@@ -102,10 +103,6 @@ export function PatientProfileEditView({ onBack, onSaveComplete }: PatientProfil
     }
   }
 
-  const calendarIcon = (
-    <Ionicons name="calendar-outline" size={20} color={primitiveColors['grey-400']} />
-  );
-
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {header}
@@ -163,14 +160,14 @@ export function PatientProfileEditView({ onBack, onSaveComplete }: PatientProfil
             helperText={errors.weight ? t(errors.weight) : undefined}
           />
 
-          <Input
+          <DatePickerField
             label={t('profileOverview.dateOfBirth')}
             value={form.dateOfBirth}
-            onChangeText={(value) => update('dateOfBirth', value)}
+            onChange={(value) => update('dateOfBirth', value)}
             placeholder={t('profileOverview.dobPlaceholder')}
-            iconLeft={calendarIcon}
             status={errors.dateOfBirth ? 'error' : 'default'}
             helperText={errors.dateOfBirth ? t(errors.dateOfBirth) : undefined}
+            maximumDate={new Date()}
           />
         </ScrollView>
 

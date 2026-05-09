@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
+import { DatePickerField } from '@shared/components/ui/DatePickerField';
 import { Input } from '@shared/components/ui/Input';
 import { SelectInput } from '@shared/components/ui/SelectInput';
 import type {
@@ -51,16 +52,15 @@ export function InsuredPatientInfoStep({
         autoCapitalize="words"
       />
 
-      <Input
+      <DatePickerField
         label={t('insuranceCoverage.patientInfo.dateOfBirthLabel')}
         placeholder={t('insuranceCoverage.patientInfo.dateOfBirthPlaceholder')}
         value={form.dateOfBirth}
-        onChangeText={(value) => onChange('dateOfBirth', value)}
+        onChange={(value) => onChange('dateOfBirth', value)}
         onBlur={() => onBlur('dateOfBirth')}
         status={errors.dateOfBirth ? 'error' : 'default'}
         helperText={errors.dateOfBirth ? t(errors.dateOfBirth) : undefined}
-        keyboardType="numbers-and-punctuation"
-        iconLeft={<Ionicons name="calendar-outline" size={24} color={primitiveColors['grey-900']} />}
+        maximumDate={new Date()}
       />
 
       <SelectInput

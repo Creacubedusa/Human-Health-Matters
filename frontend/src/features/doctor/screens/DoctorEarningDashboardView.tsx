@@ -63,6 +63,7 @@ export function DoctorEarningDashboardView() {
                 label={t('doctorEarnings.fromLabel')}
                 value={dateRange.from}
                 onChange={handleChangeFrom}
+                outputFormat="iso"
               />
             </View>
             <View className="flex-1">
@@ -70,6 +71,7 @@ export function DoctorEarningDashboardView() {
                 label={t('doctorEarnings.toLabel')}
                 value={dateRange.to}
                 onChange={handleChangeTo}
+                outputFormat="iso"
               />
             </View>
           </View>

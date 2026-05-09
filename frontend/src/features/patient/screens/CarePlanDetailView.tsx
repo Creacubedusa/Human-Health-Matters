@@ -1,9 +1,11 @@
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
 import { Button } from '@shared/components/ui/Button';
 import { useCarePlans } from '../hooks/useCarePlans';
+import type { CarePlan } from '../types/carePlan.types';
 import { CarePlanCollapsibleSection } from '../components/care-plan/CarePlanCollapsibleSection';
 import { CarePlanDiagnosisRow } from '../components/care-plan/CarePlanDiagnosisRow';
 import { CarePlanDoctorSummaryCard } from '../components/care-plan/CarePlanDoctorSummaryCard';
@@ -19,8 +21,75 @@ export interface CarePlanDetailViewProps {
 
 export function CarePlanDetailView({ carePlanId, onBack }: CarePlanDetailViewProps) {
   const { t } = useTranslation();
-  const { status, getCarePlanById, retry } = useCarePlans();
-  const carePlan = getCarePlanById(carePlanId);
+  const { fetchCarePlanDetail, getCarePlanById, retry } = useCarePlans();
+  const cachedCarePlan = getCarePlanById(carePlanId);
+  const [carePlan, setCarePlan] = useState<CarePlan | null>(cachedCarePlan ?? null);
+  const [detailStatus, setDetailStatus] = useState<'loading' | 'error' | 'success' | 'not-found'>(
+    cachedCarePlan ? 'success' : 'loading',
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!carePlanId) {
+      setCarePlan(null);
+      setDetailStatus('not-found');
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    if (cachedCarePlan) {
+      setCarePlan(cachedCarePlan);
+      setDetailStatus('success');
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setDetailStatus('loading');
+    void fetchCarePlanDetail(carePlanId)
+      .then((result) => {
+        if (cancelled) return;
+        if (!result) {
+          setCarePlan(null);
+          setDetailStatus('not-found');
+          return;
+        }
+        setCarePlan(result);
+        setDetailStatus('success');
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setCarePlan(null);
+        setDetailStatus('error');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cachedCarePlan, carePlanId, fetchCarePlanDetail]);
+
+  async function handleRetryDetail() {
+    await retry();
+
+    if (!carePlanId) {
+      setCarePlan(null);
+      setDetailStatus('not-found');
+      return;
+    }
+
+    setDetailStatus('loading');
+    const result = await fetchCarePlanDetail(carePlanId);
+    if (!result) {
+      setCarePlan(null);
+      setDetailStatus('not-found');
+      return;
+    }
+
+    setCarePlan(result);
+    setDetailStatus('success');
+  }
 
   const header = (
     <CarePlanHeader
@@ -30,7 +99,7 @@ export function CarePlanDetailView({ carePlanId, onBack }: CarePlanDetailViewPro
     />
   );
 
-  if (status === 'loading') {
+  if (detailStatus === 'loading') {
     return (
       <SafeAreaView className="flex-1 bg-white" edges={['top']}>
         {header}
@@ -41,7 +110,7 @@ export function CarePlanDetailView({ carePlanId, onBack }: CarePlanDetailViewPro
     );
   }
 
-  if (status === 'error') {
+  if (detailStatus === 'error') {
     return (
       <SafeAreaView className="flex-1 bg-white" edges={['top']}>
         {header}
@@ -49,13 +118,13 @@ export function CarePlanDetailView({ carePlanId, onBack }: CarePlanDetailViewPro
           <Text className="text-b3 font-sans text-grey-700 text-center">
             {t('carePlan.errorMessage')}
           </Text>
-          <Button label={t('common.retry')} onPress={retry} size="medium" />
+          <Button label={t('common.retry')} onPress={() => void handleRetryDetail()} size="medium" />
         </View>
       </SafeAreaView>
     );
   }
 
-  if (!carePlan) {
+  if (detailStatus === 'not-found' || !carePlan) {
     return (
       <SafeAreaView className="flex-1 bg-white" edges={['top']}>
         {header}

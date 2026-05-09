@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { DatePickerField } from '@shared/components/ui/DatePickerField';
 import { Input } from '@shared/components/ui/Input';
 import { SelectInput } from '@shared/components/ui/SelectInput';
 import { UploadInput } from '@shared/components/ui/UploadInput';
@@ -45,15 +46,15 @@ export function NoInsuranceQualificationStep({
         autoCapitalize="words"
       />
 
-      <Input
+      <DatePickerField
         label={t('insuranceCoverage.noInsurance.dateOfBirthLabel')}
         placeholder={t('insuranceCoverage.noInsurance.dateOfBirthPlaceholder')}
         value={form.dateOfBirth}
-        onChangeText={(value) => onChange('dateOfBirth', value)}
+        onChange={(value) => onChange('dateOfBirth', value)}
         onBlur={() => onBlur('dateOfBirth')}
         status={errors.dateOfBirth ? 'error' : 'default'}
         helperText={errors.dateOfBirth ? t(errors.dateOfBirth) : undefined}
-        keyboardType="numbers-and-punctuation"
+        maximumDate={new Date()}
       />
 
       <SelectInput

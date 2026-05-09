@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -11,10 +12,12 @@ import { DoctorAIChatInput } from '../components/nura/DoctorAIChatInput';
 import { DoctorMenuModal } from '../components/nura/DoctorMenuModal';
 import { DoctorPatientAICard } from '../components/nura/DoctorPatientAICard';
 import type { DoctorAIPatient } from '../types/doctorNuraAI.types';
+import { fetchDoctorProfile } from '../services/doctor.service';
 
 export function DoctorNuraAIHomeView() {
   const { t } = useTranslation();
   const router = useRouter();
+  const [doctorName, setDoctorName] = useState('Doctor');
   const { patients: realPatients, status, refreshing, refresh } = useDoctorPatients();
   const {
     patientsList,
@@ -26,6 +29,40 @@ export function DoctorNuraAIHomeView() {
     openReportChat,
   } = useDoctorNuraAI(realPatients);
 
+  const reportPatient = patientsList[0] ?? null;
+  const reportPatientFirstName = useMemo(() => {
+    const firstName = reportPatient?.patientName.trim().split(/\s+/)[0];
+    return firstName && firstName.length > 0 ? firstName : t('doctorNuraAI.patientFallback');
+  }, [reportPatient?.patientName, t]);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadDoctorName() {
+      try {
+        const profile = await fetchDoctorProfile();
+        if (!active) return;
+
+        const first = profile.user?.firstName?.trim() ?? '';
+        const last = profile.user?.lastName?.trim() ?? '';
+        const fullName = [first, last].filter(Boolean).join(' ').trim();
+        if (fullName) {
+          setDoctorName(fullName);
+        }
+      } catch {
+        if (active) {
+          setDoctorName('Doctor');
+        }
+      }
+    }
+
+    void loadDoctorName();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   function handleNewChat() {
     startNewChat();
     router.push('/(doctor)/nura-ai-chat');
@@ -36,7 +73,7 @@ export function DoctorNuraAIHomeView() {
   }
 
   function handleViewResult() {
-    openReportChat();
+    openReportChat(reportPatient?.id);
     router.push('/(doctor)/nura-ai-chat');
   }
 
@@ -126,7 +163,10 @@ export function DoctorNuraAIHomeView() {
               <View className="items-start gap-6">
                 <View className="bg-grey-50 rounded-b-2xl rounded-tr-2xl rounded-tl-sm px-4 py-3 max-w-[215px]">
                   <Text className="text-b3 font-sans text-grey-900">
-                    {t('doctorNuraAI.reportCardMessage')}
+                    {t('doctorNuraAI.reportCardMessage', {
+                      doctorName,
+                      patientName: reportPatientFirstName,
+                    })}
                   </Text>
                 </View>
 
