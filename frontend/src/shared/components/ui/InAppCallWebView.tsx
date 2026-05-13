@@ -21,12 +21,12 @@ export function InAppCallWebView({ url, onBack }: InAppCallWebViewProps) {
   const androidPermissionProps =
     Platform.OS === 'android'
       ? ({
-          // The installed WebView runtime supports this Android callback,
-          // but the current TypeScript definitions in the repo do not.
-          onPermissionRequest: (event: { grant?: () => void } | undefined) => {
-            event?.grant?.();
-          },
-        } as unknown as Partial<ComponentProps<typeof WebView>>)
+        // The installed WebView runtime supports this Android callback,
+        // but the current TypeScript definitions in the repo do not.
+        onPermissionRequest: (event: { grant?: () => void } | undefined) => {
+          event?.grant?.();
+        },
+      } as unknown as Partial<ComponentProps<typeof WebView>>)
       : {};
 
   return (
@@ -35,9 +35,8 @@ export function InAppCallWebView({ url, onBack }: InAppCallWebViewProps) {
         <Pressable onPress={onBack} accessibilityRole="button">
           <Text className="text-white font-sans">{t('common.back')}</Text>
         </Pressable>
-        <View className="flex-row gap-4">
-          {/* Open-in-browser fallback temporarily disabled. */}
-          {/*
+        {/* <View className="flex-row gap-4">
+        
           <Pressable
             onPress={() => void Linking.openURL(url)}
             accessibilityRole="button"
@@ -46,7 +45,7 @@ export function InAppCallWebView({ url, onBack }: InAppCallWebViewProps) {
               {t('consultation.openInBrowser', { defaultValue: 'Open in browser' })}
             </Text>
           </Pressable>
-          */}
+          
           <Pressable
             onPress={() => webviewRef.current?.reload()}
             accessibilityRole="button"
@@ -56,6 +55,7 @@ export function InAppCallWebView({ url, onBack }: InAppCallWebViewProps) {
             </Text>
           </Pressable>
         </View>
+        */}
       </View>
 
       <WebView

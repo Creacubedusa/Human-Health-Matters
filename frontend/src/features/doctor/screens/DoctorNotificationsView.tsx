@@ -101,7 +101,7 @@ export function DoctorNotificationsView({
           ) : (
             <FlatList
               className="flex-1"
-              contentContainerClassName="pb-8"
+              contentContainerClassName="px-4 pb-8"
               data={filteredNotifications}
               keyExtractor={(item) => item.id}
               showsVerticalScrollIndicator={false}

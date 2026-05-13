@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import { useCallback, useRef } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { useConsultationStore } from '../store/consultation.store';
 import {
   fetchConsultationSession,
@@ -44,42 +45,57 @@ export function useConsultation() {
   const store = useConsultationStore();
   const formattedTime = useCallTimer(store.callStatus === 'active');
 
-  useEffect(() => {
-    async function boot() {
-      if (store.callStatus === 'ended' && store.doctor) return;
+  const bootedRef = useRef(false);
 
-      const appointmentIdFromParams = params.appointmentId ? String(params.appointmentId) : '';
-
-      const appointments = await fetchAppointments().catch(() => [] as PatientAppointment[]);
-      const fallbackUpcoming =
-        appointments.find((appointment) => appointment.status === 'upcoming') ?? null;
-      const matched = appointmentIdFromParams
-        ? (appointments.find((a) => a.id === appointmentIdFromParams) ?? null)
-        : fallbackUpcoming;
-
-      if (matched) {
-        store.setDoctor(buildDoctorFromAppointment(matched));
-      } else {
-        const session = await fetchConsultationSession();
-        store.setDoctor(session.doctor);
+  useFocusEffect(
+    useCallback(() => {
+      // Reset on every focus so stale state from a previous session doesn't block re-joining
+      if (bootedRef.current) {
+        // Only reset if we've booted before (re-focus after back navigation)
+        store.reset();
       }
+      bootedRef.current = true;
 
-      const appointmentId = appointmentIdFromParams || matched?.id || fallbackUpcoming?.id || '';
-      store.setAppointmentId(appointmentId || null);
-      if (!appointmentId) {
+      async function boot() {
+        store.reset();
+
+        const appointmentIdFromParams = params.appointmentId ? String(params.appointmentId) : '';
+
+        const appointments = await fetchAppointments().catch(() => [] as PatientAppointment[]);
+        const fallbackUpcoming =
+          appointments.find((appointment) => appointment.status === 'upcoming') ?? null;
+        const matched = appointmentIdFromParams
+          ? (appointments.find((a) => a.id === appointmentIdFromParams) ?? null)
+          : fallbackUpcoming;
+
+        if (matched) {
+          store.setDoctor(buildDoctorFromAppointment(matched));
+        } else {
+          const session = await fetchConsultationSession();
+          store.setDoctor(session.doctor);
+        }
+
+        const appointmentId = appointmentIdFromParams || matched?.id || fallbackUpcoming?.id || '';
+        store.setAppointmentId(appointmentId || null);
+        if (!appointmentId) {
+          store.setCallStatus('active');
+          return;
+        }
+
+        const join = await joinAppointmentVideo(appointmentId);
+        const meetingUrl = buildDailyJoinUrl(join.roomUrl, join.token);
+        store.setMeetingUrl(meetingUrl);
         store.setCallStatus('active');
-        return;
       }
 
-      const join = await joinAppointmentVideo(appointmentId);
-      const meetingUrl = buildDailyJoinUrl(join.roomUrl, join.token);
-      store.setMeetingUrl(meetingUrl);
-      store.setCallStatus('active');
-    }
+      void boot();
 
-    void boot();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      return () => {
+        // Cleanup on blur/unmount — reset so next focus starts fresh
+        store.reset();
+      };
+    }, []),
+  );
 
   function handleToggleAudioModal() {
     store.setAudioModalOpen(!store.audioModalOpen);
