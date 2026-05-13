@@ -39,7 +39,14 @@ http.interceptors.response.use(
     const status = err?.response?.status as number | undefined;
 
     if (status === 401) {
-      // Session expired — clear persisted credentials and redirect to auth
+      const { isAuthenticated } = useAuthStore.getState();
+
+      // If already logged out (manual logout), skip — the logout handler already redirected
+      if (!isAuthenticated) {
+        return Promise.reject(err);
+      }
+
+      // Token expired server-side — clear session and redirect
       useAuthStore.getState().clearAuth();
       await setAccessToken(null);
       await kvDelete('app_role');
