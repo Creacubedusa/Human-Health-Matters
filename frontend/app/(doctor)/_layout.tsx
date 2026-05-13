@@ -106,7 +106,7 @@ export default function DoctorLayout() {
         }}
       />
       <Tabs.Screen name="nura-ai" options={{ href: null }} />
-      <Tabs.Screen name="nura-ai-chat" options={{ href: null }} />
+      <Tabs.Screen name="nura-ai-chat" options={{ href: null, tabBarStyle: { display: 'none' } }} />
       <Tabs.Screen name="nura-ai-history" options={{ href: null }} />
       <Tabs.Screen name="nura-ai-summary" options={{ href: null }} />
       <Tabs.Screen name="calendar" options={{ href: null }} />

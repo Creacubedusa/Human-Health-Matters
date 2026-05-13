@@ -204,18 +204,18 @@ export function DoctorAppointmentCalendarView({
       rawAppointments
         .filter((appointment) => appointment.status === 'UPCOMING')
         .map((a) => {
-        const displayDateKey = getDateKeyInTimeZone(a.startsAt, selectedTimeZone.id);
-        return {
-          id: a.id,
-          patientName: patientName(a),
-          status: a.status,
-          startsAtUtc: a.startsAt,
-          displayDateKey,
-          displayDateLabel: formatDateLabel(displayDateKey),
-          displayTimeLabel: formatTimeLabel(a.startsAt, selectedTimeZone.id),
-          displayTimeRangeLabel: formatTimeRange(a.startsAt, selectedTimeZone.id),
-        };
-      }),
+          const displayDateKey = getDateKeyInTimeZone(a.startsAt, selectedTimeZone.id);
+          return {
+            id: a.id,
+            patientName: patientName(a),
+            status: a.status,
+            startsAtUtc: a.startsAt,
+            displayDateKey,
+            displayDateLabel: formatDateLabel(displayDateKey),
+            displayTimeLabel: formatTimeLabel(a.startsAt, selectedTimeZone.id),
+            displayTimeRangeLabel: formatTimeRange(a.startsAt, selectedTimeZone.id),
+          };
+        }),
     [rawAppointments, selectedTimeZone.id],
   );
 
@@ -269,7 +269,7 @@ export function DoctorAppointmentCalendarView({
       <Pressable
         key={cell.key}
         onPress={() => selectDate(cell.key)}
-        className={[compact ? 'h-10 w-12 items-center px-0.5 py-1' : 'h-[60px] w-12 items-center px-1 py-0.5', cell.isCurrentMonth ? 'opacity-100' : 'opacity-30'].join(' ')}
+        className={[compact ? 'h-10 flex-1 items-center px-0.5 py-1' : 'h-[60px] flex-1 items-center px-1 py-0.5', cell.isCurrentMonth ? 'opacity-100' : 'opacity-30'].join(' ')}
         accessibilityRole="button"
       >
         <View className={isSelected ? 'min-w-[28px] rounded bg-primary-500 px-2 items-center' : 'min-w-[28px] items-center'}>
@@ -317,8 +317,8 @@ export function DoctorAppointmentCalendarView({
     return (
       <>
         <View className={compact ? 'rounded-b-[32px] bg-white pb-5 pt-0' : 'bg-white pt-6'}>
-          <View className="items-center">
-            <View className={compact ? 'w-[336px] gap-3' : 'w-[336px] gap-4'}>
+          <View className="px-4">
+            <View className={compact ? 'w-full gap-3' : 'w-full gap-4'}>
               {weeks.map((week, i) => (
                 <View key={`month-week-${i}`} className="flex-row">
                   {week.map((cell) => renderMonthCell(cell, compact))}
@@ -359,8 +359,8 @@ export function DoctorAppointmentCalendarView({
     const hours = Array.from({ length: 25 }, (_, i) => i);
     const columns = week ? 7 : 1;
     return (
-      <ScrollView className="flex-1 bg-white" contentContainerClassName="items-center pb-10">
-        <View className="w-[365px] flex-row">
+      <ScrollView className="flex-1 bg-white" contentContainerClassName="pb-10">
+        <View className="w-full flex-row px-2">
           <View className="w-[29px] pt-[11px]">
             {hours.map((h) => (
               <Text key={`hour-${h}`} className="h-12 text-[10px] font-medium font-sans leading-[14px] text-grey-900 text-center">
@@ -368,7 +368,7 @@ export function DoctorAppointmentCalendarView({
               </Text>
             ))}
           </View>
-          <View className="w-[336px]">
+          <View className="flex-1">
             {hours.slice(0, 24).map((h) => {
               const rowApts = appointments.filter(
                 (a) =>
@@ -383,7 +383,7 @@ export function DoctorAppointmentCalendarView({
                     return (
                       <View
                         key={`grid-cell-${h}-${col}`}
-                        className={week ? 'w-12 border-r border-grey-200 px-0.5 py-1' : 'w-[336px] border-x border-grey-200 px-0.5 py-1'}
+                        className={week ? 'flex-1 border-r border-grey-200 px-0.5 py-1' : 'flex-1 border-x border-grey-200 px-0.5 py-1'}
                       >
                         {cellApts.slice(0, 2).map((a, i) => (
                           <Pressable
@@ -412,13 +412,13 @@ export function DoctorAppointmentCalendarView({
   function renderWeekView() {
     return (
       <>
-        <View className="items-center bg-white pb-3">
-          <View className="w-[336px] flex-row">
+        <View className="bg-white pb-3 px-4">
+          <View className="w-full flex-row">
             {weekDays.map((day) => (
               <Pressable
                 key={day.key}
                 onPress={() => selectDate(day.key)}
-                className="h-10 w-12 items-center justify-start px-0.5 py-1"
+                className="h-10 flex-1 items-center justify-start px-0.5 py-1"
                 accessibilityRole="button"
               >
                 <View className={day.key === selectedDate ? 'min-w-[28px] rounded bg-primary-500 px-2 items-center' : 'min-w-[28px] items-center'}>
@@ -593,11 +593,11 @@ export function DoctorAppointmentCalendarView({
         </View>
 
         {viewMode !== 'day' && (
-          <View className="mt-7 items-center">
-            <View className="w-[336px] flex-row">
+          <View className="mt-7">
+            <View className="w-full flex-row">
               {WEEKDAY_KEYS.map((key) => (
-                <View key={key} className="w-12 items-center justify-center py-1">
-                  <Text className="w-12 text-center text-b4 font-medium font-sans text-grey-900" numberOfLines={1}>
+                <View key={key} className="flex-1 items-center justify-center py-1">
+                  <Text className="text-center text-b4 font-medium font-sans text-grey-900" numberOfLines={1}>
                     {t(key)}
                   </Text>
                 </View>

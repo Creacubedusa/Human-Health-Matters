@@ -280,6 +280,7 @@ export function DoctorProfileView() {
             clearDashboard();
             await kvDelete(TOKEN_KEY);
             await kvDelete('app_role');
+            await kvDelete('app_user_id');
             router.replace('/(auth)/patient-get-started');
           },
         },
@@ -351,10 +352,10 @@ export function DoctorProfileView() {
       const nextValue =
         uri && uri.startsWith('file://')
           ? (await uploadImageToCloudinary({
-              uri,
-              folder: 'doctor-certifications',
-              filename: `${key}_${Date.now()}.jpg`,
-            })).secureUrl
+            uri,
+            folder: 'doctor-certifications',
+            filename: `${key}_${Date.now()}.jpg`,
+          })).secureUrl
           : uri;
 
       const response = await updateDoctorProfile({ [key]: nextValue });

@@ -11,9 +11,9 @@ type Status = 'idle' | 'loading' | 'error' | 'success';
 
 function validate(form: DonorLoginForm): DonorLoginErrors {
   const e: DonorLoginErrors = {};
-  if (!form.email.trim())                    e.email    = 'donorLogin.errors.emailRequired';
-  else if (!EMAIL_RE.test(form.email.trim())) e.email   = 'donorLogin.errors.emailInvalid';
-  if (!form.password)                         e.password = 'donorLogin.errors.passwordRequired';
+  if (!form.email.trim()) e.email = 'donorLogin.errors.emailRequired';
+  else if (!EMAIL_RE.test(form.email.trim())) e.email = 'donorLogin.errors.emailInvalid';
+  if (!form.password) e.password = 'donorLogin.errors.passwordRequired';
   return e;
 }
 
@@ -78,6 +78,7 @@ export function useDonorLogin(): UseDonorLoginResult {
         await setAccessToken(data.accessToken);
       }
       await kvSet('app_role', 'donor');
+      await kvSet('app_user_id', data.userId);
       setAuth(data.userId, 'donor');
       setStatus('success');
       onSuccess();

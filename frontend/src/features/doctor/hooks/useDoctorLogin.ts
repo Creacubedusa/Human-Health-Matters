@@ -107,6 +107,7 @@ export function useDoctorLogin(): UseDoctorLoginResult {
       setToken(data.accessToken);
       await setAccessToken(data.accessToken);
       await kvSet('app_role', roleKey);
+      await kvSet('app_user_id', data.userId);
       setAuth(data.userId, roleKey);
       setStatus('success');
       onSuccess();

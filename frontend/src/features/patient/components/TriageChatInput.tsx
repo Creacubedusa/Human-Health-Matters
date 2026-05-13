@@ -25,9 +25,9 @@ export function TriageChatInput({
   return (
     <View className="px-4 py-3 bg-white border-t border-grey-100">
       <View className="flex-row items-center border border-grey-200 rounded-2xl px-3 py-2 gap-2">
-        <Pressable onPress={onAttachment} accessibilityRole="button" accessibilityLabel="Attach file">
+        {/* <Pressable onPress={onAttachment} accessibilityRole="button" accessibilityLabel="Attach file">
           <Ionicons name="attach" size={22} color={primitiveColors['grey-500']} />
-        </Pressable>
+        </Pressable> */}
 
         <TextInput
           className="flex-1 text-[14px] font-sans text-grey-900 py-1"
@@ -41,9 +41,9 @@ export function TriageChatInput({
           blurOnSubmit={false}
         />
 
-        <Pressable onPress={onMic} accessibilityRole="button" accessibilityLabel="Voice input">
+        {/* <Pressable onPress={onMic} accessibilityRole="button" accessibilityLabel="Voice input">
           <Ionicons name="mic-outline" size={22} color={primitiveColors['grey-500']} />
-        </Pressable>
+        </Pressable> */}
 
         <Pressable
           onPress={onSend}

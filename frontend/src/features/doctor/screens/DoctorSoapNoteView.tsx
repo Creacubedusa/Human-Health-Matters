@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { primitiveColors } from '@design/tokens';
@@ -57,41 +57,46 @@ export function DoctorSoapNoteView({
         </View>
       </View>
 
-      <ScrollView
+      <KeyboardAvoidingView
         className="flex-1"
-        contentContainerClassName="px-4 pt-6 pb-40 gap-5"
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <Text className="text-[13px] font-sans text-grey-500 leading-5">
-          {t('doctorConsultation.soapNoteSubtitle')}
-        </Text>
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="px-4 pt-6 pb-40 gap-5"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Text className="text-[13px] font-sans text-grey-500 leading-5">
+            {t('doctorConsultation.soapNoteSubtitle')}
+          </Text>
 
-        <SoapField
-          label={t('doctorConsultation.soapSubjectiveLabel')}
-          hint={t('doctorConsultation.soapSubjectiveHint')}
-          value={soap.subjective}
-          onChangeText={(v) => onChangeField('subjective', v)}
-        />
-        <SoapField
-          label={t('doctorConsultation.soapObjectiveLabel')}
-          hint={t('doctorConsultation.soapObjectiveHint')}
-          value={soap.objective}
-          onChangeText={(v) => onChangeField('objective', v)}
-        />
-        <SoapField
-          label={t('doctorConsultation.soapAssessmentLabel')}
-          hint={t('doctorConsultation.soapAssessmentHint')}
-          value={soap.assessment}
-          onChangeText={(v) => onChangeField('assessment', v)}
-        />
-        <SoapField
-          label={t('doctorConsultation.soapPlanLabel')}
-          hint={t('doctorConsultation.soapPlanHint')}
-          value={soap.plan}
-          onChangeText={(v) => onChangeField('plan', v)}
-        />
-      </ScrollView>
+          <SoapField
+            label={t('doctorConsultation.soapSubjectiveLabel')}
+            hint={t('doctorConsultation.soapSubjectiveHint')}
+            value={soap.subjective}
+            onChangeText={(v) => onChangeField('subjective', v)}
+          />
+          <SoapField
+            label={t('doctorConsultation.soapObjectiveLabel')}
+            hint={t('doctorConsultation.soapObjectiveHint')}
+            value={soap.objective}
+            onChangeText={(v) => onChangeField('objective', v)}
+          />
+          <SoapField
+            label={t('doctorConsultation.soapAssessmentLabel')}
+            hint={t('doctorConsultation.soapAssessmentHint')}
+            value={soap.assessment}
+            onChangeText={(v) => onChangeField('assessment', v)}
+          />
+          <SoapField
+            label={t('doctorConsultation.soapPlanLabel')}
+            hint={t('doctorConsultation.soapPlanHint')}
+            value={soap.plan}
+            onChangeText={(v) => onChangeField('plan', v)}
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-grey-100 px-4 py-5 gap-3">
         <Button

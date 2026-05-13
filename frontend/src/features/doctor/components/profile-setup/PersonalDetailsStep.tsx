@@ -32,6 +32,7 @@ export function PersonalDetailsStep({
       className="flex-1"
       contentContainerClassName="px-4 pt-6 pb-8 gap-8"
       showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
       testID={testID}
     >
       <Text className="text-h4 font-semibold font-sans text-grey-900">

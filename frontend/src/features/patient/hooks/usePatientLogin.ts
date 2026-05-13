@@ -95,6 +95,7 @@ export function usePatientLogin(): UsePatientLoginResult {
         await setAccessToken(accessToken);
       }
       await kvSet('app_role', roleKey);
+      await kvSet('app_user_id', userId);
       setAuth(
         userId,
         roleKey,

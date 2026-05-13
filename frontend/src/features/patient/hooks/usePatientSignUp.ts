@@ -17,19 +17,19 @@ function computeStrength(password: string): PasswordStrength {
     minLength: password.length >= 8,
     hasNumber: /\d/.test(password),
     hasSpecial: /[^a-zA-Z0-9]/.test(password),
-    hasUpper:   /[A-Z]/.test(password),
-    hasLower:   /[a-z]/.test(password),
+    hasUpper: /[A-Z]/.test(password),
+    hasLower: /[a-z]/.test(password),
   };
 }
 
 function validateAll(form: SignUpForm): SignUpErrors {
   const e: SignUpErrors = {};
   if (!form.firstName.trim()) e.firstName = 'patientSignUp.errors.firstNameRequired';
-  if (!form.lastName.trim())  e.lastName  = 'patientSignUp.errors.lastNameRequired';
-  if (!form.email.trim())     e.email     = 'patientSignUp.errors.emailRequired';
+  if (!form.lastName.trim()) e.lastName = 'patientSignUp.errors.lastNameRequired';
+  if (!form.email.trim()) e.email = 'patientSignUp.errors.emailRequired';
   else if (!EMAIL_RE.test(form.email.trim())) e.email = 'patientSignUp.errors.emailInvalid';
   const digits = form.phone.replace(/\D/g, '');
-  if (!form.phone.trim())              e.phone = 'patientSignUp.errors.phoneRequired';
+  if (!form.phone.trim()) e.phone = 'patientSignUp.errors.phoneRequired';
   else if (!PHONE_DIGITS_RE.test(digits)) e.phone = 'patientSignUp.errors.phoneInvalid';
   if (!form.password) e.password = 'patientSignUp.errors.passwordRequired';
   return e;
@@ -197,6 +197,7 @@ export function usePatientSignUp(): UsePatientSignUpResult {
       const roleKey =
         backendRole === 'DOCTOR' ? 'doctor' : backendRole === 'DONOR' ? 'donor' : 'patient';
       await kvSet('app_role', roleKey);
+      await kvSet('app_user_id', userId);
       setPendingEmail(form.email.trim());
       setAuth(
         userId,

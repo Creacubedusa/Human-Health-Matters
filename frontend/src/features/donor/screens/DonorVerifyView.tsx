@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@shared/components/ui/Alert';
@@ -54,77 +54,87 @@ export function DonorVerifyView({ onSuccess }: DonorVerifyViewProps) {
         </View>
       </View>
 
-      <View className="flex-1 items-center justify-between px-4 pt-16 pb-12">
-        {/* Top: title + OTP + timer */}
-        <View className="items-center gap-14 w-full">
-          <View className="gap-2 w-full">
-            <Text className="text-h4 font-semibold font-sans text-grey-900 text-center">
-              {t('patientVerify.title')}
-            </Text>
-            <View className="flex-row flex-wrap justify-center">
-              <Text className="text-b1 font-sans text-grey-900">
-                {t('patientVerify.subtitlePrefix')}{' '}
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="flex-1 items-center justify-between px-4 pt-16 pb-12"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Top: title + OTP + timer */}
+          <View className="items-center gap-14 w-full">
+            <View className="gap-2 w-full">
+              <Text className="text-h4 font-semibold font-sans text-grey-900 text-center">
+                {t('patientVerify.title')}
               </Text>
-              <Text className="text-s2 font-sans text-primary-500">
-                {pendingEmail ?? ''}
-              </Text>
-            </View>
-          </View>
-
-          <CodeInput
-            length={CODE_LENGTH}
-            value={code}
-            onChangeText={handleChange}
-            status={status === 'error' ? 'error' : 'default'}
-            disabled={isLoading}
-            testID="otp-input"
-          />
-
-          <Text className="text-h5 font-semibold font-sans text-primary-500">
-            {timerLabel}
-          </Text>
-        </View>
-
-        {/* Bottom: error + button + resend */}
-        <View className="items-center gap-6 w-full">
-          {errorKey != null && (
-            <Alert status="error" variant="outline" description={t(errorKey)} />
-          )}
-
-          <Button
-            label={t('patientVerify.verify')}
-            onPress={() => handleSubmit(onSuccess)}
-            variant="filled"
-            size="large"
-            fullWidth
-            disabled={!isComplete || isLoading}
-            iconLeft={isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
-          />
-
-          <Pressable
-            onPress={handleResend}
-            disabled={!canResend || isResending}
-            accessibilityRole="button"
-            accessibilityState={{ disabled: !canResend || isResending }}
-          >
-            {({ pressed }) => (
-              <View className="flex-row items-center gap-2">
-                {isResending && <ActivityIndicator size="small" color="#9ea2ae" />}
-                <Text
-                  className={[
-                    'text-b1 font-sans',
-                    canResend && !isResending
-                      ? pressed ? 'text-primary-500 opacity-50' : 'text-primary-500'
-                      : 'text-grey-400',
-                  ].join(' ')}
-                >
-                  {t('patientVerify.resendCode')}
+              <View className="flex-row flex-wrap justify-center">
+                <Text className="text-b1 font-sans text-grey-900">
+                  {t('patientVerify.subtitlePrefix')}{' '}
+                </Text>
+                <Text className="text-s2 font-sans text-primary-500">
+                  {pendingEmail ?? ''}
                 </Text>
               </View>
+            </View>
+
+            <CodeInput
+              length={CODE_LENGTH}
+              value={code}
+              onChangeText={handleChange}
+              status={status === 'error' ? 'error' : 'default'}
+              disabled={isLoading}
+              testID="otp-input"
+            />
+
+            <Text className="text-h5 font-semibold font-sans text-primary-500">
+              {timerLabel}
+            </Text>
+          </View>
+
+          {/* Bottom: error + button + resend */}
+          <View className="items-center gap-6 w-full">
+            {errorKey != null && (
+              <Alert status="error" variant="outline" description={t(errorKey)} />
             )}
-          </Pressable>
-        </View>
-      </View>
+
+            <Button
+              label={t('patientVerify.verify')}
+              onPress={() => handleSubmit(onSuccess)}
+              variant="filled"
+              size="large"
+              fullWidth
+              disabled={!isComplete || isLoading}
+              iconLeft={isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
+            />
+
+            <Pressable
+              onPress={handleResend}
+              disabled={!canResend || isResending}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: !canResend || isResending }}
+            >
+              {({ pressed }) => (
+                <View className="flex-row items-center gap-2">
+                  {isResending && <ActivityIndicator size="small" color="#9ea2ae" />}
+                  <Text
+                    className={[
+                      'text-b1 font-sans',
+                      canResend && !isResending
+                        ? pressed ? 'text-primary-500 opacity-50' : 'text-primary-500'
+                        : 'text-grey-400',
+                    ].join(' ')}
+                  >
+                    {t('patientVerify.resendCode')}
+                  </Text>
+                </View>
+              )}
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

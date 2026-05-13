@@ -26,6 +26,7 @@ export function CredentialsStep({
       className="flex-1"
       contentContainerClassName="px-4 pt-2 pb-8 gap-6"
       showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
       testID={testID}
     >
       <View className="gap-1">

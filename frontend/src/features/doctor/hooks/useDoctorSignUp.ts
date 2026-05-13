@@ -217,6 +217,7 @@ export function useDoctorSignUp(): UseDoctorSignUpResult {
       const roleKey =
         backendRole === 'DOCTOR' ? 'doctor' : backendRole === 'DONOR' ? 'donor' : 'patient';
       await kvSet('app_role', roleKey);
+      await kvSet('app_user_id', userId);
       await kvSet(DOCTOR_PROFILE_SETUP_REQUIRED_KEY, '1');
       setPendingEmail(email);
       setAuth(userId, roleKey);

@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -190,47 +190,53 @@ export function DoctorCreateOrderWizardView({
       {/* ── Step 2: Order Information ──────────────────────────────────────── */}
       {step === 2 ? (
         <View className="flex-1">
-          <ScrollView
+          <KeyboardAvoidingView
             className="flex-1"
-            contentContainerClassName="px-4 pt-4 pb-32 gap-4"
-            showsVerticalScrollIndicator={false}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
-            <Alert
-              status="info"
-              variant="outline"
-              title={t('createOrderWizard.orderInfoBannerTitle')}
-              description={t('createOrderWizard.orderInfoBannerBody', {
-                name: selectedPatient?.name ?? '',
-              })}
-            />
+            <ScrollView
+              className="flex-1"
+              contentContainerClassName="px-4 pt-4 pb-32 gap-4"
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              <Alert
+                status="info"
+                variant="outline"
+                title={t('createOrderWizard.orderInfoBannerTitle')}
+                description={t('createOrderWizard.orderInfoBannerBody', {
+                  name: selectedPatient?.name ?? '',
+                })}
+              />
 
-            <Input
-              label={`${t('createOrderWizard.physicianLabel')} *`}
-              placeholder={t('createOrderWizard.physicianPlaceholder')}
-              value={orderInfo.physician}
-              onChangeText={(v) => setOrderInfo({ ...orderInfo, physician: v })}
-              status={errors.physician ? 'error' : 'default'}
-              helperText={errors.physician ? t(errors.physician) : undefined}
-            />
+              <Input
+                label={`${t('createOrderWizard.physicianLabel')} *`}
+                placeholder={t('createOrderWizard.physicianPlaceholder')}
+                value={orderInfo.physician}
+                onChangeText={(v) => setOrderInfo({ ...orderInfo, physician: v })}
+                status={errors.physician ? 'error' : 'default'}
+                helperText={errors.physician ? t(errors.physician) : undefined}
+              />
 
-            <Input
-              label={`${t('createOrderWizard.specializationLabel')} *`}
-              placeholder={t('createOrderWizard.specializationPlaceholder')}
-              value={orderInfo.specialization}
-              onChangeText={(v) => setOrderInfo({ ...orderInfo, specialization: v })}
-              status={errors.specialization ? 'error' : 'default'}
-              helperText={errors.specialization ? t(errors.specialization) : undefined}
-            />
+              <Input
+                label={`${t('createOrderWizard.specializationLabel')} *`}
+                placeholder={t('createOrderWizard.specializationPlaceholder')}
+                value={orderInfo.specialization}
+                onChangeText={(v) => setOrderInfo({ ...orderInfo, specialization: v })}
+                status={errors.specialization ? 'error' : 'default'}
+                helperText={errors.specialization ? t(errors.specialization) : undefined}
+              />
 
-            <Input
-              label={t('createOrderWizard.additionalCommentLabel')}
-              placeholder={t('createOrderWizard.additionalCommentPlaceholder')}
-              value={orderInfo.additionalComment}
-              onChangeText={(v) => setOrderInfo({ ...orderInfo, additionalComment: v })}
-              multiline
-              numberOfLines={4}
-            />
-          </ScrollView>
+              <Input
+                label={t('createOrderWizard.additionalCommentLabel')}
+                placeholder={t('createOrderWizard.additionalCommentPlaceholder')}
+                value={orderInfo.additionalComment}
+                onChangeText={(v) => setOrderInfo({ ...orderInfo, additionalComment: v })}
+                multiline
+                numberOfLines={4}
+              />
+            </ScrollView>
+          </KeyboardAvoidingView>
 
           <View className="absolute bottom-0 left-0 right-0 bg-white px-4 py-6">
             <Button
@@ -247,61 +253,67 @@ export function DoctorCreateOrderWizardView({
       {/* ── Step 3: Test Information ───────────────────────────────────────── */}
       {step === 3 ? (
         <View className="flex-1">
-          <ScrollView
+          <KeyboardAvoidingView
             className="flex-1"
-            contentContainerClassName="px-4 pt-4 pb-32 gap-4"
-            showsVerticalScrollIndicator={false}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
-            <Alert
-              status="info"
-              variant="outline"
-              title={t('createOrderWizard.testInfoBannerTitle')}
-              description={t('createOrderWizard.testInfoBannerBody', {
-                name: selectedPatient?.name ?? '',
-              })}
-            />
+            <ScrollView
+              className="flex-1"
+              contentContainerClassName="px-4 pt-4 pb-32 gap-4"
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            >
+              <Alert
+                status="info"
+                variant="outline"
+                title={t('createOrderWizard.testInfoBannerTitle')}
+                description={t('createOrderWizard.testInfoBannerBody', {
+                  name: selectedPatient?.name ?? '',
+                })}
+              />
 
-            <SelectInput
-              label={`${t('createOrderWizard.testTypeLabel')} *`}
-              options={testTypeOptions}
-              value={testInfo.testType}
-              onChange={(v) => setTestInfo({ ...testInfo, testType: v })}
-            />
+              <SelectInput
+                label={`${t('createOrderWizard.testTypeLabel')} *`}
+                options={testTypeOptions}
+                value={testInfo.testType}
+                onChange={(v) => setTestInfo({ ...testInfo, testType: v })}
+              />
 
-            <Input
-              label={`${t('createOrderWizard.testNameLabel')} *`}
-              placeholder={t('createOrderWizard.testNamePlaceholder')}
-              value={testInfo.testName}
-              onChangeText={(v) => setTestInfo({ ...testInfo, testName: v })}
-              status={errors.testName ? 'error' : 'default'}
-              helperText={errors.testName ? t(errors.testName) : undefined}
-            />
+              <Input
+                label={`${t('createOrderWizard.testNameLabel')} *`}
+                placeholder={t('createOrderWizard.testNamePlaceholder')}
+                value={testInfo.testName}
+                onChangeText={(v) => setTestInfo({ ...testInfo, testName: v })}
+                status={errors.testName ? 'error' : 'default'}
+                helperText={errors.testName ? t(errors.testName) : undefined}
+              />
 
-            <Input
-              label={`${t('createOrderWizard.collectionInstructionLabel')} *`}
-              placeholder={t('createOrderWizard.collectionInstructionPlaceholder')}
-              value={testInfo.collectionInstruction}
-              onChangeText={(v) => setTestInfo({ ...testInfo, collectionInstruction: v })}
-              status={errors.collectionInstruction ? 'error' : 'default'}
-              helperText={errors.collectionInstruction ? t(errors.collectionInstruction) : undefined}
-            />
+              <Input
+                label={`${t('createOrderWizard.collectionInstructionLabel')} *`}
+                placeholder={t('createOrderWizard.collectionInstructionPlaceholder')}
+                value={testInfo.collectionInstruction}
+                onChangeText={(v) => setTestInfo({ ...testInfo, collectionInstruction: v })}
+                status={errors.collectionInstruction ? 'error' : 'default'}
+                helperText={errors.collectionInstruction ? t(errors.collectionInstruction) : undefined}
+              />
 
-            <SelectInput
-              label={`${t('createOrderWizard.priorityLabel')} *`}
-              options={priorityOptions}
-              value={testInfo.priority}
-              onChange={(v) => setTestInfo({ ...testInfo, priority: v })}
-            />
+              <SelectInput
+                label={`${t('createOrderWizard.priorityLabel')} *`}
+                options={priorityOptions}
+                value={testInfo.priority}
+                onChange={(v) => setTestInfo({ ...testInfo, priority: v })}
+              />
 
-            <Input
-              label={t('createOrderWizard.additionalCommentLabel')}
-              placeholder={t('createOrderWizard.additionalCommentPlaceholder')}
-              value={testInfo.additionalComment}
-              onChangeText={(v) => setTestInfo({ ...testInfo, additionalComment: v })}
-              multiline
-              numberOfLines={4}
-            />
-          </ScrollView>
+              <Input
+                label={t('createOrderWizard.additionalCommentLabel')}
+                placeholder={t('createOrderWizard.additionalCommentPlaceholder')}
+                value={testInfo.additionalComment}
+                onChangeText={(v) => setTestInfo({ ...testInfo, additionalComment: v })}
+                multiline
+                numberOfLines={4}
+              />
+            </ScrollView>
+          </KeyboardAvoidingView>
 
           <View className="absolute bottom-0 left-0 right-0 bg-white px-4 py-6">
             <Button

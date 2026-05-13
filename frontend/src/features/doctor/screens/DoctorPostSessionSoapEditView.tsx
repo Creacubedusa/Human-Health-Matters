@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@shared/components/ui/Button';
@@ -64,44 +64,50 @@ export function DoctorPostSessionSoapEditView({
         </View>
       </View>
 
-      <ScrollView
-        className="flex-1 bg-white"
-        contentContainerClassName="px-2 pb-32 pt-4"
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View className="rounded-[8px] border border-grey-100 bg-white px-4 py-4">
-          <View className="gap-4">
-            <Text className="text-[18px] font-semibold font-sans leading-7 text-[#212121]">
-              SOAP notes
-            </Text>
+        <ScrollView
+          className="flex-1 bg-white"
+          contentContainerClassName="px-2 pb-32 pt-4"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="rounded-[8px] border border-grey-100 bg-white px-4 py-4">
+            <View className="gap-4">
+              <Text className="text-[18px] font-semibold font-sans leading-7 text-[#212121]">
+                SOAP notes
+              </Text>
 
-            <SoapField
-              label="Subjective"
-              value={draft.subjective}
-              onChangeText={(value) => updateField('subjective', value)}
-              heightClassName="min-h-[162px]"
-            />
-            <SoapField
-              label="Objective"
-              value={draft.objective}
-              onChangeText={(value) => updateField('objective', value)}
-              heightClassName="min-h-[183px]"
-            />
-            <SoapField
-              label="Assessment"
-              value={draft.assessment}
-              onChangeText={(value) => updateField('assessment', value)}
-              heightClassName="min-h-[162px]"
-            />
-            <SoapField
-              label="Plan"
-              value={draft.plan}
-              onChangeText={(value) => updateField('plan', value)}
-              heightClassName="min-h-[437px]"
-            />
+              <SoapField
+                label="Subjective"
+                value={draft.subjective}
+                onChangeText={(value) => updateField('subjective', value)}
+                heightClassName="min-h-[162px]"
+              />
+              <SoapField
+                label="Objective"
+                value={draft.objective}
+                onChangeText={(value) => updateField('objective', value)}
+                heightClassName="min-h-[183px]"
+              />
+              <SoapField
+                label="Assessment"
+                value={draft.assessment}
+                onChangeText={(value) => updateField('assessment', value)}
+                heightClassName="min-h-[162px]"
+              />
+              <SoapField
+                label="Plan"
+                value={draft.plan}
+                onChangeText={(value) => updateField('plan', value)}
+                heightClassName="min-h-[437px]"
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <View className="absolute bottom-0 left-0 right-0 bg-white px-6 pb-6 pt-4">
         <View className="flex-row items-center justify-between">

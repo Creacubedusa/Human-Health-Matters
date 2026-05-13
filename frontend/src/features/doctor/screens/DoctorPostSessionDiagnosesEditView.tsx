@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -72,9 +72,9 @@ export function DoctorPostSessionDiagnosesEditView({
         diagnosis.id !== id
           ? diagnosis
           : {
-              ...diagnosis,
-              [field]: value,
-            },
+            ...diagnosis,
+            [field]: value,
+          },
       ),
     );
   }
@@ -97,88 +97,94 @@ export function DoctorPostSessionDiagnosesEditView({
         </View>
       </View>
 
-      <ScrollView
-        className="flex-1 bg-white"
-        contentContainerClassName="px-3 pb-32 pt-3"
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View className="gap-4">
-          <Text className="text-[18px] font-semibold font-sans leading-7 text-grey-900">
-            Diagnoses
-          </Text>
+        <ScrollView
+          className="flex-1 bg-white"
+          contentContainerClassName="px-3 pb-32 pt-3"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="gap-4">
+            <Text className="text-[18px] font-semibold font-sans leading-7 text-grey-900">
+              Diagnoses
+            </Text>
 
-          {draft.map((diagnosis, index) => (
-            <View key={diagnosis.id} className="gap-4">
-              <View className="flex-row items-center justify-between">
-                <Text className="text-[16px] font-medium font-sans text-grey-900">
-                  Diagnosis {index + 1}
-                </Text>
-                {draft.length > 1 ? (
-                  <Pressable
-                    onPress={() => removeDiagnosis(diagnosis.id)}
-                    className="h-6 w-6 items-center justify-center"
-                  >
-                    <Ionicons name="trash-outline" size={18} color={primitiveColors['red-500']} />
-                  </Pressable>
-                ) : null}
-              </View>
+            {draft.map((diagnosis, index) => (
+              <View key={diagnosis.id} className="gap-4">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-[16px] font-medium font-sans text-grey-900">
+                    Diagnosis {index + 1}
+                  </Text>
+                  {draft.length > 1 ? (
+                    <Pressable
+                      onPress={() => removeDiagnosis(diagnosis.id)}
+                      className="h-6 w-6 items-center justify-center"
+                    >
+                      <Ionicons name="trash-outline" size={18} color={primitiveColors['red-500']} />
+                    </Pressable>
+                  ) : null}
+                </View>
 
-              <DiagnosisInput
-                label={`Diagnose ${index + 1}`}
-                value={diagnosis.name}
-                onChangeText={(value) => updateDiagnosis(diagnosis.id, 'name', value)}
-              />
-              <DiagnosisInput
-                label={`Diagnosis code ${index + 1}`}
-                value={diagnosis.icd10Code}
-                onChangeText={(value) => updateDiagnosis(diagnosis.id, 'icd10Code', value)}
-              />
+                <DiagnosisInput
+                  label={`Diagnose ${index + 1}`}
+                  value={diagnosis.name}
+                  onChangeText={(value) => updateDiagnosis(diagnosis.id, 'name', value)}
+                />
+                <DiagnosisInput
+                  label={`Diagnosis code ${index + 1}`}
+                  value={diagnosis.icd10Code}
+                  onChangeText={(value) => updateDiagnosis(diagnosis.id, 'icd10Code', value)}
+                />
 
-              <View className="gap-2">
-                <Text className="text-[16px] font-medium font-sans leading-6 text-grey-900">
-                  Classification {index + 1}
-                </Text>
-                <View className="rounded-[12px] border border-grey-200 bg-grey-50 px-4 py-3">
-                  <View className="flex-row items-center justify-between">
-                    <View className="flex-row gap-2">
-                      {(['primary', 'secondary'] as const).map((priority) => {
-                        const active = diagnosis.priority === priority;
-                        return (
-                          <Pressable
-                            key={priority}
-                            onPress={() => updateDiagnosis(diagnosis.id, 'priority', priority)}
-                            className={[
-                              'rounded-[10px] px-3 py-2',
-                              active ? 'bg-white border border-primary-500' : 'bg-transparent border border-transparent',
-                            ].join(' ')}
-                          >
-                            <Text
+                <View className="gap-2">
+                  <Text className="text-[16px] font-medium font-sans leading-6 text-grey-900">
+                    Classification {index + 1}
+                  </Text>
+                  <View className="rounded-[12px] border border-grey-200 bg-grey-50 px-4 py-3">
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-row gap-2">
+                        {(['primary', 'secondary'] as const).map((priority) => {
+                          const active = diagnosis.priority === priority;
+                          return (
+                            <Pressable
+                              key={priority}
+                              onPress={() => updateDiagnosis(diagnosis.id, 'priority', priority)}
                               className={[
-                                'text-[16px] font-sans leading-6',
-                                active ? 'text-primary-500' : 'text-grey-400',
+                                'rounded-[10px] px-3 py-2',
+                                active ? 'bg-white border border-primary-500' : 'bg-transparent border border-transparent',
                               ].join(' ')}
                             >
-                              {priority === 'primary' ? 'Primary' : 'Secondary'}
-                            </Text>
-                          </Pressable>
-                        );
-                      })}
+                              <Text
+                                className={[
+                                  'text-[16px] font-sans leading-6',
+                                  active ? 'text-primary-500' : 'text-grey-400',
+                                ].join(' ')}
+                              >
+                                {priority === 'primary' ? 'Primary' : 'Secondary'}
+                              </Text>
+                            </Pressable>
+                          );
+                        })}
+                      </View>
+                      <Ionicons name="chevron-down" size={20} color={primitiveColors['grey-400']} />
                     </View>
-                    <Ionicons name="chevron-down" size={20} color={primitiveColors['grey-400']} />
                   </View>
                 </View>
               </View>
-            </View>
-          ))}
+            ))}
 
-          <Pressable
-            onPress={addMore}
-            className="h-10 self-end rounded-[12px] border border-grey-300 px-4 items-center justify-center"
-          >
-            <Text className="text-[14px] font-semibold font-sans text-grey-900">Add More</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
+            <Pressable
+              onPress={addMore}
+              className="h-10 self-end rounded-[12px] border border-grey-300 px-4 items-center justify-center"
+            >
+              <Text className="text-[14px] font-semibold font-sans text-grey-900">Add More</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <View className="absolute bottom-0 left-0 right-0 bg-white px-6 pb-6 pt-4">
         <View className="flex-row items-center justify-between">

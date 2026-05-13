@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -84,48 +84,54 @@ export function DoctorPostSessionRecommendedTestsEditView({
         </View>
       </View>
 
-      <ScrollView
-        className="flex-1 bg-white"
-        contentContainerClassName="px-3 pb-32 pt-3"
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View className="gap-4">
-          <Text className="text-[18px] font-semibold font-sans leading-7 text-grey-900">
-            Recommended Test
-          </Text>
+        <ScrollView
+          className="flex-1 bg-white"
+          contentContainerClassName="px-3 pb-32 pt-3"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="gap-4">
+            <Text className="text-[18px] font-semibold font-sans leading-7 text-grey-900">
+              Recommended Test
+            </Text>
 
-          {draft.map((test, index) => (
-            <View key={test.id} className="gap-4">
-              <View className="flex-row items-center justify-between">
-                <Text className="text-[16px] font-medium font-sans text-grey-900">
-                  Test {index + 1}
-                </Text>
-                {draft.length > 1 ? (
-                  <Pressable
-                    onPress={() => removeTest(test.id)}
-                    className="h-6 w-6 items-center justify-center"
-                  >
-                    <Ionicons name="trash-outline" size={18} color={primitiveColors['red-500']} />
-                  </Pressable>
-                ) : null}
+            {draft.map((test, index) => (
+              <View key={test.id} className="gap-4">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-[16px] font-medium font-sans text-grey-900">
+                    Test {index + 1}
+                  </Text>
+                  {draft.length > 1 ? (
+                    <Pressable
+                      onPress={() => removeTest(test.id)}
+                      className="h-6 w-6 items-center justify-center"
+                    >
+                      <Ionicons name="trash-outline" size={18} color={primitiveColors['red-500']} />
+                    </Pressable>
+                  ) : null}
+                </View>
+
+                <TestInput
+                  label={`Test ${index + 1}`}
+                  value={test.name}
+                  onChangeText={(value) => updateTest(test.id, value)}
+                />
               </View>
+            ))}
 
-              <TestInput
-                label={`Test ${index + 1}`}
-                value={test.name}
-                onChangeText={(value) => updateTest(test.id, value)}
-              />
-            </View>
-          ))}
-
-          <Pressable
-            onPress={addMore}
-            className="h-10 self-end rounded-[12px] border border-grey-300 px-4 items-center justify-center"
-          >
-            <Text className="text-[14px] font-semibold font-sans text-grey-900">Add More</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
+            <Pressable
+              onPress={addMore}
+              className="h-10 self-end rounded-[12px] border border-grey-300 px-4 items-center justify-center"
+            >
+              <Text className="text-[14px] font-semibold font-sans text-grey-900">Add More</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <View className="absolute bottom-0 left-0 right-0 bg-white px-6 pb-6 pt-4">
         <View className="flex-row items-center justify-between">

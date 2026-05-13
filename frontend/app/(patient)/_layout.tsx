@@ -267,30 +267,30 @@ export default function PatientLayout() {
       />
 
       {/* ── Hidden tabs — navigated to programmatically ── */}
-      <Tabs.Screen name="book-appointment"               options={{ href: null }} />
-      <Tabs.Screen name="triage"                         options={{ href: null }} />
-      <Tabs.Screen name="triage-history"                 options={{ href: null }} />
-      <Tabs.Screen name="triage-summary"                 options={{ href: null }} />
-      <Tabs.Screen name="triage-result"                  options={{ href: null }} />
-      <Tabs.Screen name="appointment-booking"            options={{ href: null }} />
-      <Tabs.Screen name="appointment-policy"             options={{ href: null }} />
-      <Tabs.Screen name="appointment-reason"             options={{ href: null }} />
+      <Tabs.Screen name="book-appointment" options={{ href: null }} />
+      <Tabs.Screen name="triage" options={{ href: null, tabBarStyle: { display: 'none' } }} />
+      <Tabs.Screen name="triage-history" options={{ href: null }} />
+      <Tabs.Screen name="triage-summary" options={{ href: null }} />
+      <Tabs.Screen name="triage-result" options={{ href: null }} />
+      <Tabs.Screen name="appointment-booking" options={{ href: null }} />
+      <Tabs.Screen name="appointment-policy" options={{ href: null }} />
+      <Tabs.Screen name="appointment-reason" options={{ href: null }} />
       <Tabs.Screen name="appointment-reschedule-datetime" options={{ href: null }} />
-      <Tabs.Screen name="calendar"                       options={{ href: null }} />
-      <Tabs.Screen name="insurance"                      options={{ href: null }} />
-      <Tabs.Screen name="consultations"                  options={{ href: null }} />
-      <Tabs.Screen name="consultation-review"            options={{ href: null }} />
-      <Tabs.Screen name="notifications"                  options={{ href: null }} />
-      <Tabs.Screen name="prescriptions"                  options={{ href: null }} />
-      <Tabs.Screen name="prescription-detail"            options={{ href: null }} />
-      <Tabs.Screen name="prescription-preview"           options={{ href: null }} />
-      <Tabs.Screen name="tests"                          options={{ href: null }} />
-      <Tabs.Screen name="orders"                         options={{ href: null }} />
-      <Tabs.Screen name="order-detail"                   options={{ href: null }} />
-      <Tabs.Screen name="care-plan-detail"               options={{ href: null }} />
-      <Tabs.Screen name="profile-edit"                   options={{ href: null }} />
-      <Tabs.Screen name="profile-record-detail"          options={{ href: null }} />
-      <Tabs.Screen name="privacy-policy"                 options={{ href: null }} />
+      <Tabs.Screen name="calendar" options={{ href: null }} />
+      <Tabs.Screen name="insurance" options={{ href: null }} />
+      <Tabs.Screen name="consultations" options={{ href: null }} />
+      <Tabs.Screen name="consultation-review" options={{ href: null }} />
+      <Tabs.Screen name="notifications" options={{ href: null }} />
+      <Tabs.Screen name="prescriptions" options={{ href: null }} />
+      <Tabs.Screen name="prescription-detail" options={{ href: null }} />
+      <Tabs.Screen name="prescription-preview" options={{ href: null }} />
+      <Tabs.Screen name="tests" options={{ href: null }} />
+      <Tabs.Screen name="orders" options={{ href: null }} />
+      <Tabs.Screen name="order-detail" options={{ href: null }} />
+      <Tabs.Screen name="care-plan-detail" options={{ href: null }} />
+      <Tabs.Screen name="profile-edit" options={{ href: null }} />
+      <Tabs.Screen name="profile-record-detail" options={{ href: null }} />
+      <Tabs.Screen name="privacy-policy" options={{ href: null }} />
     </Tabs>
   );
 }

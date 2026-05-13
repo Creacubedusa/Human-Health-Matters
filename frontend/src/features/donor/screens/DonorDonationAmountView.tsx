@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { primitiveColors } from '@design/tokens';
@@ -44,98 +44,103 @@ export function DonorDonationAmountView({ onBack, onDonate }: DonorDonationAmoun
         </Text>
       </View>
 
-      <ScrollView
+      <KeyboardAvoidingView
         className="flex-1"
-        contentContainerClassName="px-5 pt-6 pb-10 gap-6"
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {/* Title */}
-        <View className="gap-2">
-          <Text className="text-h4 font-semibold font-sans text-grey-900">
-            {t('donorDonation.amountTitle')}
-          </Text>
-          <Text className="text-b2 font-sans text-grey-500">
-            {t('donorDonation.amountSubtitle')}
-          </Text>
-        </View>
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="px-5 pt-6 pb-10 gap-6"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Title */}
+          <View className="gap-2">
+            <Text className="text-h4 font-semibold font-sans text-grey-900">
+              {t('donorDonation.amountTitle')}
+            </Text>
+            <Text className="text-b2 font-sans text-grey-500">
+              {t('donorDonation.amountSubtitle')}
+            </Text>
+          </View>
 
-        {/* Contribution type toggle */}
-        <View className="flex-row gap-3">
-          {TYPE_OPTIONS.map((opt) => {
-            const selected = type === opt.value;
-            return (
-              <Pressable
-                key={opt.value}
-                onPress={() => handleTypeToggle(opt.value)}
-                className={[
-                  'flex-1 py-3 rounded-lg items-center justify-center border',
-                  selected
-                    ? 'bg-primary-500 border-primary-500'
-                    : 'bg-white border-grey-200',
-                ].join(' ')}
-                accessibilityRole="radio"
-                accessibilityState={{ checked: selected }}
-              >
-                <Text
+          {/* Contribution type toggle */}
+          <View className="flex-row gap-3">
+            {TYPE_OPTIONS.map((opt) => {
+              const selected = type === opt.value;
+              return (
+                <Pressable
+                  key={opt.value}
+                  onPress={() => handleTypeToggle(opt.value)}
                   className={[
-                    'text-b2 font-semibold font-sans',
-                    selected ? 'text-white' : 'text-grey-900',
+                    'flex-1 py-3 rounded-lg items-center justify-center border',
+                    selected
+                      ? 'bg-primary-500 border-primary-500'
+                      : 'bg-white border-grey-200',
                   ].join(' ')}
+                  accessibilityRole="radio"
+                  accessibilityState={{ checked: selected }}
                 >
-                  {t(opt.labelKey)}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
-
-        {/* Custom amount input */}
-        <Input
-          label={t('donorDonation.customAmountLabel')}
-          placeholder="0"
-          value={customInput}
-          onChangeText={handleCustomChange}
-          keyboardType="numeric"
-          iconLeft={
-            <Ionicons name="cash-outline" size={18} color={primitiveColors['grey-400']} />
-          }
-        />
-
-        {/* Preset amounts grid — 2 rows × 3 cols */}
-        <View className="gap-3">
-          {[0, 1].map((row) => (
-            <View key={row} className="flex-row gap-3">
-              {PRESET_AMOUNTS.slice(row * 3, row * 3 + 3).map((preset) => {
-                const selected = isPresetSelected(preset);
-                return (
-                  <Pressable
-                    key={preset}
-                    onPress={() => handlePresetSelect(preset)}
+                  <Text
                     className={[
-                      'flex-1 py-3 rounded-lg items-center justify-center border',
-                      selected
-                        ? 'bg-primary-500 border-primary-500'
-                        : 'bg-white border-grey-200',
+                      'text-b2 font-semibold font-sans',
+                      selected ? 'text-white' : 'text-grey-900',
                     ].join(' ')}
-                    accessibilityRole="button"
-                    accessibilityLabel={`$${preset}`}
                   >
-                    <Text
+                    {t(opt.labelKey)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          {/* Custom amount input */}
+          <Input
+            label={t('donorDonation.customAmountLabel')}
+            placeholder="0"
+            value={customInput}
+            onChangeText={handleCustomChange}
+            keyboardType="numeric"
+            iconLeft={
+              <Ionicons name="cash-outline" size={18} color={primitiveColors['grey-400']} />
+            }
+          />
+
+          {/* Preset amounts grid — 2 rows × 3 cols */}
+          <View className="gap-3">
+            {[0, 1].map((row) => (
+              <View key={row} className="flex-row gap-3">
+                {PRESET_AMOUNTS.slice(row * 3, row * 3 + 3).map((preset) => {
+                  const selected = isPresetSelected(preset);
+                  return (
+                    <Pressable
+                      key={preset}
+                      onPress={() => handlePresetSelect(preset)}
                       className={[
-                        'text-b2 font-semibold font-sans',
-                        selected ? 'text-white' : 'text-grey-900',
+                        'flex-1 py-3 rounded-lg items-center justify-center border',
+                        selected
+                          ? 'bg-primary-500 border-primary-500'
+                          : 'bg-white border-grey-200',
                       ].join(' ')}
+                      accessibilityRole="button"
+                      accessibilityLabel={`$${preset}`}
                     >
-                      {`$${preset}`}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+                      <Text
+                        className={[
+                          'text-b2 font-semibold font-sans',
+                          selected ? 'text-white' : 'text-grey-900',
+                        ].join(' ')}
+                      >
+                        {`$${preset}`}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Sticky bottom CTA */}
       <View className="px-5 pb-6 pt-4 border-t border-grey-100">

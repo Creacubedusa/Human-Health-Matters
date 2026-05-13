@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActivityIndicator, ScrollView, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -100,42 +100,48 @@ export function DoctorCreateOrderView({ patientId, returnTo }: DoctorCreateOrder
         }}
       />
 
-      <ScrollView
+      <KeyboardAvoidingView
         className="flex-1"
-        contentContainerClassName="px-4 pt-6 pb-32 gap-4"
-        showsVerticalScrollIndicator={false}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {errorKey ? <Alert status="error" variant="outline" description={t(errorKey)} /> : null}
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="px-4 pt-6 pb-32 gap-4"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {errorKey ? <Alert status="error" variant="outline" description={t(errorKey)} /> : null}
 
-        <Input
-          label={t('doctorPatients.form.testName')}
-          value={form.testName}
-          onChangeText={(value) => updateField('testName', value)}
-        />
-        <Input
-          label={t('doctorPatients.form.priority')}
-          value={form.priority}
-          onChangeText={(value) => updateField('priority', value.toLowerCase())}
-          placeholder={t('doctorPatients.form.priorityPlaceholder')}
-        />
-        <Input
-          label={t('doctorPatients.form.sampleType')}
-          value={form.sampleType}
-          onChangeText={(value) => updateField('sampleType', value)}
-        />
-        <Input
-          label={t('doctorPatients.form.collectionInstruction')}
-          value={form.collectionInstruction}
-          onChangeText={(value) => updateField('collectionInstruction', value)}
-        />
-        <Input
-          label={t('doctorPatients.form.additionalComment')}
-          value={form.additionalComment}
-          multiline
-          numberOfLines={4}
-          onChangeText={(value) => updateField('additionalComment', value)}
-        />
-      </ScrollView>
+          <Input
+            label={t('doctorPatients.form.testName')}
+            value={form.testName}
+            onChangeText={(value) => updateField('testName', value)}
+          />
+          <Input
+            label={t('doctorPatients.form.priority')}
+            value={form.priority}
+            onChangeText={(value) => updateField('priority', value.toLowerCase())}
+            placeholder={t('doctorPatients.form.priorityPlaceholder')}
+          />
+          <Input
+            label={t('doctorPatients.form.sampleType')}
+            value={form.sampleType}
+            onChangeText={(value) => updateField('sampleType', value)}
+          />
+          <Input
+            label={t('doctorPatients.form.collectionInstruction')}
+            value={form.collectionInstruction}
+            onChangeText={(value) => updateField('collectionInstruction', value)}
+          />
+          <Input
+            label={t('doctorPatients.form.additionalComment')}
+            value={form.additionalComment}
+            multiline
+            numberOfLines={4}
+            onChangeText={(value) => updateField('additionalComment', value)}
+          />
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       <View className="absolute bottom-0 left-0 right-0 bg-white px-4 py-6 border-t border-grey-100">
         <Button

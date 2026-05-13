@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
+  KeyboardAvoidingView,
   Modal,
   Platform,
   Pressable,
@@ -444,295 +445,301 @@ export function DoctorAvailabilityView({ onBack }: DoctorAvailabilityViewProps) 
       </View>
 
       <View className="flex-1 bg-white">
-        <ScrollView
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerClassName="px-4 pt-8 pb-36"
-          showsVerticalScrollIndicator={false}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          {loading ? (
-            <Text className="text-b2 font-sans text-grey-500">
-              {t('common.loading')}
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-4 pt-8 pb-36"
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {loading ? (
+              <Text className="text-b2 font-sans text-grey-500">
+                {t('common.loading')}
+              </Text>
+            ) : null}
+
+            <Text className="text-h4 font-semibold font-sans text-grey-900">
+              {t('calendar.setAvailability', { defaultValue: 'Set Availability' })}
             </Text>
-          ) : null}
 
-          <Text className="text-h4 font-semibold font-sans text-grey-900">
-            {t('calendar.setAvailability', { defaultValue: 'Set Availability' })}
-          </Text>
-
-          <View className="mt-6 gap-6">
-            <View className="gap-4">
-              <SectionHeading
-                title="Date Range"
-                subtitle="Patient can schedule within this date"
-              />
-
-              <View className="flex-row justify-between">
-                <InteractiveField
-                  label="From"
-                  value={formatDateDisplay(settings.fromDate)}
-                  widthClassName="w-[154px]"
-                  status={dateRangeError ? 'error' : 'default'}
-                  onPress={() => openDatePicker('fromDate')}
-                  iconRight={
-                    <Ionicons
-                      name="calendar-outline"
-                      size={20}
-                      color={primitiveColors['grey-400']}
-                    />
-                  }
-                />
-                <InteractiveField
-                  label="To"
-                  value={formatDateDisplay(settings.toDate)}
-                  widthClassName="w-[154px]"
-                  status={dateRangeError ? 'error' : 'default'}
-                  helperText={dateRangeError ?? undefined}
-                  onPress={() => openDatePicker('toDate')}
-                  iconRight={
-                    <Ionicons
-                      name="calendar-outline"
-                      size={20}
-                      color={primitiveColors['grey-400']}
-                    />
-                  }
-                />
-              </View>
-            </View>
-
-            <View className="gap-4">
-              <SectionHeading
-                title="Appointment Duration"
-                subtitle="How long should each appointment last"
-              />
-
-              <SelectInput
-                options={[...DURATION_OPTIONS]}
-                value={String(settings.appointmentDurationMinutes)}
-                onChange={(value) =>
-                  setSettings((current) => ({
-                    ...current,
-                    appointmentDurationMinutes: Number(value) as 15 | 30 | 45 | 60,
-                  }))
-                }
-              />
-            </View>
-
-            <View className="gap-4">
-              <SectionHeading
-                title="Time Slots"
-                subtitle="Set when you are available for appointment"
-              />
-
+            <View className="mt-6 gap-6">
               <View className="gap-4">
-                {settings.days.map((day) =>
-                  day.slots.length > 0 ? (
-                    <View key={day.key} className="gap-3">
-                      {day.slots.map((slot, slotIndex) => {
-                        const errorText = slotErrors[`${day.key}:${slot.id}`];
-                        return (
-                          <View
-                            key={slot.id}
-                            className="flex-row items-start justify-between gap-3"
-                          >
-                            <View className="flex-1 flex-row items-start">
-                              <Text className="w-[37px] pt-3 text-b1 font-sans text-grey-900">
-                                {slotIndex === 0 ? day.label : ''}
-                              </Text>
-                              <View className="ml-2 flex-1 gap-2">
-                                <View className="flex-row items-center gap-2">
-                                  <InteractiveField
-                                    value={formatTimeDisplay(slot.startTime)}
-                                    widthClassName="w-[88px]"
-                                    status={errorText ? 'error' : 'default'}
-                                    onPress={() =>
-                                      openTimePicker(day.key, slot.id, 'startTime', slot.startTime)
-                                    }
-                                  />
-                                  <Text className="text-b1 font-sans text-grey-900">-</Text>
-                                  <InteractiveField
-                                    value={formatTimeDisplay(slot.endTime)}
-                                    widthClassName="w-[88px]"
-                                    status={errorText ? 'error' : 'default'}
-                                    helperText={errorText}
-                                    onPress={() =>
-                                      openTimePicker(day.key, slot.id, 'endTime', slot.endTime)
-                                    }
-                                  />
-                                </View>
-                              </View>
-                            </View>
+                <SectionHeading
+                  title="Date Range"
+                  subtitle="Patient can schedule within this date"
+                />
 
-                            <View className="flex-row items-center gap-3 pt-3">
-                              <Pressable
-                                accessibilityRole="button"
-                                onPress={() => removeSlot(day.key, slot.id)}
-                              >
-                                <Ionicons
-                                  name="close-circle-outline"
-                                  size={22}
-                                  color={primitiveColors['grey-900']}
-                                />
-                              </Pressable>
-                              <Pressable
-                                accessibilityRole="button"
-                                onPress={() => addSlot(day.key)}
-                              >
-                                <Ionicons
-                                  name="add-circle-outline"
-                                  size={22}
-                                  color={primitiveColors['grey-900']}
-                                />
-                              </Pressable>
-                            </View>
-                          </View>
-                        );
-                      })}
-                    </View>
-                  ) : (
-                    <View key={day.key} className="flex-row items-center justify-between">
-                      <View className="flex-row items-center">
-                        <Text className="w-[37px] text-b1 font-sans text-grey-900">
-                          {day.label}
-                        </Text>
-                        <Text className="ml-3 text-s2 font-semibold font-sans text-grey-900">
-                          Unavailable
-                        </Text>
-                      </View>
-
-                      <Pressable accessibilityRole="button" onPress={() => addSlot(day.key)}>
-                        <Ionicons
-                          name="add-circle-outline"
-                          size={22}
-                          color={primitiveColors['grey-900']}
-                        />
-                      </Pressable>
-                    </View>
-                  ),
-                )}
-              </View>
-            </View>
-
-            <View className="gap-4">
-              <Pressable
-                onPress={() => setBookingLimitExpanded((current) => !current)}
-                className="bg-primary-50 px-4 py-[10px]"
-                accessibilityRole="button"
-              >
-                <View className="flex-row items-center justify-between">
-                  <View className="w-[254px] gap-2">
-                    <Text className="text-s1 font-semibold font-sans text-grey-900">
-                      Booking Limit Settings
-                    </Text>
-                    <Text className="text-b3 font-sans text-grey-600">
-                      Manage how many booking per day
-                    </Text>
-                  </View>
-
-                  <Ionicons
-                    name={bookingLimitExpanded ? 'chevron-up-outline' : 'chevron-down-outline'}
-                    size={20}
-                    color={primitiveColors['grey-900']}
+                <View className="flex-row justify-between">
+                  <InteractiveField
+                    label="From"
+                    value={formatDateDisplay(settings.fromDate)}
+                    widthClassName="w-[154px]"
+                    status={dateRangeError ? 'error' : 'default'}
+                    onPress={() => openDatePicker('fromDate')}
+                    iconRight={
+                      <Ionicons
+                        name="calendar-outline"
+                        size={20}
+                        color={primitiveColors['grey-400']}
+                      />
+                    }
+                  />
+                  <InteractiveField
+                    label="To"
+                    value={formatDateDisplay(settings.toDate)}
+                    widthClassName="w-[154px]"
+                    status={dateRangeError ? 'error' : 'default'}
+                    helperText={dateRangeError ?? undefined}
+                    onPress={() => openDatePicker('toDate')}
+                    iconRight={
+                      <Ionicons
+                        name="calendar-outline"
+                        size={20}
+                        color={primitiveColors['grey-400']}
+                      />
+                    }
                   />
                 </View>
-              </Pressable>
+              </View>
 
-              {bookingLimitExpanded ? (
-                <View className="gap-6">
-                  <View className="gap-4">
-                    <View className="gap-2">
-                      <Text className="text-s2 font-semibold font-sans text-grey-900">
-                        Buffer time
-                      </Text>
-                      <Text className="text-b3 font-sans text-grey-900">
-                        Manage break time after each appointment
-                      </Text>
-                    </View>
+              <View className="gap-4">
+                <SectionHeading
+                  title="Appointment Duration"
+                  subtitle="How long should each appointment last"
+                />
 
-                    <View className="flex-row items-center gap-3">
-                      <Checkbox
-                        checked={settings.bookingLimits.bufferEnabled}
-                        onPress={() =>
-                          setSettings((current) => ({
-                            ...current,
-                            bookingLimits: {
-                              ...current.bookingLimits,
-                              bufferEnabled: !current.bookingLimits.bufferEnabled,
-                            },
-                          }))
-                        }
-                      />
-                      <View className="flex-1">
-                        <SelectInput
-                          options={[...BUFFER_OPTIONS]}
-                          value={String(settings.bookingLimits.bufferDurationMinutes)}
-                          disabled={!settings.bookingLimits.bufferEnabled}
-                          onChange={(value) =>
-                            setSettings((current) => ({
-                              ...current,
-                              bookingLimits: {
-                                ...current.bookingLimits,
-                                bufferDurationMinutes: Number(value) as 10 | 15 | 30 | 45,
-                              },
-                            }))
-                          }
-                        />
+                <SelectInput
+                  options={[...DURATION_OPTIONS]}
+                  value={String(settings.appointmentDurationMinutes)}
+                  onChange={(value) =>
+                    setSettings((current) => ({
+                      ...current,
+                      appointmentDurationMinutes: Number(value) as 15 | 30 | 45 | 60,
+                    }))
+                  }
+                />
+              </View>
+
+              <View className="gap-4">
+                <SectionHeading
+                  title="Time Slots"
+                  subtitle="Set when you are available for appointment"
+                />
+
+                <View className="gap-4">
+                  {settings.days.map((day) =>
+                    day.slots.length > 0 ? (
+                      <View key={day.key} className="gap-3">
+                        {day.slots.map((slot, slotIndex) => {
+                          const errorText = slotErrors[`${day.key}:${slot.id}`];
+                          return (
+                            <View
+                              key={slot.id}
+                              className="flex-row items-start justify-between gap-3"
+                            >
+                              <View className="flex-1 flex-row items-start">
+                                <Text className="w-[37px] pt-3 text-b1 font-sans text-grey-900">
+                                  {slotIndex === 0 ? day.label : ''}
+                                </Text>
+                                <View className="ml-2 flex-1 gap-2">
+                                  <View className="flex-row items-center gap-2">
+                                    <InteractiveField
+                                      value={formatTimeDisplay(slot.startTime)}
+                                      widthClassName="w-[88px]"
+                                      status={errorText ? 'error' : 'default'}
+                                      onPress={() =>
+                                        openTimePicker(day.key, slot.id, 'startTime', slot.startTime)
+                                      }
+                                    />
+                                    <Text className="text-b1 font-sans text-grey-900">-</Text>
+                                    <InteractiveField
+                                      value={formatTimeDisplay(slot.endTime)}
+                                      widthClassName="w-[88px]"
+                                      status={errorText ? 'error' : 'default'}
+                                      helperText={errorText}
+                                      onPress={() =>
+                                        openTimePicker(day.key, slot.id, 'endTime', slot.endTime)
+                                      }
+                                    />
+                                  </View>
+                                </View>
+                              </View>
+
+                              <View className="flex-row items-center gap-3 pt-3">
+                                <Pressable
+                                  accessibilityRole="button"
+                                  onPress={() => removeSlot(day.key, slot.id)}
+                                >
+                                  <Ionicons
+                                    name="close-circle-outline"
+                                    size={22}
+                                    color={primitiveColors['grey-900']}
+                                  />
+                                </Pressable>
+                                <Pressable
+                                  accessibilityRole="button"
+                                  onPress={() => addSlot(day.key)}
+                                >
+                                  <Ionicons
+                                    name="add-circle-outline"
+                                    size={22}
+                                    color={primitiveColors['grey-900']}
+                                  />
+                                </Pressable>
+                              </View>
+                            </View>
+                          );
+                        })}
                       </View>
+                    ) : (
+                      <View key={day.key} className="flex-row items-center justify-between">
+                        <View className="flex-row items-center">
+                          <Text className="w-[37px] text-b1 font-sans text-grey-900">
+                            {day.label}
+                          </Text>
+                          <Text className="ml-3 text-s2 font-semibold font-sans text-grey-900">
+                            Unavailable
+                          </Text>
+                        </View>
+
+                        <Pressable accessibilityRole="button" onPress={() => addSlot(day.key)}>
+                          <Ionicons
+                            name="add-circle-outline"
+                            size={22}
+                            color={primitiveColors['grey-900']}
+                          />
+                        </Pressable>
+                      </View>
+                    ),
+                  )}
+                </View>
+              </View>
+
+              <View className="gap-4">
+                <Pressable
+                  onPress={() => setBookingLimitExpanded((current) => !current)}
+                  className="bg-primary-50 px-4 py-[10px]"
+                  accessibilityRole="button"
+                >
+                  <View className="flex-row items-center justify-between">
+                    <View className="w-[254px] gap-2">
+                      <Text className="text-s1 font-semibold font-sans text-grey-900">
+                        Booking Limit Settings
+                      </Text>
+                      <Text className="text-b3 font-sans text-grey-600">
+                        Manage how many booking per day
+                      </Text>
                     </View>
+
+                    <Ionicons
+                      name={bookingLimitExpanded ? 'chevron-up-outline' : 'chevron-down-outline'}
+                      size={20}
+                      color={primitiveColors['grey-900']}
+                    />
                   </View>
+                </Pressable>
 
-                  <View className="gap-4">
-                    <View className="gap-2">
-                      <Text className="text-s2 font-semibold font-sans text-grey-900">
-                        Maximum booking per day
-                      </Text>
-                      <Text className="text-b3 font-sans text-grey-900">
-                        Limit how many booking you want to take per day
-                      </Text>
-                    </View>
+                {bookingLimitExpanded ? (
+                  <View className="gap-6">
+                    <View className="gap-4">
+                      <View className="gap-2">
+                        <Text className="text-s2 font-semibold font-sans text-grey-900">
+                          Buffer time
+                        </Text>
+                        <Text className="text-b3 font-sans text-grey-900">
+                          Manage break time after each appointment
+                        </Text>
+                      </View>
 
-                    <View className="flex-row items-start gap-3">
-                      <View className="pt-3">
+                      <View className="flex-row items-center gap-3">
                         <Checkbox
-                          checked={settings.bookingLimits.dailyLimitEnabled}
+                          checked={settings.bookingLimits.bufferEnabled}
                           onPress={() =>
                             setSettings((current) => ({
                               ...current,
                               bookingLimits: {
                                 ...current.bookingLimits,
-                                dailyLimitEnabled: !current.bookingLimits.dailyLimitEnabled,
+                                bufferEnabled: !current.bookingLimits.bufferEnabled,
                               },
                             }))
                           }
                         />
+                        <View className="flex-1">
+                          <SelectInput
+                            options={[...BUFFER_OPTIONS]}
+                            value={String(settings.bookingLimits.bufferDurationMinutes)}
+                            disabled={!settings.bookingLimits.bufferEnabled}
+                            onChange={(value) =>
+                              setSettings((current) => ({
+                                ...current,
+                                bookingLimits: {
+                                  ...current.bookingLimits,
+                                  bufferDurationMinutes: Number(value) as 10 | 15 | 30 | 45,
+                                },
+                              }))
+                            }
+                          />
+                        </View>
                       </View>
-                      <View className="flex-1">
-                        <Input
-                          value={settings.bookingLimits.dailyLimit}
-                          onChangeText={(value) => {
-                            setSettings((current) => ({
-                              ...current,
-                              bookingLimits: {
-                                ...current.bookingLimits,
-                                dailyLimit: value.replace(/[^0-9]/g, ''),
-                              },
-                            }));
-                            setDailyLimitError(null);
-                          }}
-                          keyboardType="number-pad"
-                          editable={settings.bookingLimits.dailyLimitEnabled}
-                          disabled={!settings.bookingLimits.dailyLimitEnabled}
-                          status={dailyLimitError ? 'error' : 'default'}
-                          helperText={dailyLimitError ?? undefined}
-                          placeholder="4"
-                        />
+                    </View>
+
+                    <View className="gap-4">
+                      <View className="gap-2">
+                        <Text className="text-s2 font-semibold font-sans text-grey-900">
+                          Maximum booking per day
+                        </Text>
+                        <Text className="text-b3 font-sans text-grey-900">
+                          Limit how many booking you want to take per day
+                        </Text>
+                      </View>
+
+                      <View className="flex-row items-start gap-3">
+                        <View className="pt-3">
+                          <Checkbox
+                            checked={settings.bookingLimits.dailyLimitEnabled}
+                            onPress={() =>
+                              setSettings((current) => ({
+                                ...current,
+                                bookingLimits: {
+                                  ...current.bookingLimits,
+                                  dailyLimitEnabled: !current.bookingLimits.dailyLimitEnabled,
+                                },
+                              }))
+                            }
+                          />
+                        </View>
+                        <View className="flex-1">
+                          <Input
+                            value={settings.bookingLimits.dailyLimit}
+                            onChangeText={(value) => {
+                              setSettings((current) => ({
+                                ...current,
+                                bookingLimits: {
+                                  ...current.bookingLimits,
+                                  dailyLimit: value.replace(/[^0-9]/g, ''),
+                                },
+                              }));
+                              setDailyLimitError(null);
+                            }}
+                            keyboardType="number-pad"
+                            editable={settings.bookingLimits.dailyLimitEnabled}
+                            disabled={!settings.bookingLimits.dailyLimitEnabled}
+                            status={dailyLimitError ? 'error' : 'default'}
+                            helperText={dailyLimitError ?? undefined}
+                            placeholder="4"
+                          />
+                        </View>
                       </View>
                     </View>
                   </View>
-                </View>
-              ) : null}
+                ) : null}
+              </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
 
         <View className="absolute bottom-0 left-0 right-0 bg-white px-4 pb-8 pt-8">
           <Button label="Save" onPress={handleSave} size="large" fullWidth />

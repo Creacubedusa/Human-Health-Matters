@@ -1,4 +1,4 @@
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -166,7 +166,12 @@ export function DoctorProfileSetupWizardView({ onComplete }: DoctorProfileSetupW
       )}
 
       {/* Step content */}
-      <View className="flex-1">{renderStep()}</View>
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View className="flex-1">{renderStep()}</View>
+      </KeyboardAvoidingView>
 
       {/* CTA footer */}
       <View className="bg-white px-4 pt-4 pb-6 shadow-300">
@@ -191,7 +196,7 @@ export function DoctorProfileSetupWizardView({ onComplete }: DoctorProfileSetupW
       {/* Success modal */}
       <SubmissionSuccessModal
         visible={isSubmitted}
-        onGoToDashboard={onComplete ?? (() => {})}
+        onGoToDashboard={onComplete ?? (() => { })}
         testID="submission-success-modal"
       />
     </SafeAreaView>
