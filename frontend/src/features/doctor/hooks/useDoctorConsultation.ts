@@ -213,6 +213,9 @@ export function useDoctorConsultation() {
 
   useEffect(() => {
     async function boot() {
+      // Reset store so stale state from a previous session doesn't bleed in.
+      store.reset();
+
       const appointmentId = params.appointmentId ? String(params.appointmentId) : '';
 
       if (!appointmentId) {
@@ -235,6 +238,7 @@ export function useDoctorConsultation() {
         const join = await joinDoctorAppointmentVideo(appointmentId);
         const meetingUrl = buildDailyJoinUrl(join.roomUrl, join.token);
         store.setMeetingUrl(meetingUrl);
+        store.setCallStatus('active');
       } catch (e: unknown) {
         const msg = String(
           (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
@@ -247,9 +251,8 @@ export function useDoctorConsultation() {
         } else {
           toast.error('Unable to join call. Please try again.');
         }
+        store.setCallStatus('active');
       }
-
-      store.setCallStatus('active');
     }
 
     void boot();
