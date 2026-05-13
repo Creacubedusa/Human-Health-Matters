@@ -87,7 +87,7 @@ export function DoctorCreateOrderView({ patientId, returnTo }: DoctorCreateOrder
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <ProfileHeader
         title={t('doctorPatients.createOrderTitle')}
         backLabel={t('common.back')}

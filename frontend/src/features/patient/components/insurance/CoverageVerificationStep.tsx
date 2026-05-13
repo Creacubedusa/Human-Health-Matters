@@ -5,6 +5,7 @@ import { StatusBanner } from './StatusBanner';
 
 interface CoverageVerificationStepProps {
   currentStepIndex: 0 | 1 | 2;
+  isComplete?: boolean;
 }
 
 const STEP_LABEL_KEYS = [
@@ -13,15 +14,19 @@ const STEP_LABEL_KEYS = [
   'insuranceCoverage.verifying.steps.checkingSupport',
 ] as const;
 
-export function CoverageVerificationStep({ currentStepIndex }: CoverageVerificationStepProps) {
+export function CoverageVerificationStep({ currentStepIndex, isComplete = false }: CoverageVerificationStepProps) {
   const { t } = useTranslation();
 
   return (
     <View className="gap-[50px]">
       <View className="items-center gap-8">
-        <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
+        {!isComplete && (
+          <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
+        )}
         <Text className="text-s1 font-semibold font-sans text-center text-grey-900">
-          {t('insuranceCoverage.verifying.title')}
+          {t(isComplete ? 'insuranceCoverage.verifying.completeTitle' : 'insuranceCoverage.verifying.title', {
+            defaultValue: isComplete ? 'Verification Complete' : undefined,
+          })}
         </Text>
       </View>
 

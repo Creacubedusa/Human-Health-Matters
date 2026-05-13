@@ -53,7 +53,7 @@ export function OrderListView({ onBack, onSelectOrder }: OrderListViewProps) {
 
   if (status === 'loading') {
     return (
-      <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
+      <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
         {header}
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
@@ -64,7 +64,7 @@ export function OrderListView({ onBack, onSelectOrder }: OrderListViewProps) {
 
   if (status === 'error') {
     return (
-      <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
+      <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
         {header}
         <View className="flex-1 items-center justify-center px-6 gap-4">
           <Text className="text-b2 font-semibold font-sans text-grey-900 text-center">
@@ -80,7 +80,7 @@ export function OrderListView({ onBack, onSelectOrder }: OrderListViewProps) {
   }
 
   return (
-    <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
+    <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
       {header}
       <ScrollView
         contentContainerClassName="px-4 pt-3 pb-8 gap-4"

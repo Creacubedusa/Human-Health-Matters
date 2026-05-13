@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { Dimensions, FlatList, type ImageSourcePropType, type ListRenderItemInfo, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { usePatientOnboarding } from '@features/patient/hooks/usePatientOnboarding';
 import { OnboardingSlide } from '@shared/components/ui/OnboardingSlide';
@@ -59,7 +60,7 @@ export function PatientOnboardingView({ onGetStarted }: PatientOnboardingViewPro
   );
 
   return (
-    <View className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <FlatList
         ref={flatListRef}
         data={SLIDES}
@@ -74,6 +75,6 @@ export function PatientOnboardingView({ onGetStarted }: PatientOnboardingViewPro
         bounces={false}
         className="flex-1"
       />
-    </View>
+    </SafeAreaView>
   );
 }

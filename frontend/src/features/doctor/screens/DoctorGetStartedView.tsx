@@ -13,7 +13,7 @@ export function DoctorGetStartedView({ onSignUp, onLogin }: DoctorGetStartedView
   const { t } = useTranslation();
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <View className="flex-1 items-center justify-center px-4 gap-12">
         <View className="opacity-25 py-14">
           <HHMSIllustration />

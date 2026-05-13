@@ -45,7 +45,7 @@ export function PrescriptionDetailView({
 
   if (loading || status === 'loading') {
     return (
-      <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
+      <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
         {header}
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
@@ -56,7 +56,7 @@ export function PrescriptionDetailView({
 
   if (status === 'error') {
     return (
-      <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
+      <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
         {header}
         <View className="flex-1 items-center justify-center px-6 gap-4">
           <Text className="text-b3 font-sans text-grey-700 text-center">
@@ -70,7 +70,7 @@ export function PrescriptionDetailView({
 
   if (!detail) {
     return (
-      <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
+      <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
         {header}
         <View className="flex-1 items-center justify-center px-6">
           <Text className="text-b3 font-sans text-grey-500 text-center">
@@ -84,7 +84,7 @@ export function PrescriptionDetailView({
   const refillDisplay = String(detail.totalRefills);
 
   return (
-    <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
+    <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
       {header}
 
       <ScrollView

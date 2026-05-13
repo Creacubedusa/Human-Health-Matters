@@ -162,7 +162,7 @@ export function InsuranceCoverageView({
 
   let primaryActionLabel = '';
   let primaryActionDisabled = false;
-  let primaryAction = () => {};
+  let primaryAction = () => { };
   let primaryReasonMessage: string | null = null;
 
   if (step === 'insuredStep1PatientInfo') {
@@ -332,20 +332,20 @@ export function InsuranceCoverageView({
             fields={
               result.path === 'insurance'
                 ? [
-                    { label: t('insuranceCoverage.patientInfo.firstNameLabel'), value: insuredForm.firstName || t('insuranceCoverage.results.missingValue') },
-                    { label: t('insuranceCoverage.insuranceInfo.memberIdLabel'), value: insuredForm.memberId || t('insuranceCoverage.results.missingValue') },
-                    { label: t('insuranceCoverage.patientInfo.dateOfBirthLabel'), value: insuredForm.dateOfBirth || t('insuranceCoverage.results.missingValue') },
-                  ]
+                  { label: t('insuranceCoverage.patientInfo.firstNameLabel'), value: insuredForm.firstName || t('insuranceCoverage.results.missingValue') },
+                  { label: t('insuranceCoverage.insuranceInfo.memberIdLabel'), value: insuredForm.memberId || t('insuranceCoverage.results.missingValue') },
+                  { label: t('insuranceCoverage.patientInfo.dateOfBirthLabel'), value: insuredForm.dateOfBirth || t('insuranceCoverage.results.missingValue') },
+                ]
                 : [
-                    { label: t('insuranceCoverage.noInsurance.fullNameLabel'), value: noInsuranceForm.fullName || t('insuranceCoverage.results.missingValue') },
-                    { label: t('insuranceCoverage.noInsurance.dateOfBirthLabel'), value: noInsuranceForm.dateOfBirth || t('insuranceCoverage.results.missingValue') },
-                    {
-                      label: t('insuranceCoverage.noInsurance.employmentStatusLabel'),
-                      value: noInsuranceForm.employmentStatus
-                        ? translateEmploymentStatusValue(noInsuranceForm.employmentStatus, t)
-                        : t('insuranceCoverage.results.missingValue'),
-                    },
-                  ]
+                  { label: t('insuranceCoverage.noInsurance.fullNameLabel'), value: noInsuranceForm.fullName || t('insuranceCoverage.results.missingValue') },
+                  { label: t('insuranceCoverage.noInsurance.dateOfBirthLabel'), value: noInsuranceForm.dateOfBirth || t('insuranceCoverage.results.missingValue') },
+                  {
+                    label: t('insuranceCoverage.noInsurance.employmentStatusLabel'),
+                    value: noInsuranceForm.employmentStatus
+                      ? translateEmploymentStatusValue(noInsuranceForm.employmentStatus, t)
+                      : t('insuranceCoverage.results.missingValue'),
+                  },
+                ]
             }
             ctaLabelKey="insuranceCoverage.actions.retryVerification"
             onRetry={() => handleSecondaryAction('retryVerification')}
@@ -449,7 +449,7 @@ export function InsuranceCoverageView({
     }
 
     if (step === 'verifying') {
-      return <CoverageVerificationStep currentStepIndex={verificationStepIndex} />;
+      return <CoverageVerificationStep currentStepIndex={verificationStepIndex} isComplete={isVerificationComplete} />;
     }
 
     return renderResultContent();
