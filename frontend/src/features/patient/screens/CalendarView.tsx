@@ -145,7 +145,7 @@ export function CalendarView({
   function renderMonthCell(cell: CalendarDayCell, compact: boolean) {
     const selected = calendar.daySelected && cell.key === calendar.selectedDate;
     const dayClass = [
-      compact ? 'h-10 w-12 items-center px-0.5 py-1' : 'h-[60px] w-12 items-center px-1 py-0.5',
+      compact ? 'h-10 flex-1 items-center px-0.5 py-1' : 'h-[60px] flex-1 items-center px-1 py-0.5',
       cell.isCurrentMonth ? 'opacity-100' : 'opacity-30',
     ].join(' ');
 
@@ -183,15 +183,15 @@ export function CalendarView({
     return (
       <>
         <View className={compact ? 'rounded-b-[32px] bg-white pb-5 pt-0' : 'bg-white pt-6'}>
-          <View className="items-center">
-          <View className={compact ? 'w-[336px] gap-3' : 'w-[336px] gap-4'}>
-            {weeksToRender.map((week, index) => (
-              <View key={`calendar-month-week-${index}`} className="flex-row">
-                {week.map((cell) => renderMonthCell(cell, compact))}
-              </View>
-            ))}
+          <View className="px-4">
+            <View className={compact ? 'w-full gap-3' : 'w-full gap-4'}>
+              {weeksToRender.map((week, index) => (
+                <View key={`calendar-month-week-${index}`} className="flex-row">
+                  {week.map((cell) => renderMonthCell(cell, compact))}
+                </View>
+              ))}
+            </View>
           </View>
-        </View>
           {compact ? (
             <View className="mt-3 items-center">
               <View className="h-1 w-[71px] rounded bg-grey-600" />
@@ -249,8 +249,8 @@ export function CalendarView({
         <Text className="text-[8px] font-sans text-grey-900 tracking-[0.2px]" numberOfLines={1}>
           {wide
             ? calendarText('calendar.appointmentWith', CALENDAR_TEXT.appointmentWith, {
-                name: appointment.doctorName.replace('Dr. ', 'Dr '),
-              })
+              name: appointment.doctorName.replace('Dr. ', 'Dr '),
+            })
             : appointment.doctorName.replace('Dr. ', 'Dr ')}
         </Text>
       </Pressable>
@@ -262,8 +262,8 @@ export function CalendarView({
     const columns = week ? 7 : 1;
 
     return (
-      <ScrollView className="flex-1 bg-white" contentContainerClassName="items-center pb-10">
-        <View className="w-[365px] flex-row">
+      <ScrollView className="flex-1 bg-white" contentContainerClassName="pb-10">
+        <View className="w-full flex-row px-2">
           <View className="w-[29px] pt-[11px]">
             {hours.map((hour) => (
               <Text key={`hour-${hour}`} className="h-12 text-[10px] font-medium font-sans leading-[14px] text-grey-900 text-center">
@@ -272,7 +272,7 @@ export function CalendarView({
             ))}
           </View>
 
-          <View className="w-[336px]">
+          <View className="flex-1">
             {hours.slice(0, 24).map((hour) => {
               const rowAppointments = calendar.appointments.filter(
                 (appointment) =>
@@ -293,7 +293,7 @@ export function CalendarView({
                     return (
                       <View
                         key={`grid-cell-${hour}-${colIndex}`}
-                        className={week ? 'w-12 border-r border-grey-200 px-0.5 py-1' : 'w-[336px] border-x border-grey-200 px-0.5 py-1'}
+                        className={week ? 'flex-1 border-r border-grey-200 px-0.5 py-1' : 'flex-1 border-x border-grey-200 px-0.5 py-1'}
                       >
                         {cellAppointments.slice(0, 2).map((appointment, index) =>
                           renderGridAppointmentLabel(appointment, index, !week),
@@ -314,13 +314,13 @@ export function CalendarView({
   function renderWeekView() {
     return (
       <>
-        <View className="items-center bg-white pb-3">
-          <View className="w-[336px] flex-row">
+        <View className="bg-white pb-3 px-4">
+          <View className="w-full flex-row">
             {calendar.weekDays.map((day) => (
               <Pressable
                 key={day.key}
                 onPress={() => calendar.selectDate(day.key)}
-                className="h-10 w-12 items-center justify-start px-0.5 py-1"
+                className="h-10 flex-1 items-center justify-start px-0.5 py-1"
                 accessibilityRole="button"
               >
                 <View className={day.key === calendar.selectedDate ? 'min-w-[28px] rounded bg-primary-500 px-2 items-center' : 'min-w-[28px] items-center'}>
@@ -368,8 +368,8 @@ export function CalendarView({
                       mode.value === 'day'
                         ? CALENDAR_TEXT.day
                         : mode.value === 'week'
-                        ? CALENDAR_TEXT.week
-                        : CALENDAR_TEXT.month,
+                          ? CALENDAR_TEXT.week
+                          : CALENDAR_TEXT.month,
                     )}
                   </Text>
                 </View>
@@ -537,10 +537,11 @@ export function CalendarView({
 
       <View className="px-4 pt-5">
         <View className="flex-row items-center justify-between">
-          <View className="w-[190px] flex-row items-center">
-            <Text className="w-[110px] text-btn-medium font-semibold font-sans text-grey-900">
-              {calendar.viewMode === 'month' ? calendar.focusedMonthDateLabel : calendar.selectedDateLabel}
-            </Text>
+          <Text className="mt-2 text-btn-medium font-semibold font-sans text-grey-900">
+            {calendar.viewMode === 'month' ? calendar.focusedMonthDateLabel : calendar.selectedDateLabel}
+          </Text>
+
+          <View className='flex flex-row items-center'>
             <Pressable
               onPress={calendar.navigatePrevious}
               accessibilityRole="button"
@@ -556,7 +557,6 @@ export function CalendarView({
               <Ionicons name="chevron-forward" size={24} color={primitiveColors['grey-900']} />
             </Pressable>
           </View>
-
           <View className="flex-row items-center gap-4">
             <Pressable
               onPress={() => calendar.setViewMenuOpen(!calendar.viewMenuOpen)}
@@ -576,11 +576,11 @@ export function CalendarView({
         </View>
 
         {calendar.viewMode !== 'day' ? (
-          <View className="mt-7 items-center">
-            <View className="w-[336px] flex-row">
+          <View className="mt-7">
+            <View className="w-full flex-row">
               {calendar.weekdayKeys.map((key) => (
-                <View key={key} className="w-12 items-center justify-center py-1">
-                  <Text className="w-12 text-center text-b4 font-medium font-sans text-grey-900" numberOfLines={1}>
+                <View key={key} className="flex-1 items-center justify-center py-1">
+                  <Text className="text-center text-b4 font-medium font-sans text-grey-900" numberOfLines={1}>
                     {t(key)}
                   </Text>
                 </View>

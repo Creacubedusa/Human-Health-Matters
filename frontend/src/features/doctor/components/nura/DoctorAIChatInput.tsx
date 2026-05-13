@@ -25,36 +25,36 @@ export function DoctorAIChatInput({ onSend, disabled = false, testID }: DoctorAI
       className="bg-white border border-grey-300 rounded-2xl px-4 py-3 gap-4"
       testID={testID}
     >
-      <TextInput
-        value={text}
-        onChangeText={setText}
-        placeholder={t('doctorNuraAI.chatPlaceholder')}
-        placeholderTextColor={primitiveColors['grey-400']}
-        className="text-b3 font-sans text-grey-900 p-0"
-        multiline={false}
-        editable={!disabled}
-        onSubmitEditing={handleSend}
-        returnKeyType="send"
-        accessibilityLabel={t('doctorNuraAI.chatPlaceholder')}
-      />
 
-      <View className="flex-row items-center justify-between">
-        <Pressable
+
+      <View className="flex-row items-center gap-2">
+        {/* <Pressable
           accessibilityRole="button"
           accessibilityLabel={t('doctorNuraAI.attachmentLabel')}
           className="opacity-80"
         >
           <Ionicons name="attach-outline" size={22} color={primitiveColors['grey-700']} />
-        </Pressable>
-
+        </Pressable> */}
+        <TextInput
+          value={text}
+          onChangeText={setText}
+          placeholder={t('doctorNuraAI.chatPlaceholder')}
+          placeholderTextColor={primitiveColors['grey-400']}
+          className="flex-1 text-b3 font-sans text-grey-900 p-0"
+          multiline={false}
+          editable={!disabled}
+          onSubmitEditing={handleSend}
+          returnKeyType="send"
+          accessibilityLabel={t('doctorNuraAI.chatPlaceholder')}
+        />
         <View className="flex-row items-center gap-4">
-          <Pressable
+          {/* <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('doctorNuraAI.micLabel')}
             className="opacity-80"
           >
             <Ionicons name="mic-outline" size={22} color={primitiveColors['grey-700']} />
-          </Pressable>
+          </Pressable> */}
 
           <Pressable
             onPress={handleSend}

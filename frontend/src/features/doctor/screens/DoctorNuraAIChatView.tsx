@@ -1,4 +1,4 @@
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
@@ -81,49 +81,56 @@ export function DoctorNuraAIChatView() {
         </View>
       )}
 
-      {/* Chat area */}
-      {isEmpty ? (
-        <View className="flex-1 px-4 items-center justify-center gap-6">
-          <Text className="text-h5 font-semibold font-sans text-grey-900 text-center">
-            {t('doctorNuraAI.howCanIHelp')}
-          </Text>
-          <View className="w-full gap-2">
-            {SUGGESTION_KEYS.map((key) => (
-              <SuggestionChip
-                key={key}
-                label={t(`doctorNuraAI.${key}`)}
-                onPress={() => handleSuggestion(key)}
-              />
-            ))}
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 114 : 0}
+      >
+        {/* Chat area */}
+        {isEmpty ? (
+          <View className="flex-1 px-4 items-center justify-center gap-6">
+            <Text className="text-h5 font-semibold font-sans text-grey-900 text-center">
+              {t('doctorNuraAI.howCanIHelp')}
+            </Text>
+            <View className="w-full gap-2">
+              {SUGGESTION_KEYS.map((key) => (
+                <SuggestionChip
+                  key={key}
+                  label={t(`doctorNuraAI.${key}`)}
+                  onPress={() => handleSuggestion(key)}
+                />
+              ))}
+            </View>
           </View>
-        </View>
-      ) : (
-        <FlatList
-          data={chatMessages}
-          keyExtractor={(item) => item.id}
-          className="flex-1 px-4"
-          contentContainerClassName="py-4 gap-3"
-          showsVerticalScrollIndicator={false}
-          ListFooterComponent={isAITyping ? <TypingIndicator /> : null}
-          renderItem={({ item }) => (
-            <ChatBubble
-              role={item.role === 'ai' ? 'ai' : 'user'}
-              content={item.content}
-              showViewResult={item.showViewResult}
-              onViewResult={handleViewResult}
-            />
-          )}
-        />
-      )}
+        ) : (
+          <FlatList
+            data={chatMessages}
+            keyExtractor={(item) => item.id}
+            className="flex-1 px-4"
+            contentContainerClassName="py-4 gap-3"
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            ListFooterComponent={isAITyping ? <TypingIndicator /> : null}
+            renderItem={({ item }) => (
+              <ChatBubble
+                role={item.role === 'ai' ? 'ai' : 'user'}
+                content={item.content}
+                showViewResult={item.showViewResult}
+                onViewResult={handleViewResult}
+              />
+            )}
+          />
+        )}
 
-      {/* Chat input */}
-      <View className="px-4 pb-6 pt-2">
-        <DoctorAIChatInput
-          onSend={sendMessage}
-          disabled={isAITyping}
-          testID="chat-input"
-        />
-      </View>
+        {/* Chat input */}
+        <View className="px-4 pb-6 pt-2">
+          <DoctorAIChatInput
+            onSend={sendMessage}
+            disabled={isAITyping}
+            testID="chat-input"
+          />
+        </View>
+      </KeyboardAvoidingView>
 
       {/* Menu modal */}
       <DoctorMenuModal

@@ -1,5 +1,5 @@
 import { useState, type ComponentProps } from 'react';
-import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -101,66 +101,72 @@ export function DoctorAddAppointmentView({
       </View>
 
       <View className="flex-1 bg-white">
-        <ScrollView
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerClassName="px-[14px] pt-8 pb-36"
-          showsVerticalScrollIndicator={false}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <Text className="text-h4 font-semibold font-sans text-grey-900">
-            {t('calendar.addAppointmentTitle', { defaultValue: 'Add Appointment' })}
-          </Text>
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-[14px] pt-8 pb-36"
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Text className="text-h4 font-semibold font-sans text-grey-900">
+              {t('calendar.addAppointmentTitle', { defaultValue: 'Add Appointment' })}
+            </Text>
 
-          <View className="mt-6 gap-5">
-            <View className="gap-2">
-              <FieldLabel label={t('calendar.appointmentTitleLabel', { defaultValue: 'Appointment Title' })} />
-              <TextInput
-                value={title}
-                onChangeText={setTitle}
-                placeholder={t('calendar.appointmentTitlePlaceholder', { defaultValue: 'Appointment title' })}
-                placeholderTextColor={primitiveColors['grey-400']}
-                className={[INPUT_BASE_CLASS, 'h-12'].join(' ')}
-              />
-            </View>
-
-            <View className="gap-2">
-              <FieldLabel label={t('calendar.descriptionLabel', { defaultValue: 'Description' })} />
-              <TextInput
-                value={description}
-                onChangeText={setDescription}
-                placeholder={t('calendar.descriptionPlaceholder', { defaultValue: 'Description' })}
-                placeholderTextColor={primitiveColors['grey-400']}
-                multiline
-                textAlignVertical="top"
-                className={[INPUT_BASE_CLASS, 'min-h-[210px] py-3'].join(' ')}
-              />
-            </View>
-
-            <View className="gap-2">
-              <FieldLabel label={t('calendar.dateLabel', { defaultValue: 'Date' })} />
-              <DisplayField value="23/3/2026" iconLeftName="calendar-outline" />
-            </View>
-
-            <View className="flex-row justify-between">
-              <View className="gap-2 w-[170px]">
-                <FieldLabel label={t('calendar.fromLabel', { defaultValue: 'From' })} />
-                <DisplayField value="08:00 AM" iconRightName="time-outline" wide={false} />
+            <View className="mt-6 gap-5">
+              <View className="gap-2">
+                <FieldLabel label={t('calendar.appointmentTitleLabel', { defaultValue: 'Appointment Title' })} />
+                <TextInput
+                  value={title}
+                  onChangeText={setTitle}
+                  placeholder={t('calendar.appointmentTitlePlaceholder', { defaultValue: 'Appointment title' })}
+                  placeholderTextColor={primitiveColors['grey-400']}
+                  className={[INPUT_BASE_CLASS, 'h-12'].join(' ')}
+                />
               </View>
 
-              <View className="gap-2 w-[170px]">
-                <FieldLabel label={t('calendar.toLabel', { defaultValue: 'To' })} />
-                <DisplayField value="08:30 AM" iconRightName="time-outline" wide={false} />
+              <View className="gap-2">
+                <FieldLabel label={t('calendar.descriptionLabel', { defaultValue: 'Description' })} />
+                <TextInput
+                  value={description}
+                  onChangeText={setDescription}
+                  placeholder={t('calendar.descriptionPlaceholder', { defaultValue: 'Description' })}
+                  placeholderTextColor={primitiveColors['grey-400']}
+                  multiline
+                  textAlignVertical="top"
+                  className={[INPUT_BASE_CLASS, 'min-h-[210px] py-3'].join(' ')}
+                />
+              </View>
+
+              <View className="gap-2">
+                <FieldLabel label={t('calendar.dateLabel', { defaultValue: 'Date' })} />
+                <DisplayField value="23/3/2026" iconLeftName="calendar-outline" />
+              </View>
+
+              <View className="flex-row justify-between">
+                <View className="gap-2 w-[170px]">
+                  <FieldLabel label={t('calendar.fromLabel', { defaultValue: 'From' })} />
+                  <DisplayField value="08:00 AM" iconRightName="time-outline" wide={false} />
+                </View>
+
+                <View className="gap-2 w-[170px]">
+                  <FieldLabel label={t('calendar.toLabel', { defaultValue: 'To' })} />
+                  <DisplayField value="08:30 AM" iconRightName="time-outline" wide={false} />
+                </View>
+              </View>
+
+              <View className="gap-2">
+                <FieldLabel label={t('calendar.addPatientLabel', { defaultValue: 'Add Patient' })} />
+                <DisplayField
+                  value={initialPatientName ?? ''}
+                  placeholder={t('calendar.addPatientPlaceholder', { defaultValue: 'Add Patient' })}
+                />
               </View>
             </View>
-
-            <View className="gap-2">
-              <FieldLabel label={t('calendar.addPatientLabel', { defaultValue: 'Add Patient' })} />
-              <DisplayField
-                value={initialPatientName ?? ''}
-                placeholder={t('calendar.addPatientPlaceholder', { defaultValue: 'Add Patient' })}
-              />
-            </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
 
         <View className="absolute bottom-0 left-0 right-0 bg-white px-4 pb-8 pt-8">
           <Button

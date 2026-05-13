@@ -16,18 +16,18 @@ function computeStrength(password: string): DonorPasswordStrength {
     minLength: password.length >= 8,
     hasNumber: /\d/.test(password),
     hasSpecial: /[^a-zA-Z0-9]/.test(password),
-    hasUpper:   /[A-Z]/.test(password),
-    hasLower:   /[a-z]/.test(password),
+    hasUpper: /[A-Z]/.test(password),
+    hasLower: /[a-z]/.test(password),
   };
 }
 
 function validateAll(form: DonorSignUpForm): DonorSignUpErrors {
   const e: DonorSignUpErrors = {};
   if (!form.firstName.trim()) e.firstName = 'donorSignUp.errors.firstNameRequired';
-  if (!form.lastName.trim())  e.lastName  = 'donorSignUp.errors.lastNameRequired';
-  if (!form.email.trim())     e.email     = 'donorSignUp.errors.emailRequired';
+  if (!form.lastName.trim()) e.lastName = 'donorSignUp.errors.lastNameRequired';
+  if (!form.email.trim()) e.email = 'donorSignUp.errors.emailRequired';
   else if (!EMAIL_RE.test(form.email.trim())) e.email = 'donorSignUp.errors.emailInvalid';
-  if (!form.password)         e.password  = 'donorSignUp.errors.passwordRequired';
+  if (!form.password) e.password = 'donorSignUp.errors.passwordRequired';
   return e;
 }
 
@@ -134,6 +134,7 @@ export function useDonorSignUp(): UseDonorSignUpResult {
         await setAccessToken(login.accessToken);
       }
       await kvSet('app_role', 'donor');
+      await kvSet('app_user_id', userId);
       setPendingEmail(form.email.trim());
       setAuth(userId, 'donor');
       setStatus('success');

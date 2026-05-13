@@ -3,6 +3,8 @@ import {
   ActivityIndicator,
   FlatList,
   InteractionManager,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   Text,
   View,
@@ -26,6 +28,9 @@ export interface NuraTriageViewProps {
   onHistory: () => void;
   onViewResult: (result: TriageResult) => void;
 }
+
+// Header (66px) + Sub-bar (48px) = 114px above the KeyboardAvoidingView
+const IOS_KEYBOARD_OFFSET = 114;
 
 export function NuraTriageView({
   onBack,
@@ -106,71 +111,78 @@ export function NuraTriageView({
         </Pressable>
       </View>
 
-      {/* Loading */}
-      {isLoading && (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
-        </View>
-      )}
-
-      {/* Empty state — first load before first AI message */}
-      {isEmpty && (
-        <View className="flex-1 items-center justify-center px-8 gap-6">
-          <Text className="text-[22px] font-bold font-sans text-grey-900 text-center">
-            {t('nuraAI.howCanIHelp')}
-          </Text>
-          <View className="w-full gap-3">
-            <SuggestionChip
-              label={t('nuraAI.suggestion1')}
-              onPress={() => handleSuggestion(t('nuraAI.suggestion1'))}
-            />
-            <SuggestionChip
-              label={t('nuraAI.suggestion2')}
-              onPress={() => handleSuggestion(t('nuraAI.suggestion2'))}
-            />
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? IOS_KEYBOARD_OFFSET : 0}
+      >
+        {/* Loading */}
+        {isLoading && (
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator size="large" color={primitiveColors['primary-500']} />
           </View>
-        </View>
-      )}
+        )}
 
-      {/* Chat list */}
-      {messages.length > 0 && (
-        <FlatList
-          ref={listRef}
-          className="flex-1"
-          contentContainerClassName="px-4 py-4 gap-4"
-          data={messages}
-          keyExtractor={(item) => item.id}
-          onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <ChatBubble
-              role={item.role}
-              content={item.content}
-              options={item.options}
-              onOptionSelect={handleOptionSelect}
-              showViewResult={item.showViewResult}
-              onViewResult={() => result && onViewResult(result)}
-            />
-          )}
-          ListFooterComponent={
-            isTyping ? (
-              <View className="mt-2">
-                <TypingIndicator />
-              </View>
-            ) : null
-          }
+        {/* Empty state — first load before first AI message */}
+        {isEmpty && (
+          <View className="flex-1 items-center justify-center px-8 gap-6">
+            <Text className="text-[22px] font-bold font-sans text-grey-900 text-center">
+              {t('nuraAI.howCanIHelp')}
+            </Text>
+            <View className="w-full gap-3">
+              <SuggestionChip
+                label={t('nuraAI.suggestion1')}
+                onPress={() => handleSuggestion(t('nuraAI.suggestion1'))}
+              />
+              <SuggestionChip
+                label={t('nuraAI.suggestion2')}
+                onPress={() => handleSuggestion(t('nuraAI.suggestion2'))}
+              />
+            </View>
+          </View>
+        )}
+
+        {/* Chat list */}
+        {messages.length > 0 && (
+          <FlatList
+            ref={listRef}
+            className="flex-1"
+            contentContainerClassName="px-4 py-4 gap-4"
+            data={messages}
+            keyExtractor={(item) => item.id}
+            keyboardShouldPersistTaps="handled"
+            onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <ChatBubble
+                role={item.role}
+                content={item.content}
+                options={item.options}
+                onOptionSelect={handleOptionSelect}
+                showViewResult={item.showViewResult}
+                onViewResult={() => result && onViewResult(result)}
+              />
+            )}
+            ListFooterComponent={
+              isTyping ? (
+                <View className="mt-2">
+                  <TypingIndicator />
+                </View>
+              ) : null
+            }
+          />
+        )}
+
+        {/* Chat input */}
+        <TriageChatInput
+          value={inputText}
+          onChangeText={setInputText}
+          onSend={handleSend}
+          onAttachment={() => { }}
+          onMic={() => { }}
+          disabled={isTyping}
         />
-      )}
-
-      {/* Chat input */}
-      <TriageChatInput
-        value={inputText}
-        onChangeText={setInputText}
-        onSend={handleSend}
-        onAttachment={() => {}}
-        onMic={() => {}}
-        disabled={isTyping}
-      />
+      </KeyboardAvoidingView>
 
       {/* Menu modal */}
       <TriageMenuModal

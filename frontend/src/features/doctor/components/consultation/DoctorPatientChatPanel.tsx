@@ -1,4 +1,4 @@
-import { FlatList, Modal, Pressable, Text, TextInput, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -83,40 +83,46 @@ export function DoctorPatientChatPanel({
           </View>
         </View>
 
-        <View className="flex-1">
-          <FlatList
-            data={messages}
-            keyExtractor={(item) => item.id}
-            contentContainerClassName="px-4 pt-3 pb-6"
-            renderItem={({ item }) => <Bubble message={item} />}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
+        <KeyboardAvoidingView
+          className="flex-1"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View className="flex-1">
+            <FlatList
+              data={messages}
+              keyExtractor={(item) => item.id}
+              contentContainerClassName="px-4 pt-3 pb-6"
+              renderItem={({ item }) => <Bubble message={item} />}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+            />
+          </View>
 
-        <View className="mx-3 mb-4 rounded-2xl border border-grey-300 bg-white px-4 py-3">
-          <TextInput
-            value={input}
-            onChangeText={onChangeInput}
-            placeholder={t('doctorConsultation.patientChatPlaceholder')}
-            placeholderTextColor={primitiveColors['grey-400']}
-            className="text-b3 text-text-secondary font-sans mb-3"
-            multiline
-          />
-          <View className="flex-row items-center justify-between">
-            <Ionicons name="attach-outline" size={24} color={primitiveColors['grey-900']} />
-            <View className="flex-row items-center gap-4">
-              <Ionicons name="mic-outline" size={24} color={primitiveColors['grey-900']} />
-              <Pressable
-                className="w-10 h-10 rounded-full bg-primary-50 items-center justify-center"
-                onPress={onSend}
-                accessibilityRole="button"
-                accessibilityLabel={t('doctorConsultation.send')}
-              >
-                <Ionicons name="send" size={16} color={primitiveColors['primary-500']} />
-              </Pressable>
+          <View className="mx-3 mb-4 rounded-2xl border border-grey-300 bg-white px-4 py-3">
+            <TextInput
+              value={input}
+              onChangeText={onChangeInput}
+              placeholder={t('doctorConsultation.patientChatPlaceholder')}
+              placeholderTextColor={primitiveColors['grey-400']}
+              className="text-b3 text-text-secondary font-sans mb-3"
+              multiline
+            />
+            <View className="flex-row items-center justify-between">
+              <Ionicons name="attach-outline" size={24} color={primitiveColors['grey-900']} />
+              <View className="flex-row items-center gap-4">
+                <Ionicons name="mic-outline" size={24} color={primitiveColors['grey-900']} />
+                <Pressable
+                  className="w-10 h-10 rounded-full bg-primary-50 items-center justify-center"
+                  onPress={onSend}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('doctorConsultation.send')}
+                >
+                  <Ionicons name="send" size={16} color={primitiveColors['primary-500']} />
+                </Pressable>
+              </View>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </Modal>
   );
