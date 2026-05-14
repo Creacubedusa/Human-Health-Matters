@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { usePatientStore } from '../store/patient.store';
+import { fetchPatientProfileOverview } from '../services/profileOverview.service';
 import {
   isScenarioForPath,
   verifyCoverage,
@@ -164,17 +165,29 @@ export interface UseInsuranceCoverageFlowResult {
 
 export function useInsuranceCoverageFlow(): UseInsuranceCoverageFlowResult {
   const profile = usePatientStore((state) => state.profile);
+  const profileOverview = usePatientStore((state) => state.profileOverview);
+  const dashboard = usePatientStore((state) => state.dashboard);
+
+  // Derive name from the most reliable available source
+  const fullName = profileOverview?.name ?? dashboard?.patientName ?? '';
+  const profileFirstName = fullName.split(' ')[0] ?? '';
+  const profileLastName = fullName.split(' ').slice(1).join(' ') ?? '';
+  const profileDob = profile?.dateOfBirth ?? profileOverview?.dateOfBirth ?? '';
+  const profileGender = profile?.gender ?? profileOverview?.gender ?? '';
 
   const [step, setStep] = useState<CoverageFlowStep>('entryQuestion');
   const [activePath, setActivePath] = useState<CoveragePath>('insurance');
   const [insuredForm, setInsuredForm] = useState<InsuredCoverageForm>(() => ({
     ...EMPTY_INSURED_FORM,
-    dateOfBirth: profile?.dateOfBirth ?? '',
-    gender: profile?.gender ?? '',
+    firstName: profileFirstName,
+    lastName: profileLastName,
+    dateOfBirth: profileDob,
+    gender: profileGender,
   }));
   const [noInsuranceForm, setNoInsuranceForm] = useState<NoInsuranceQualificationForm>(() => ({
     ...EMPTY_NO_INSURANCE_FORM,
-    dateOfBirth: profile?.dateOfBirth ?? '',
+    fullName,
+    dateOfBirth: profileDob,
   }));
   const [patientInfoTouched, setPatientInfoTouched] = useState<Set<keyof InsuredCoverageForm>>(new Set());
   const [insuranceInfoTouched, setInsuranceInfoTouched] = useState<Set<keyof InsuredCoverageForm>>(new Set());
@@ -191,6 +204,39 @@ export function useInsuranceCoverageFlow(): UseInsuranceCoverageFlowResult {
   const [savedToWishlist, setSavedToWishlist] = useState(false);
   const [insuredScenarioId, setInsuredScenarioId] = useState<CoverageScenarioId>(INSURED_DEFAULT_SCENARIO);
   const [noInsuranceScenarioId, setNoInsuranceScenarioId] = useState<CoverageScenarioId>(NO_INSURANCE_DEFAULT_SCENARIO);
+
+  // Sync profile data into forms when it becomes available (e.g. loaded after mount)
+  const profileSyncedRef = useRef(false);
+
+  // Fetch profile overview if not already in store
+  const setProfileOverview = usePatientStore((state) => state.setProfileOverview);
+  useEffect(() => {
+    if (profileOverview) return;
+    void fetchPatientProfileOverview()
+      .then((data) => setProfileOverview(data))
+      .catch(() => { /* silently ignore — forms will just stay empty */ });
+  }, []);
+
+  useEffect(() => {
+    if (profileSyncedRef.current) return;
+    const hasName = profileFirstName || profileLastName;
+    const hasDob = !!profileDob;
+    if (!hasName && !hasDob) return;
+
+    profileSyncedRef.current = true;
+    setInsuredForm((prev) => ({
+      ...prev,
+      firstName: prev.firstName || profileFirstName,
+      lastName: prev.lastName || profileLastName,
+      dateOfBirth: prev.dateOfBirth || profileDob,
+      gender: prev.gender || profileGender,
+    }));
+    setNoInsuranceForm((prev) => ({
+      ...prev,
+      fullName: prev.fullName || fullName,
+      dateOfBirth: prev.dateOfBirth || profileDob,
+    }));
+  }, [profileFirstName, profileLastName, profileDob, profileGender, fullName]);
 
   const verificationTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const verificationRunIdRef = useRef(0);

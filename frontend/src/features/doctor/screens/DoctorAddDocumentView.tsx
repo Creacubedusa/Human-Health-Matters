@@ -47,7 +47,7 @@ export function DoctorAddDocumentView({ patientId }: DoctorAddDocumentViewProps)
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <ProfileHeader
         title={t('doctorPatients.addDocumentTitle')}
         backLabel={t('common.back')}

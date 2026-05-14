@@ -53,7 +53,7 @@ export function AppointmentCalendar({
 
         <View className="mt-7 flex-row">
           {weekdayLabels.map((label) => (
-            <View key={label} className="w-12 items-center px-[10px] py-[3px]">
+            <View key={label} className="flex-1 items-center px-[10px] py-[3px]">
               <Text className="text-b4 font-medium font-sans text-grey-900">
                 {label}
               </Text>
@@ -68,7 +68,7 @@ export function AppointmentCalendar({
             <View key={`calendar-week-${weekIndex}`} className="flex-row">
               {week.map((day, dayIndex) => {
                 if (!day) {
-                  return <View key={`calendar-empty-${weekIndex}-${dayIndex}`} className="h-10 w-12 px-[2px] py-1" />;
+                  return <View key={`calendar-empty-${weekIndex}-${dayIndex}`} className="h-10 flex-1 px-[2px] py-1" />;
                 }
 
                 const isSelected = day.key === selectedDateKey;
@@ -77,7 +77,7 @@ export function AppointmentCalendar({
                   <Pressable
                     key={day.key}
                     onPress={() => day.isAvailable && onSelectDate(day.key)}
-                    className="h-10 w-12 px-[2px] py-1"
+                    className="h-10 flex-1 px-[2px] py-1"
                     accessibilityRole="button"
                   >
                     <View className="items-center gap-2">

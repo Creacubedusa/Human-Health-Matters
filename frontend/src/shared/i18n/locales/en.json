@@ -1154,7 +1154,7 @@
       "householdSizeLabel": "Household Size *",
       "householdSizePlaceholder": "Household size",
       "householdIncomeLabel": "Household Income *",
-      "householdIncomePlaceholder": "Household income",
+      "householdIncomePlaceholder": "Household income $",
       "proofOfIncomeLabel": "Proof of Income *",
       "proofOfIncomePlaceholder": "Upload",
       "uploading": "Uploading...",

@@ -22,7 +22,7 @@ function formatExperienceLabel(createdAt: Date | null | undefined) {
 
 @Injectable()
 export class DoctorsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async listDoctors(filter: DoctorFilterTab): Promise<DoctorRecommendation[]> {
     const doctors = await this.prisma.user.findMany({

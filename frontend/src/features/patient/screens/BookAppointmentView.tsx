@@ -14,7 +14,7 @@ export function BookAppointmentView({ onBack, onSymptoms, onFollowUp }: BookAppo
   const { t } = useTranslation();
 
   return (
-    <SafeAreaView edges={['bottom']} className="flex-1 bg-surface">
+    <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
       <AppointmentBookingHeader
         title={t('appointmentBooking.headers.default')}
         onBack={onBack}

@@ -8,6 +8,7 @@ import { primitiveColors } from '@design/tokens';
 import { toast } from '@shared/components/ui/toast';
 import { useDoctorHome } from '../hooks/useDoctorHome';
 import { useDoctorNuraAI } from '../hooks/useDoctorNuraAI';
+import { useDoctorNotificationPolling } from '../hooks/useDoctorNotificationPolling';
 import { PatientQueueCard } from '../components/home/PatientQueueCard';
 import type { PatientInQueue } from '../types/doctor.types';
 
@@ -46,6 +47,7 @@ export function DoctorHomeView() {
   const router = useRouter();
   const { status, refreshing, homeDashboard, doctorAvatar, retry, refresh } = useDoctorHome();
   const { viewPatientSummary } = useDoctorNuraAI();
+  useDoctorNotificationPolling();
 
   if (status === 'loading') {
     return (

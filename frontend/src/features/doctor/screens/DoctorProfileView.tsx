@@ -281,7 +281,7 @@ export function DoctorProfileView() {
             await kvDelete(TOKEN_KEY);
             await kvDelete('app_role');
             await kvDelete('app_user_id');
-            router.replace('/(auth)/patient-get-started');
+            router.replace('/(auth)/select-language');
           },
         },
       ],
