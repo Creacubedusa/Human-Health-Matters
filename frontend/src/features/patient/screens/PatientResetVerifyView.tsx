@@ -5,6 +5,7 @@ import { Alert } from '@shared/components/ui/Alert';
 import { Button } from '@shared/components/ui/Button';
 import { CodeInput } from '@shared/components/ui/CodeInput';
 import { usePatientResetVerify } from '../hooks/usePatientResetVerify';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import { useAuthStore } from '@shared/store/auth.store';
 
 const CODE_LENGTH = 6;
@@ -54,85 +55,87 @@ export function PatientResetVerifyView({ onSuccess }: PatientResetVerifyViewProp
         </View>
       </View>
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView
+      <TabletContainer>
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerClassName="flex-1 items-center justify-between px-4 pt-16 pb-12"
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          {/* Top: title + OTP + timer */}
-          <View className="items-center gap-14 w-full">
-            <View className="gap-2 w-full">
-              <Text className="text-h4 font-semibold font-sans text-grey-900 text-center">
-                {t('patientResetVerify.title')}
-              </Text>
-              <View className="flex-row flex-wrap justify-center">
-                <Text className="text-b1 font-sans text-grey-900">
-                  {t('patientResetVerify.subtitlePrefix')}{' '}
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="flex-1 items-center justify-between px-4 pt-16 pb-12"
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Top: title + OTP + timer */}
+            <View className="items-center gap-14 w-full">
+              <View className="gap-2 w-full">
+                <Text className="text-h4 font-semibold font-sans text-grey-900 text-center">
+                  {t('patientResetVerify.title')}
                 </Text>
-                <Text className="text-s2 font-sans text-primary-500">
-                  {pendingResetContact ?? ''}
-                </Text>
-              </View>
-            </View>
-
-            <CodeInput
-              length={CODE_LENGTH}
-              value={code}
-              onChangeText={handleChange}
-              status={status === 'error' ? 'error' : 'default'}
-              disabled={isLoading}
-            />
-
-            <Text className="text-h5 font-semibold font-sans text-primary-500">
-              {timerLabel}
-            </Text>
-          </View>
-
-          {/* Bottom: error + button + resend */}
-          <View className="items-center gap-6 w-full">
-            {errorKey != null && (
-              <Alert status="error" variant="outline" description={t(errorKey)} />
-            )}
-
-            <Button
-              label={t('patientResetVerify.verify')}
-              onPress={() => handleSubmit(onSuccess)}
-              variant="filled"
-              size="large"
-              fullWidth
-              disabled={!isComplete || isLoading}
-              iconLeft={isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
-            />
-
-            <Pressable
-              onPress={handleResend}
-              disabled={!canResend || isResending}
-              accessibilityRole="button"
-            >
-              {({ pressed }) => (
-                <View className="flex-row items-center gap-2">
-                  {isResending && <ActivityIndicator size="small" color="#9ea2ae" />}
-                  <Text
-                    className={[
-                      'text-b1 font-sans',
-                      canResend && !isResending
-                        ? pressed ? 'text-primary-500 opacity-50' : 'text-primary-500'
-                        : 'text-grey-400',
-                    ].join(' ')}
-                  >
-                    {t('patientResetVerify.resendCode')}
+                <View className="flex-row flex-wrap justify-center">
+                  <Text className="text-b1 font-sans text-grey-900">
+                    {t('patientResetVerify.subtitlePrefix')}{' '}
+                  </Text>
+                  <Text className="text-s2 font-sans text-primary-500">
+                    {pendingResetContact ?? ''}
                   </Text>
                 </View>
+              </View>
+
+              <CodeInput
+                length={CODE_LENGTH}
+                value={code}
+                onChangeText={handleChange}
+                status={status === 'error' ? 'error' : 'default'}
+                disabled={isLoading}
+              />
+
+              <Text className="text-h5 font-semibold font-sans text-primary-500">
+                {timerLabel}
+              </Text>
+            </View>
+
+            {/* Bottom: error + button + resend */}
+            <View className="items-center gap-6 w-full">
+              {errorKey != null && (
+                <Alert status="error" variant="outline" description={t(errorKey)} />
               )}
-            </Pressable>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+
+              <Button
+                label={t('patientResetVerify.verify')}
+                onPress={() => handleSubmit(onSuccess)}
+                variant="filled"
+                size="large"
+                fullWidth
+                disabled={!isComplete || isLoading}
+                iconLeft={isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
+              />
+
+              <Pressable
+                onPress={handleResend}
+                disabled={!canResend || isResending}
+                accessibilityRole="button"
+              >
+                {({ pressed }) => (
+                  <View className="flex-row items-center gap-2">
+                    {isResending && <ActivityIndicator size="small" color="#9ea2ae" />}
+                    <Text
+                      className={[
+                        'text-b1 font-sans',
+                        canResend && !isResending
+                          ? pressed ? 'text-primary-500 opacity-50' : 'text-primary-500'
+                          : 'text-grey-400',
+                      ].join(' ')}
+                    >
+                      {t('patientResetVerify.resendCode')}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

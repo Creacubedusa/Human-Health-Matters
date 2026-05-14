@@ -10,6 +10,7 @@ import { ProfileHeader } from '@features/patient/components/profile/ProfileHeade
 import { useDoctorPatientsStore } from '../store/doctorPatients.store';
 import { useDoctorConsultationStore } from '../store/doctorConsultation.store';
 import { createDoctorLabOrder } from '../services/doctor.service';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import type { DoctorOrderDraft } from '../types/doctor.types';
 
 export interface DoctorCreateOrderViewProps {
@@ -100,59 +101,61 @@ export function DoctorCreateOrderView({ patientId, returnTo }: DoctorCreateOrder
         }}
       />
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView
+      <TabletContainer>
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerClassName="px-4 pt-6 pb-32 gap-4"
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          {errorKey ? <Alert status="error" variant="outline" description={t(errorKey)} /> : null}
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-4 pt-6 pb-32 gap-4"
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {errorKey ? <Alert status="error" variant="outline" description={t(errorKey)} /> : null}
 
-          <Input
-            label={t('doctorPatients.form.testName')}
-            value={form.testName}
-            onChangeText={(value) => updateField('testName', value)}
-          />
-          <Input
-            label={t('doctorPatients.form.priority')}
-            value={form.priority}
-            onChangeText={(value) => updateField('priority', value.toLowerCase())}
-            placeholder={t('doctorPatients.form.priorityPlaceholder')}
-          />
-          <Input
-            label={t('doctorPatients.form.sampleType')}
-            value={form.sampleType}
-            onChangeText={(value) => updateField('sampleType', value)}
-          />
-          <Input
-            label={t('doctorPatients.form.collectionInstruction')}
-            value={form.collectionInstruction}
-            onChangeText={(value) => updateField('collectionInstruction', value)}
-          />
-          <Input
-            label={t('doctorPatients.form.additionalComment')}
-            value={form.additionalComment}
-            multiline
-            numberOfLines={4}
-            onChangeText={(value) => updateField('additionalComment', value)}
-          />
-        </ScrollView>
-      </KeyboardAvoidingView>
+            <Input
+              label={t('doctorPatients.form.testName')}
+              value={form.testName}
+              onChangeText={(value) => updateField('testName', value)}
+            />
+            <Input
+              label={t('doctorPatients.form.priority')}
+              value={form.priority}
+              onChangeText={(value) => updateField('priority', value.toLowerCase())}
+              placeholder={t('doctorPatients.form.priorityPlaceholder')}
+            />
+            <Input
+              label={t('doctorPatients.form.sampleType')}
+              value={form.sampleType}
+              onChangeText={(value) => updateField('sampleType', value)}
+            />
+            <Input
+              label={t('doctorPatients.form.collectionInstruction')}
+              value={form.collectionInstruction}
+              onChangeText={(value) => updateField('collectionInstruction', value)}
+            />
+            <Input
+              label={t('doctorPatients.form.additionalComment')}
+              value={form.additionalComment}
+              multiline
+              numberOfLines={4}
+              onChangeText={(value) => updateField('additionalComment', value)}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
 
-      <View className="absolute bottom-0 left-0 right-0 bg-white px-4 py-6 border-t border-grey-100">
-        <Button
-          label={submitting ? '' : t('doctorPatients.saveOrder')}
-          onPress={handleSubmit}
-          size="large"
-          fullWidth
-          disabled={submitting}
-          iconLeft={submitting ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
-        />
-      </View>
+        <View className="absolute bottom-0 left-0 right-0 bg-white px-4 py-6 border-t border-grey-100">
+          <Button
+            label={submitting ? '' : t('doctorPatients.saveOrder')}
+            onPress={handleSubmit}
+            size="large"
+            fullWidth
+            disabled={submitting}
+            iconLeft={submitting ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
+          />
+        </View>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

@@ -6,6 +6,7 @@ import { CheckboxGroup } from '@shared/components/ui/CheckboxGroup';
 import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { Input } from '@shared/components/ui/Input';
 import { useDonorEditCard } from '../hooks/useDonorEditCard';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 
 export interface DonorEditCardViewProps {
   cardId: string;
@@ -30,79 +31,81 @@ export function DonorEditCardView({ cardId, onBack, onSave }: DonorEditCardViewP
         </Text>
       </View>
 
-      <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView
-          className="flex-1"
-          contentContainerClassName="px-5 pt-6 pb-10 gap-6"
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <Text className="text-h4 font-semibold font-sans text-grey-900">
-            {t('donorProfile.editCardTitle')}
-          </Text>
+      <TabletContainer>
+        <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-5 pt-6 pb-10 gap-6"
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <Text className="text-h4 font-semibold font-sans text-grey-900">
+              {t('donorProfile.editCardTitle')}
+            </Text>
 
-          <View className="gap-4">
-            <Input
-              label={t('donorProfile.cardNumberLabel')}
-              placeholder={t('donorProfile.cardNumberPlaceholder')}
-              value={cardNumber}
-              onChangeText={handleCardNumber}
-              keyboardType="numeric"
-              maxLength={19}
-            />
+            <View className="gap-4">
+              <Input
+                label={t('donorProfile.cardNumberLabel')}
+                placeholder={t('donorProfile.cardNumberPlaceholder')}
+                value={cardNumber}
+                onChangeText={handleCardNumber}
+                keyboardType="numeric"
+                maxLength={19}
+              />
 
-            <View className="flex-row gap-3">
-              <View className="flex-1">
-                <Input
-                  label={t('donorProfile.expiryLabel')}
-                  placeholder={t('donorProfile.expiryPlaceholder')}
-                  value={expiry}
-                  onChangeText={handleExpiry}
-                  keyboardType="numeric"
-                  maxLength={5}
-                />
+              <View className="flex-row gap-3">
+                <View className="flex-1">
+                  <Input
+                    label={t('donorProfile.expiryLabel')}
+                    placeholder={t('donorProfile.expiryPlaceholder')}
+                    value={expiry}
+                    onChangeText={handleExpiry}
+                    keyboardType="numeric"
+                    maxLength={5}
+                  />
+                </View>
+                <View className="flex-1">
+                  <Input
+                    label={t('donorProfile.cvvLabel')}
+                    placeholder={t('donorProfile.cvvPlaceholder')}
+                    value={cvv}
+                    onChangeText={handleCvv}
+                    keyboardType="numeric"
+                    maxLength={4}
+                    secureTextEntry
+                  />
+                </View>
               </View>
-              <View className="flex-1">
-                <Input
-                  label={t('donorProfile.cvvLabel')}
-                  placeholder={t('donorProfile.cvvPlaceholder')}
-                  value={cvv}
-                  onChangeText={handleCvv}
-                  keyboardType="numeric"
-                  maxLength={4}
-                  secureTextEntry
-                />
-              </View>
+
+              <Input
+                label={t('donorProfile.zipLabel')}
+                placeholder=""
+                value={zipCode}
+                onChangeText={handleZip}
+                maxLength={10}
+              />
             </View>
 
-            <Input
-              label={t('donorProfile.zipLabel')}
-              placeholder=""
-              value={zipCode}
-              onChangeText={handleZip}
-              maxLength={10}
+            <CheckboxGroup
+              options={[{ label: t('donorProfile.saveCardLabel'), value: 'save' }]}
+              values={saveCard ? ['save'] : []}
+              onChange={(vals) => handleSaveCard(vals.includes('save'))}
             />
-          </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
 
-          <CheckboxGroup
-            options={[{ label: t('donorProfile.saveCardLabel'), value: 'save' }]}
-            values={saveCard ? ['save'] : []}
-            onChange={(vals) => handleSaveCard(vals.includes('save'))}
+        {/* Sticky bottom CTA */}
+        <View className="px-5 pb-6 pt-4 border-t border-grey-100">
+          <Button
+            label={t('donorProfile.saveBtn')}
+            variant="filled"
+            size="large"
+            fullWidth
+            disabled={!isValid && cardNumber.length === 0}
+            onPress={() => handleSave(onSave)}
           />
-        </ScrollView>
-      </KeyboardAvoidingView>
-
-      {/* Sticky bottom CTA */}
-      <View className="px-5 pb-6 pt-4 border-t border-grey-100">
-        <Button
-          label={t('donorProfile.saveBtn')}
-          variant="filled"
-          size="large"
-          fullWidth
-          disabled={!isValid && cardNumber.length === 0}
-          onPress={() => handleSave(onSave)}
-        />
-      </View>
+        </View>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

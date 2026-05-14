@@ -5,6 +5,7 @@ import { Alert } from '@shared/components/ui/Alert';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { usePatientForgotPassword } from '../hooks/usePatientForgotPassword';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 
 export interface PatientForgotPasswordViewProps {
   onSuccess: () => void;
@@ -40,72 +41,74 @@ export function PatientForgotPasswordView({ onSuccess, onBack }: PatientForgotPa
         </View>
       </View>
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <View className="flex-1 px-4 pt-8 gap-8">
-          {/* Title */}
-          <View className="gap-2">
-            <Text className="text-h4 font-semibold font-sans text-grey-900">
-              {t('patientForgotPassword.title')}
-            </Text>
-            <Text className="text-b1 font-sans text-grey-600">
-              {t('patientForgotPassword.subtitle')}
-            </Text>
-          </View>
+      <TabletContainer>
+        <KeyboardAvoidingView
+          className="flex-1"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View className="flex-1 px-4 pt-8 gap-8">
+            {/* Title */}
+            <View className="gap-2">
+              <Text className="text-h4 font-semibold font-sans text-grey-900">
+                {t('patientForgotPassword.title')}
+              </Text>
+              <Text className="text-b1 font-sans text-grey-600">
+                {t('patientForgotPassword.subtitle')}
+              </Text>
+            </View>
 
-          {/* Email / phone input */}
-          <Input
-            placeholder={t('patientForgotPassword.identifierPlaceholder')}
-            value={identifier}
-            onChangeText={setIdentifier}
-            status={identifierError ? 'error' : 'default'}
-            helperText={identifierError ? t(identifierError) : undefined}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-            returnKeyType="done"
-            disabled={isLoading}
-          />
-
-          {/* Server error */}
-          {status === 'error' && (
-            <Alert
-              status="error"
-              variant="outline"
-              description={t('patientForgotPassword.errors.submitFailed')}
+            {/* Email / phone input */}
+            <Input
+              placeholder={t('patientForgotPassword.identifierPlaceholder')}
+              value={identifier}
+              onChangeText={setIdentifier}
+              status={identifierError ? 'error' : 'default'}
+              helperText={identifierError ? t(identifierError) : undefined}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+              returnKeyType="done"
+              disabled={isLoading}
             />
-          )}
 
-          {/* Send Code button */}
-          <Button
-            label={t('patientForgotPassword.sendCode')}
-            onPress={() => handleSubmit(onSuccess)}
-            variant="filled"
-            size="large"
-            fullWidth
-            disabled={isLoading || !identifier.trim()}
-            iconLeft={isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
-          />
+            {/* Server error */}
+            {status === 'error' && (
+              <Alert
+                status="error"
+                variant="outline"
+                description={t('patientForgotPassword.errors.submitFailed')}
+              />
+            )}
 
-          {/* Back to login */}
-          <View className="flex-row justify-center items-center">
-            <Text className="text-b1 font-sans text-grey-900">
-              {t('patientForgotPassword.rememberPassword')}{' '}
-            </Text>
-            <Pressable onPress={onBack} accessibilityRole="button" disabled={isLoading}>
-              {({ pressed }) => (
-                <Text
-                  className={['text-s2 font-sans text-primary-500', pressed ? 'opacity-50' : ''].join(' ')}
-                >
-                  {t('patientForgotPassword.backToLogin')}
-                </Text>
-              )}
-            </Pressable>
+            {/* Send Code button */}
+            <Button
+              label={t('patientForgotPassword.sendCode')}
+              onPress={() => handleSubmit(onSuccess)}
+              variant="filled"
+              size="large"
+              fullWidth
+              disabled={isLoading || !identifier.trim()}
+              iconLeft={isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
+            />
+
+            {/* Back to login */}
+            <View className="flex-row justify-center items-center">
+              <Text className="text-b1 font-sans text-grey-900">
+                {t('patientForgotPassword.rememberPassword')}{' '}
+              </Text>
+              <Pressable onPress={onBack} accessibilityRole="button" disabled={isLoading}>
+                {({ pressed }) => (
+                  <Text
+                    className={['text-s2 font-sans text-primary-500', pressed ? 'opacity-50' : ''].join(' ')}
+                  >
+                    {t('patientForgotPassword.backToLogin')}
+                  </Text>
+                )}
+              </Pressable>
+            </View>
           </View>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

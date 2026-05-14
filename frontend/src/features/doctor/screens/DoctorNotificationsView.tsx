@@ -7,6 +7,7 @@ import { NotificationEmptyState } from '@shared/components/ui/NotificationEmptyS
 import { NotificationTabs } from '@features/patient/components/NotificationTabs';
 import { useDoctorNotifications } from '../hooks/useDoctorNotifications';
 import { DoctorNotificationItem } from '../components/notifications/DoctorNotificationItem';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import type { DoctorNotification } from '../types/doctorNotification.types';
 
 export interface DoctorNotificationsViewProps {
@@ -89,32 +90,34 @@ export function DoctorNotificationsView({
       )}
 
       {status === 'success' && (
-        <View className="flex-1">
-          {hasNotifications ? (
-            <View className="pb-4 pt-6">
-              <NotificationTabs activeFilter={activeFilter} onFilterChange={setFilter} />
-            </View>
-          ) : null}
+        <TabletContainer>
+          <View className="flex-1">
+            {hasNotifications ? (
+              <View className="pb-4 pt-6">
+                <NotificationTabs activeFilter={activeFilter} onFilterChange={setFilter} />
+              </View>
+            ) : null}
 
-          {filteredNotifications.length === 0 ? (
-            <NotificationEmptyState />
-          ) : (
-            <FlatList
-              className="flex-1"
-              contentContainerClassName="px-4 pb-8"
-              data={filteredNotifications}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <DoctorNotificationItem
-                  notification={item}
-                  onPress={handlePress}
-                  onAction={() => handleAction(item)}
-                />
-              )}
-            />
-          )}
-        </View>
+            {filteredNotifications.length === 0 ? (
+              <NotificationEmptyState />
+            ) : (
+              <FlatList
+                className="flex-1"
+                contentContainerClassName="px-4 pb-8"
+                data={filteredNotifications}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <DoctorNotificationItem
+                    notification={item}
+                    onPress={handlePress}
+                    onAction={() => handleAction(item)}
+                  />
+                )}
+              />
+            )}
+          </View>
+        </TabletContainer>
       )}
     </SafeAreaView>
   );

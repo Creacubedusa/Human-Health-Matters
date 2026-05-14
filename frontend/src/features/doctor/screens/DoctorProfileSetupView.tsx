@@ -7,6 +7,7 @@ import { TagInput } from '@shared/components/ui/TagInput';
 import { uploadImageToCloudinary } from '@shared/api/cloudinary';
 import { fetchDoctorProfile, setupDoctorProfile } from '../services/doctor.service';
 import { useAuthStore } from '@shared/store/auth.store';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 
 export interface DoctorProfileSetupViewProps {
   onComplete: () => void;
@@ -75,69 +76,71 @@ export function DoctorProfileSetupView({ onComplete }: DoctorProfileSetupViewPro
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
-          <View className="pt-6 pb-2">
-            <Text className="text-h4 font-semibold font-sans text-grey-900">
-              Doctor profile setup
-            </Text>
-            <Text className="text-b2 font-sans text-grey-500 mt-1">
-              Add your specialty and a short bio to help patients understand how you can help.
-            </Text>
-          </View>
+      <TabletContainer>
+        <KeyboardAvoidingView
+          className="flex-1"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <ScrollView className="flex-1 px-4" contentContainerStyle={{ paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
+            <View className="pt-6 pb-2">
+              <Text className="text-h4 font-semibold font-sans text-grey-900">
+                Doctor profile setup
+              </Text>
+              <Text className="text-b2 font-sans text-grey-500 mt-1">
+                Add your specialty and a short bio to help patients understand how you can help.
+              </Text>
+            </View>
 
-          <View className="mt-6 items-center">
-            <AvatarUpload
-              uri={avatarUri}
-              onSelect={setAvatarUri}
-              initials={initials}
-              disabled={isSaving || isPrefilling}
-              testID="doctor-avatar-upload"
-            />
-          </View>
+            <View className="mt-6 items-center">
+              <AvatarUpload
+                uri={avatarUri}
+                onSelect={setAvatarUri}
+                initials={initials}
+                disabled={isSaving || isPrefilling}
+                testID="doctor-avatar-upload"
+              />
+            </View>
 
-          <View className="mt-8 gap-6">
-            <TagInput
-              label="Specialties"
-              values={specialties}
-              onChange={setSpecialties}
-              placeholder="e.g. Cardiology"
-              disabled={isSaving || isPrefilling}
-              testID="doctor-specialties"
-            />
+            <View className="mt-8 gap-6">
+              <TagInput
+                label="Specialties"
+                values={specialties}
+                onChange={setSpecialties}
+                placeholder="e.g. Cardiology"
+                disabled={isSaving || isPrefilling}
+                testID="doctor-specialties"
+              />
 
-            <View className="gap-2 w-full">
-              <Text className="text-b2 text-grey-900 font-sans">Bio</Text>
-              <View className="bg-grey-50 border-2 border-grey-200 rounded-md p-3">
-                <TextInput
-                  value={bio}
-                  onChangeText={setBio}
-                  placeholder="Write a short bio..."
-                  className="text-b1 font-sans text-grey-900 p-0"
-                  multiline
-                  editable={!isSaving && !isPrefilling}
-                />
+              <View className="gap-2 w-full">
+                <Text className="text-b2 text-grey-900 font-sans">Bio</Text>
+                <View className="bg-grey-50 border-2 border-grey-200 rounded-md p-3">
+                  <TextInput
+                    value={bio}
+                    onChangeText={setBio}
+                    placeholder="Write a short bio..."
+                    className="text-b1 font-sans text-grey-900 p-0"
+                    multiline
+                    editable={!isSaving && !isPrefilling}
+                  />
+                </View>
               </View>
             </View>
-          </View>
 
-          <View className="mt-10">
-            <Button
-              label="Save and continue"
-              onPress={handleSave}
-              variant="filled"
-              size="large"
-              fullWidth
-              disabled={!canSave}
-              iconLeft={isSaving || isPrefilling ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
-              testID="doctor-profile-setup-save"
-            />
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+            <View className="mt-10">
+              <Button
+                label="Save and continue"
+                onPress={handleSave}
+                variant="filled"
+                size="large"
+                fullWidth
+                disabled={!canSave}
+                iconLeft={isSaving || isPrefilling ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
+                testID="doctor-profile-setup-save"
+              />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

@@ -8,6 +8,7 @@ import { NotificationEmptyState } from '@shared/components/ui/NotificationEmptyS
 import { useNotifications } from '../hooks/useNotifications';
 import { NotificationItem } from '../components/NotificationItem';
 import { NotificationTabs } from '../components/NotificationTabs';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import type { Notification } from '../types/notification.types';
 
 export interface NotificationViewProps {
@@ -80,32 +81,34 @@ export function NotificationView({
 
       {/* Success */}
       {status === 'success' && (
-        <View className="flex-1">
-          {hasNotifications ? (
-            <View className="pt-6 pb-4">
-              <NotificationTabs activeFilter={activeFilter} onFilterChange={setFilter} />
-            </View>
-          ) : null}
+        <TabletContainer>
+          <View className="flex-1">
+            {hasNotifications ? (
+              <View className="pt-6 pb-4">
+                <NotificationTabs activeFilter={activeFilter} onFilterChange={setFilter} />
+              </View>
+            ) : null}
 
-          {filteredNotifications.length === 0 ? (
-            <NotificationEmptyState />
-          ) : (
-            <FlatList
-              className="flex-1"
-              contentContainerClassName="px-4 pb-8"
-              data={filteredNotifications}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <NotificationItem
-                  notification={item}
-                  onPress={handlePress}
-                  onAction={() => handleAction(item)}
-                />
-              )}
-            />
-          )}
-        </View>
+            {filteredNotifications.length === 0 ? (
+              <NotificationEmptyState />
+            ) : (
+              <FlatList
+                className="flex-1"
+                contentContainerClassName="px-4 pb-8"
+                data={filteredNotifications}
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+                renderItem={({ item }) => (
+                  <NotificationItem
+                    notification={item}
+                    onPress={handlePress}
+                    onAction={() => handleAction(item)}
+                  />
+                )}
+              />
+            )}
+          </View>
+        </TabletContainer>
       )}
     </SafeAreaView>
   );

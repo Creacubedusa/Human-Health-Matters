@@ -11,6 +11,7 @@ import { Button } from '@shared/components/ui/Button';
 import { CodeInput } from '@shared/components/ui/CodeInput';
 import { Input } from '@shared/components/ui/Input';
 import { useDoctorEarnings } from '../hooks/useDoctorEarnings';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 
 const CODE_LENGTH = 6;
 const PRESET_AMOUNTS = [50, 100, 150, 500, 1000, 1500];
@@ -278,295 +279,297 @@ export function DoctorEarningWithdrawView() {
         onBack={handleBack}
       />
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView
+      <TabletContainer>
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerClassName="px-4 pt-6 pb-10 gap-6"
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          {withdrawalStep === 'overview' ? (
-            <>
-              <View className="items-center gap-4 pt-8">
-                <Text className="text-b3 font-sans text-grey-500">
-                  {t('doctorEarnings.availableToWithdraw')}
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-4 pt-6 pb-10 gap-6"
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {withdrawalStep === 'overview' ? (
+              <>
+                <View className="items-center gap-4 pt-8">
+                  <Text className="text-b3 font-sans text-grey-500">
+                    {t('doctorEarnings.availableToWithdraw')}
+                  </Text>
+                  <Text className="text-h3 font-semibold font-sans text-grey-900">
+                    {formatCurrency(availableToWithdraw)}
+                  </Text>
+                  <View className="w-full">
+                    <Button
+                      label={t('doctorEarnings.withdraw')}
+                      variant="filled"
+                      size="large"
+                      fullWidth
+                      onPress={() => setWithdrawalStep(hasBanks ? 'selectBank' : 'addBank')}
+                    />
+                  </View>
+                </View>
+
+                <View className="gap-6">
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-s2 font-semibold font-sans text-grey-900">
+                      {t('doctorEarnings.bankSection')}
+                    </Text>
+
+                    {hasBanks ? (
+                      <Pressable
+                        onPress={() => setWithdrawalStep('addBank')}
+                        className="flex-row items-center gap-2"
+                      >
+                        <Text className="text-btn-medium font-semibold font-sans text-primary-500">
+                          {t('doctorEarnings.add')}
+                        </Text>
+                        <Ionicons name="arrow-forward" size={18} color={primitiveColors['primary-500']} />
+                      </Pressable>
+                    ) : null}
+                  </View>
+
+                  {hasBanks ? (
+                    <View className="gap-4">
+                      {withdrawalBanks.map((bank) => renderBankCard(bank.id, false))}
+                    </View>
+                  ) : (
+                    <View className="items-center gap-6 px-4 py-8">
+                      <View className="gap-2">
+                        <Text className="text-center text-h4 font-semibold font-sans text-grey-900">
+                          {t('doctorEarnings.noBankTitle')}
+                        </Text>
+                        <Text className="text-center text-b1 font-sans text-grey-500">
+                          {t('doctorEarnings.noBankSubtitle')}
+                        </Text>
+                      </View>
+
+                      <View className="w-[221px]">
+                        <Button
+                          label={t('doctorEarnings.addBankCta')}
+                          variant="filled"
+                          size="large"
+                          fullWidth
+                          onPress={() => setWithdrawalStep('addBank')}
+                        />
+                      </View>
+                    </View>
+                  )}
+                </View>
+              </>
+            ) : null}
+
+            {withdrawalStep === 'addBank' ? (
+              <>
+                <Text className="text-h4 font-semibold font-sans text-grey-900">
+                  {t('doctorEarnings.addBankHeading')}
                 </Text>
-                <Text className="text-h3 font-semibold font-sans text-grey-900">
-                  {formatCurrency(availableToWithdraw)}
-                </Text>
-                <View className="w-full">
+
+                <View className="gap-4">
+                  <Input
+                    label={t('doctorProfileSetup.bank.bankNameLabel')}
+                    placeholder={t('doctorProfileSetup.bank.bankNamePlaceholder')}
+                    value={bankForm.bankName}
+                    onChangeText={(value) => handleChangeBankField('bankName', value)}
+                    status={bankErrors.bankName ? 'error' : 'default'}
+                    helperText={bankErrors.bankName || undefined}
+                  />
+                  <Input
+                    label={t('doctorProfileSetup.bank.accountNameLabel')}
+                    placeholder={t('doctorProfileSetup.bank.accountNamePlaceholder')}
+                    value={bankForm.accountName}
+                    onChangeText={(value) => handleChangeBankField('accountName', value)}
+                    status={bankErrors.accountName ? 'error' : 'default'}
+                    helperText={bankErrors.accountName || undefined}
+                  />
+                  <Input
+                    label={t('doctorProfileSetup.bank.accountNumberLabel')}
+                    placeholder={t('doctorProfileSetup.bank.accountNumberPlaceholder')}
+                    value={bankForm.accountNumber}
+                    onChangeText={(value) => handleChangeBankField('accountNumber', value.replace(/\D/g, ''))}
+                    keyboardType="numeric"
+                    status={bankErrors.accountNumber ? 'error' : 'default'}
+                    helperText={bankErrors.accountNumber || undefined}
+                  />
+                  <Input
+                    label={t('doctorProfileSetup.bank.sortCodeLabel')}
+                    placeholder={t('doctorProfileSetup.bank.sortCodePlaceholder')}
+                    value={bankForm.sortCode}
+                    onChangeText={(value) => handleChangeBankField('sortCode', value)}
+                    status={bankErrors.sortCode ? 'error' : 'default'}
+                    helperText={bankErrors.sortCode || undefined}
+                  />
+                  <Input
+                    label={t('doctorProfileSetup.bank.accountTypeLabel')}
+                    placeholder={t('doctorProfileSetup.bank.accountTypePlaceholder')}
+                    value={bankForm.accountType}
+                    onChangeText={(value) => handleChangeBankField('accountType', value)}
+                  />
+                </View>
+
+                <View className="pt-4">
                   <Button
-                    label={t('doctorEarnings.withdraw')}
+                    label={t('doctorEarnings.add')}
                     variant="filled"
                     size="large"
                     fullWidth
-                    onPress={() => setWithdrawalStep(hasBanks ? 'selectBank' : 'addBank')}
+                    onPress={handleAddBank}
                   />
                 </View>
-              </View>
+              </>
+            ) : null}
 
-              <View className="gap-6">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-s2 font-semibold font-sans text-grey-900">
-                    {t('doctorEarnings.bankSection')}
-                  </Text>
+            {withdrawalStep === 'selectBank' ? (
+              <>
+                <Text className="text-h4 font-semibold font-sans text-grey-900">
+                  {t('doctorEarnings.chooseBankHeading')}
+                </Text>
 
-                  {hasBanks ? (
-                    <Pressable
-                      onPress={() => setWithdrawalStep('addBank')}
-                      className="flex-row items-center gap-2"
-                    >
-                      <Text className="text-btn-medium font-semibold font-sans text-primary-500">
-                        {t('doctorEarnings.add')}
-                      </Text>
-                      <Ionicons name="arrow-forward" size={18} color={primitiveColors['primary-500']} />
-                    </Pressable>
-                  ) : null}
+                <View className="gap-4">
+                  {withdrawalBanks.map((bank) => renderBankCard(bank.id, true))}
                 </View>
+              </>
+            ) : null}
 
-                {hasBanks ? (
-                  <View className="gap-4">
-                    {withdrawalBanks.map((bank) => renderBankCard(bank.id, false))}
-                  </View>
-                ) : (
-                  <View className="items-center gap-6 px-4 py-8">
-                    <View className="gap-2">
-                      <Text className="text-center text-h4 font-semibold font-sans text-grey-900">
-                        {t('doctorEarnings.noBankTitle')}
-                      </Text>
-                      <Text className="text-center text-b1 font-sans text-grey-500">
-                        {t('doctorEarnings.noBankSubtitle')}
-                      </Text>
-                    </View>
+            {withdrawalStep === 'enterAmount' ? (
+              <>
+                {selectedWithdrawalBank ? (
+                  <View className="rounded-lg bg-grey-50 px-4 py-4">
+                    <View className="flex-row items-center gap-3">
+                      <View className="size-10 items-center justify-center rounded-[4px] bg-primary-50">
+                        <MaterialCommunityIcons name="bank-outline" size={20} color={primitiveColors['primary-500']} />
+                      </View>
 
-                    <View className="w-[221px]">
-                      <Button
-                        label={t('doctorEarnings.addBankCta')}
-                        variant="filled"
-                        size="large"
-                        fullWidth
-                        onPress={() => setWithdrawalStep('addBank')}
-                      />
+                      <View className="gap-1.5">
+                        <Text className="text-b3 font-medium font-sans text-grey-900">
+                          {selectedWithdrawalBank.bankName}
+                        </Text>
+                        <Text className="text-c1 font-sans text-grey-500">
+                          {`${selectedWithdrawalBank.accountName}. ${selectedWithdrawalBank.accountNumber}. ${selectedWithdrawalBank.accountType.toLowerCase()}`}
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                )}
-              </View>
-            </>
-          ) : null}
+                ) : null}
 
-          {withdrawalStep === 'addBank' ? (
-            <>
-              <Text className="text-h4 font-semibold font-sans text-grey-900">
-                {t('doctorEarnings.addBankHeading')}
-              </Text>
+                <Text className="text-s2 font-semibold font-sans text-grey-900">
+                  {t('doctorEarnings.withdrawAmount')}
+                </Text>
 
-              <View className="gap-4">
                 <Input
-                  label={t('doctorProfileSetup.bank.bankNameLabel')}
-                  placeholder={t('doctorProfileSetup.bank.bankNamePlaceholder')}
-                  value={bankForm.bankName}
-                  onChangeText={(value) => handleChangeBankField('bankName', value)}
-                  status={bankErrors.bankName ? 'error' : 'default'}
-                  helperText={bankErrors.bankName || undefined}
+                  value={withdrawalAmount}
+                  onChangeText={(value) => {
+                    setWithdrawalAmount(normalizeAmount(value));
+                    setAmountError(null);
+                  }}
+                  keyboardType="decimal-pad"
+                  iconLeft={<Text className="text-b1 font-sans text-grey-900">$</Text>}
+                  status={amountError ? 'error' : 'default'}
+                  helperText={amountError || undefined}
                 />
-                <Input
-                  label={t('doctorProfileSetup.bank.accountNameLabel')}
-                  placeholder={t('doctorProfileSetup.bank.accountNamePlaceholder')}
-                  value={bankForm.accountName}
-                  onChangeText={(value) => handleChangeBankField('accountName', value)}
-                  status={bankErrors.accountName ? 'error' : 'default'}
-                  helperText={bankErrors.accountName || undefined}
-                />
-                <Input
-                  label={t('doctorProfileSetup.bank.accountNumberLabel')}
-                  placeholder={t('doctorProfileSetup.bank.accountNumberPlaceholder')}
-                  value={bankForm.accountNumber}
-                  onChangeText={(value) => handleChangeBankField('accountNumber', value.replace(/\D/g, ''))}
-                  keyboardType="numeric"
-                  status={bankErrors.accountNumber ? 'error' : 'default'}
-                  helperText={bankErrors.accountNumber || undefined}
-                />
-                <Input
-                  label={t('doctorProfileSetup.bank.sortCodeLabel')}
-                  placeholder={t('doctorProfileSetup.bank.sortCodePlaceholder')}
-                  value={bankForm.sortCode}
-                  onChangeText={(value) => handleChangeBankField('sortCode', value)}
-                  status={bankErrors.sortCode ? 'error' : 'default'}
-                  helperText={bankErrors.sortCode || undefined}
-                />
-                <Input
-                  label={t('doctorProfileSetup.bank.accountTypeLabel')}
-                  placeholder={t('doctorProfileSetup.bank.accountTypePlaceholder')}
-                  value={bankForm.accountType}
-                  onChangeText={(value) => handleChangeBankField('accountType', value)}
-                />
-              </View>
 
-              <View className="pt-4">
-                <Button
-                  label={t('doctorEarnings.add')}
-                  variant="filled"
-                  size="large"
-                  fullWidth
-                  onPress={handleAddBank}
-                />
-              </View>
-            </>
-          ) : null}
-
-          {withdrawalStep === 'selectBank' ? (
-            <>
-              <Text className="text-h4 font-semibold font-sans text-grey-900">
-                {t('doctorEarnings.chooseBankHeading')}
-              </Text>
-
-              <View className="gap-4">
-                {withdrawalBanks.map((bank) => renderBankCard(bank.id, true))}
-              </View>
-            </>
-          ) : null}
-
-          {withdrawalStep === 'enterAmount' ? (
-            <>
-              {selectedWithdrawalBank ? (
-                <View className="rounded-lg bg-grey-50 px-4 py-4">
-                  <View className="flex-row items-center gap-3">
-                    <View className="size-10 items-center justify-center rounded-[4px] bg-primary-50">
-                      <MaterialCommunityIcons name="bank-outline" size={20} color={primitiveColors['primary-500']} />
-                    </View>
-
-                    <View className="gap-1.5">
-                      <Text className="text-b3 font-medium font-sans text-grey-900">
-                        {selectedWithdrawalBank.bankName}
-                      </Text>
-                      <Text className="text-c1 font-sans text-grey-500">
-                        {`${selectedWithdrawalBank.accountName}. ${selectedWithdrawalBank.accountNumber}. ${selectedWithdrawalBank.accountType.toLowerCase()}`}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              ) : null}
-
-              <Text className="text-s2 font-semibold font-sans text-grey-900">
-                {t('doctorEarnings.withdrawAmount')}
-              </Text>
-
-              <Input
-                value={withdrawalAmount}
-                onChangeText={(value) => {
-                  setWithdrawalAmount(normalizeAmount(value));
-                  setAmountError(null);
-                }}
-                keyboardType="decimal-pad"
-                iconLeft={<Text className="text-b1 font-sans text-grey-900">$</Text>}
-                status={amountError ? 'error' : 'default'}
-                helperText={amountError || undefined}
-              />
-
-              <View className="gap-5 pt-2">
-                <View className="flex-row flex-wrap justify-between gap-y-5">
-                  {PRESET_AMOUNTS.map((amount) => {
-                    const isActive = withdrawalAmount === String(amount);
-                    return (
-                      <Pressable
-                        key={amount}
-                        onPress={() => {
-                          setWithdrawalAmount(String(amount));
-                          setAmountError(null);
-                        }}
-                        className={[
-                          'w-[31%] rounded-md px-3 py-2 items-center justify-center',
-                          isActive ? 'bg-primary-50 border border-primary-500' : 'bg-grey-200',
-                        ].join(' ')}
-                      >
-                        <Text
+                <View className="gap-5 pt-2">
+                  <View className="flex-row flex-wrap justify-between gap-y-5">
+                    {PRESET_AMOUNTS.map((amount) => {
+                      const isActive = withdrawalAmount === String(amount);
+                      return (
+                        <Pressable
+                          key={amount}
+                          onPress={() => {
+                            setWithdrawalAmount(String(amount));
+                            setAmountError(null);
+                          }}
                           className={[
-                            'text-b3 font-sans text-center',
-                            isActive ? 'text-primary-500' : 'text-grey-400',
+                            'w-[31%] rounded-md px-3 py-2 items-center justify-center',
+                            isActive ? 'bg-primary-50 border border-primary-500' : 'bg-grey-200',
                           ].join(' ')}
                         >
-                          {`$${amount}`}
-                        </Text>
-                      </Pressable>
-                    );
-                  })}
+                          <Text
+                            className={[
+                              'text-b3 font-sans text-center',
+                              isActive ? 'text-primary-500' : 'text-grey-400',
+                            ].join(' ')}
+                          >
+                            {`$${amount}`}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+
+                  <Button
+                    label={
+                      isAmountValid
+                        ? t('doctorEarnings.withdrawAmountCta', { amount: `$${parsedAmount.toFixed(0)}` })
+                        : t('doctorEarnings.withdraw')
+                    }
+                    variant="filled"
+                    size="large"
+                    fullWidth
+                    onPress={handleAmountContinue}
+                    iconRight={
+                      isAmountValid ? (
+                        <Ionicons name="arrow-forward" size={18} color={primitiveColors.white} />
+                      ) : undefined
+                    }
+                  />
+                </View>
+              </>
+            ) : null}
+
+            {withdrawalStep === 'verify' ? (
+              <View className="flex-1 justify-between pt-4">
+                <View className="items-center gap-14">
+                  <View className="gap-2">
+                    <Text className="text-center text-h4 font-semibold font-sans text-grey-900">
+                      {t('doctorEarnings.verifyTitle')}
+                    </Text>
+                    <Text className="text-center text-b1 font-sans text-grey-500">
+                      {verifySubtitle}
+                    </Text>
+                  </View>
+
+                  <CodeInput
+                    length={CODE_LENGTH}
+                    value={withdrawalCode}
+                    onChangeText={setWithdrawalCode}
+                    testID="withdrawal-code-input"
+                    variant="auth"
+                  />
+
+                  <Text className="text-h5 font-semibold font-sans text-primary-500">
+                    {`0:${String(secondsRemaining).padStart(2, '0')}`}
+                  </Text>
                 </View>
 
-                <Button
-                  label={
-                    isAmountValid
-                      ? t('doctorEarnings.withdrawAmountCta', { amount: `$${parsedAmount.toFixed(0)}` })
-                      : t('doctorEarnings.withdraw')
-                  }
-                  variant="filled"
-                  size="large"
-                  fullWidth
-                  onPress={handleAmountContinue}
-                  iconRight={
-                    isAmountValid ? (
-                      <Ionicons name="arrow-forward" size={18} color={primitiveColors.white} />
-                    ) : undefined
-                  }
-                />
-              </View>
-            </>
-          ) : null}
+                <View className="items-center gap-6 pt-20">
+                  <Button
+                    label={t('doctorEarnings.confirmWithdrawal')}
+                    variant="filled"
+                    size="large"
+                    fullWidth
+                    disabled={withdrawalCode.length !== CODE_LENGTH}
+                    onPress={handleVerifySubmit}
+                  />
 
-          {withdrawalStep === 'verify' ? (
-            <View className="flex-1 justify-between pt-4">
-              <View className="items-center gap-14">
-                <View className="gap-2">
-                  <Text className="text-center text-h4 font-semibold font-sans text-grey-900">
-                    {t('doctorEarnings.verifyTitle')}
-                  </Text>
-                  <Text className="text-center text-b1 font-sans text-grey-500">
-                    {verifySubtitle}
-                  </Text>
+                  <Pressable
+                    onPress={() => {
+                      if (secondsRemaining > 0) return;
+                      setWithdrawalCode('');
+                      setSecondsRemaining(30);
+                    }}
+                    disabled={secondsRemaining > 0}
+                  >
+                    <Text className={['text-b1 font-sans', secondsRemaining > 0 ? 'text-grey-400' : 'text-primary-500'].join(' ')}>
+                      {t('doctorEarnings.resendCode')}
+                    </Text>
+                  </Pressable>
                 </View>
-
-                <CodeInput
-                  length={CODE_LENGTH}
-                  value={withdrawalCode}
-                  onChangeText={setWithdrawalCode}
-                  testID="withdrawal-code-input"
-                  variant="auth"
-                />
-
-                <Text className="text-h5 font-semibold font-sans text-primary-500">
-                  {`0:${String(secondsRemaining).padStart(2, '0')}`}
-                </Text>
               </View>
-
-              <View className="items-center gap-6 pt-20">
-                <Button
-                  label={t('doctorEarnings.confirmWithdrawal')}
-                  variant="filled"
-                  size="large"
-                  fullWidth
-                  disabled={withdrawalCode.length !== CODE_LENGTH}
-                  onPress={handleVerifySubmit}
-                />
-
-                <Pressable
-                  onPress={() => {
-                    if (secondsRemaining > 0) return;
-                    setWithdrawalCode('');
-                    setSecondsRemaining(30);
-                  }}
-                  disabled={secondsRemaining > 0}
-                >
-                  <Text className={['text-b1 font-sans', secondsRemaining > 0 ? 'text-grey-400' : 'text-primary-500'].join(' ')}>
-                    {t('doctorEarnings.resendCode')}
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          ) : null}
-        </ScrollView>
-      </KeyboardAvoidingView>
+            ) : null}
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TabletContainer>
 
       <Modal
         visible={withdrawalSuccessVisible}

@@ -17,6 +17,7 @@ import { DoctorStatsRow } from '../components/booking/DoctorStatsRow';
 import { FindingBestMatchCard } from '../components/booking/FindingBestMatchCard';
 import { NuraMatchSummaryCard } from '../components/booking/NuraMatchSummaryCard';
 import { TimeSlotGrid } from '../components/booking/TimeSlotGrid';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 
 export interface AppointmentBookingViewProps {
   onExit: () => void;
@@ -330,9 +331,11 @@ export function AppointmentBookingView({
         showCalendarIcon={step === 'doctorDetails'}
       />
 
-      {routeViewState !== 'content' && step !== 'findingMatch'
-        ? renderRouteState()
-        : renderContent()}
+      <TabletContainer>
+        {routeViewState !== 'content' && step !== 'findingMatch'
+          ? renderRouteState()
+          : renderContent()}
+      </TabletContainer>
     </SafeAreaView>
   );
 }

@@ -9,6 +9,7 @@ import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { ScreenHeader } from '@shared/components/ui/ScreenHeader';
 import { useDoctorAddMultiPrescription } from '../hooks/useDoctorAddMultiPrescription';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import type { DoctorPrescriptionDraft } from '../types/doctor.types';
 
 export interface DoctorAddPrescriptionViewProps {
@@ -52,72 +53,74 @@ export function DoctorAddPrescriptionView({ patientId, returnTo }: DoctorAddPres
         titleClassName="text-[16px] font-semibold font-sans text-grey-900"
       />
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView
+      <TabletContainer>
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerClassName="px-4 pt-6 pb-40 gap-4"
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          {/* Section title */}
-          <Text className="text-[18px] font-semibold font-sans text-grey-900">
-            {t('addPrescription.sectionTitle')}
-          </Text>
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-4 pt-6 pb-40 gap-4"
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Section title */}
+            <Text className="text-[18px] font-semibold font-sans text-grey-900">
+              {t('addPrescription.sectionTitle')}
+            </Text>
 
-          {/* Validation error banner */}
-          {hasAnyError ? (
-            <Alert
-              status="error"
-              variant="outline"
-              description={t('addPrescription.errorRequired')}
-            />
-          ) : null}
+            {/* Validation error banner */}
+            {hasAnyError ? (
+              <Alert
+                status="error"
+                variant="outline"
+                description={t('addPrescription.errorRequired')}
+              />
+            ) : null}
 
-          {/* Prescription blocks */}
-          {blocks.map((block, index) => (
-            <PrescriptionBlock
-              key={index}
-              block={block}
-              index={index}
-              isInvalid={!!invalidBlocks[index]}
-              canRemove={blocks.length > 1}
-              onRemove={() => removeBlock(index)}
-              onChangeField={(field, value) => updateField(index, field, value)}
-            />
-          ))}
+            {/* Prescription blocks */}
+            {blocks.map((block, index) => (
+              <PrescriptionBlock
+                key={index}
+                block={block}
+                index={index}
+                isInvalid={!!invalidBlocks[index]}
+                canRemove={blocks.length > 1}
+                onRemove={() => removeBlock(index)}
+                onChangeField={(field, value) => updateField(index, field, value)}
+              />
+            ))}
 
-          {/* Add More button */}
-          <View className="items-end">
-            <Button
-              label={t('addPrescription.addMoreBtn')}
-              variant="outline"
-              size="medium"
-              onPress={addBlock}
-            />
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+            {/* Add More button */}
+            <View className="items-end">
+              <Button
+                label={t('addPrescription.addMoreBtn')}
+                variant="outline"
+                size="medium"
+                onPress={addBlock}
+              />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
 
-      {/* Footer */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white px-6 py-6 flex-row items-center justify-between">
-        <Button
-          label={t('addPrescription.cancelBtn')}
-          variant="outline"
-          size="large"
-          onPress={handleCancel}
-          disabled={isSubmitting}
-        />
-        <Button
-          label={t('addPrescription.saveBtn')}
-          variant="filled"
-          size="large"
-          onPress={() => void handleSave()}
-          disabled={isSubmitting}
-        />
-      </View>
+        {/* Footer */}
+        <View className="absolute bottom-0 left-0 right-0 bg-white px-6 py-6 flex-row items-center justify-between">
+          <Button
+            label={t('addPrescription.cancelBtn')}
+            variant="outline"
+            size="large"
+            onPress={handleCancel}
+            disabled={isSubmitting}
+          />
+          <Button
+            label={t('addPrescription.saveBtn')}
+            variant="filled"
+            size="large"
+            onPress={() => void handleSave()}
+            disabled={isSubmitting}
+          />
+        </View>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

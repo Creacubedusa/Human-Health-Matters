@@ -8,6 +8,7 @@ import { HeaderBackButton } from '@shared/components/ui/HeaderBackButton';
 import { AppointmentCalendar } from '../components/booking/AppointmentCalendar';
 import { TimeSlotGrid } from '../components/booking/TimeSlotGrid';
 import { useRescheduleDatetime } from '../hooks/useRescheduleDatetime';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 
 const WEEKDAY_KEYS = [
   'appointmentBooking.weekdays.sun',
@@ -120,51 +121,53 @@ export function AppointmentRescheduleDateTimeView({
         </View>
       </View>
 
-      <ScrollView
-        className="flex-1"
-        contentContainerClassName="px-4 pt-4 pb-32"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Calendar */}
-        {calendarMonth && (
-          <AppointmentCalendar
-            month={calendarMonth}
-            headerLabel={headerLabel}
-            selectedDateKey={selectedDate}
-            weekdayLabels={weekdayLabels}
-            onSelectDate={setSelectedDate}
-            onPrevMonth={() => void handlePrevMonth()}
-            onNextMonth={() => void handleNextMonth()}
-          />
+      <TabletContainer>
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="px-4 pt-4 pb-32"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Calendar */}
+          {calendarMonth && (
+            <AppointmentCalendar
+              month={calendarMonth}
+              headerLabel={headerLabel}
+              selectedDateKey={selectedDate}
+              weekdayLabels={weekdayLabels}
+              onSelectDate={setSelectedDate}
+              onPrevMonth={() => void handlePrevMonth()}
+              onNextMonth={() => void handleNextMonth()}
+            />
+          )}
+        </ScrollView>
+
+        {/* Time slot modal — appears when a date is selected */}
+        <TimeSlotGrid
+          visible={!!selectedDate}
+          title={t('appointmentBooking.dateTime.availableTimeSlotTitle')}
+          slots={timeSlots}
+          selectedTimeSlotId={selectedTimeSlotId}
+          ctaLabel={t('appointmentBooking.actions.makeAppointment')}
+          ctaDisabled={!canMakeAppointment}
+          onClose={() => setSelectedDate(null)}
+          onSelectTimeSlot={setSelectedTimeSlot}
+          onSubmit={() => handleMakeAppointment(onSuccess)}
+        />
+
+        {/* Sticky CTA — visible when date selected but no time slots shown yet */}
+        {selectedDate && timeSlots.length === 0 && (
+          <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-grey-100 px-5 py-6">
+            <Button
+              label={t('appointmentBooking.actions.makeAppointment')}
+              variant="filled"
+              size="large"
+              fullWidth
+              disabled={!canMakeAppointment}
+              onPress={() => handleMakeAppointment(onSuccess)}
+            />
+          </View>
         )}
-      </ScrollView>
-
-      {/* Time slot modal — appears when a date is selected */}
-      <TimeSlotGrid
-        visible={!!selectedDate}
-        title={t('appointmentBooking.dateTime.availableTimeSlotTitle')}
-        slots={timeSlots}
-        selectedTimeSlotId={selectedTimeSlotId}
-        ctaLabel={t('appointmentBooking.actions.makeAppointment')}
-        ctaDisabled={!canMakeAppointment}
-        onClose={() => setSelectedDate(null)}
-        onSelectTimeSlot={setSelectedTimeSlot}
-        onSubmit={() => handleMakeAppointment(onSuccess)}
-      />
-
-      {/* Sticky CTA — visible when date selected but no time slots shown yet */}
-      {selectedDate && timeSlots.length === 0 && (
-        <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-grey-100 px-5 py-6">
-          <Button
-            label={t('appointmentBooking.actions.makeAppointment')}
-            variant="filled"
-            size="large"
-            fullWidth
-            disabled={!canMakeAppointment}
-            onPress={() => handleMakeAppointment(onSuccess)}
-          />
-        </View>
-      )}
+      </TabletContainer>
     </SafeAreaView>
   );
 }

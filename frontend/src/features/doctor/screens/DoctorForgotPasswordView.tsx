@@ -5,6 +5,7 @@ import { Alert } from '@shared/components/ui/Alert';
 import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { useDoctorForgotPassword } from '../hooks/useDoctorForgotPassword';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 
 export interface DoctorForgotPasswordViewProps {
   onSuccess: () => void;
@@ -37,76 +38,78 @@ export function DoctorForgotPasswordView({ onSuccess }: DoctorForgotPasswordView
         </View>
       </View>
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <View className="flex-1 px-4 pt-[148px] justify-between pb-[281px]">
-          <View className="gap-8">
-            <View className="gap-2">
-              <Text className="text-h4 font-semibold font-sans text-grey-900">
-                {t('doctorForgotPassword.title')}
-              </Text>
-              <Text className="text-b2 font-sans text-grey-500">
-                {t('doctorForgotPassword.subtitle')}
-              </Text>
-            </View>
-
-            <View className="gap-6">
-              <Input
-                placeholder={t('doctorForgotPassword.emailPlaceholder')}
-                value={email}
-                onChangeText={setEmail}
-                status={emailError ? 'error' : 'default'}
-                helperText={emailError ? t(emailError) : undefined}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType="done"
-                disabled={isLoading}
-              />
-
-              {status === 'error' && (
-                <Alert
-                  status="error"
-                  variant="outline"
-                  description={t('doctorForgotPassword.errors.submitFailed')}
-                />
-              )}
-
-              <Button
-                label={t('doctorForgotPassword.sendCode')}
-                onPress={() => handleSubmit(onSuccess)}
-                variant="filled"
-                size="large"
-                fullWidth
-                disabled={isLoading || !email.trim()}
-                iconLeft={
-                  isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined
-                }
-              />
-            </View>
-          </View>
-
-          <View className="flex-row justify-center items-center">
-            <Text className="text-b1 font-sans text-grey-900">
-              {t('doctorForgotPassword.noCode')}{' '}
-            </Text>
-            <Pressable onPress={() => handleSubmit(onSuccess)} accessibilityRole="button">
-              {({ pressed }) => (
-                <Text
-                  className={[
-                    'text-s2 font-sans text-primary-500',
-                    pressed ? 'opacity-50' : '',
-                  ].join(' ')}
-                >
-                  {t('doctorForgotPassword.resendCode')}
+      <TabletContainer>
+        <KeyboardAvoidingView
+          className="flex-1"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View className="flex-1 px-4 pt-[148px] justify-between pb-[281px]">
+            <View className="gap-8">
+              <View className="gap-2">
+                <Text className="text-h4 font-semibold font-sans text-grey-900">
+                  {t('doctorForgotPassword.title')}
                 </Text>
-              )}
-            </Pressable>
+                <Text className="text-b2 font-sans text-grey-500">
+                  {t('doctorForgotPassword.subtitle')}
+                </Text>
+              </View>
+
+              <View className="gap-6">
+                <Input
+                  placeholder={t('doctorForgotPassword.emailPlaceholder')}
+                  value={email}
+                  onChangeText={setEmail}
+                  status={emailError ? 'error' : 'default'}
+                  helperText={emailError ? t(emailError) : undefined}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  disabled={isLoading}
+                />
+
+                {status === 'error' && (
+                  <Alert
+                    status="error"
+                    variant="outline"
+                    description={t('doctorForgotPassword.errors.submitFailed')}
+                  />
+                )}
+
+                <Button
+                  label={t('doctorForgotPassword.sendCode')}
+                  onPress={() => handleSubmit(onSuccess)}
+                  variant="filled"
+                  size="large"
+                  fullWidth
+                  disabled={isLoading || !email.trim()}
+                  iconLeft={
+                    isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined
+                  }
+                />
+              </View>
+            </View>
+
+            <View className="flex-row justify-center items-center">
+              <Text className="text-b1 font-sans text-grey-900">
+                {t('doctorForgotPassword.noCode')}{' '}
+              </Text>
+              <Pressable onPress={() => handleSubmit(onSuccess)} accessibilityRole="button">
+                {({ pressed }) => (
+                  <Text
+                    className={[
+                      'text-s2 font-sans text-primary-500',
+                      pressed ? 'opacity-50' : '',
+                    ].join(' ')}
+                  >
+                    {t('doctorForgotPassword.resendCode')}
+                  </Text>
+                )}
+              </Pressable>
+            </View>
           </View>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </TabletContainer>
     </SafeAreaView>
   );
 }
