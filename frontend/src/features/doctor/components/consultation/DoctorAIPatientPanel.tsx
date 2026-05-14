@@ -49,21 +49,21 @@ function SeverityBadge({ severity }: SeverityBadgeProps) {
   const styles =
     severity === 'high'
       ? {
-          container: 'bg-[#FDECEC]',
-          text: 'text-[#EE443F]',
-          label: 'High',
-        }
+        container: 'bg-[#FDECEC]',
+        text: 'text-[#EE443F]',
+        label: 'High',
+      }
       : severity === 'moderate'
         ? {
-            container: 'bg-[#FFF7E6]',
-            text: 'text-[#FFAA00]',
-            label: 'Moderate',
-          }
+          container: 'bg-[#FFF7E6]',
+          text: 'text-[#FFAA00]',
+          label: 'Moderate',
+        }
         : {
-            container: 'bg-[#EAF6EC]',
-            text: 'text-[#2D9F5D]',
-            label: 'Low',
-          };
+          container: 'bg-[#EAF6EC]',
+          text: 'text-[#2D9F5D]',
+          label: 'Low',
+        };
 
   return (
     <View className={`min-w-[54px] items-center justify-center rounded-[8px] px-2 py-1 ${styles.container}`}>
@@ -264,8 +264,8 @@ export function DoctorAIPatientPanel({
         {reportOpen && summary ? (
           <View className="absolute inset-0 z-50 bg-white">
             <SafeAreaView className="flex-1 bg-white" edges={['top', 'bottom']}>
-              <View className="h-[120px] bg-primary-50">
-                <View className="mt-[47px] h-[66px] flex-row items-center justify-between px-4">
+              <View className="bg-primary-50">
+                <View className="h-[66px] flex-row items-center justify-between px-4">
                   <HeaderBackButton
                     onPress={() => setReportOpen(false)}
                     accessibilityLabel={t('common.back')}
