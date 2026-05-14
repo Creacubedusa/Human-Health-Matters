@@ -76,8 +76,8 @@ export function DoctorPostSessionRecommendedTestsEditView({
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top', 'bottom']}>
-      <View className="h-[120px] bg-primary-50">
-        <View className="mt-[47px] h-[66px] flex-row items-center justify-between px-4">
+      <View className="bg-primary-50">
+        <View className="h-[66px] flex-row items-center justify-between px-4">
           <HeaderBackButton onPress={onCancel} accessibilityLabel={t('common.back')} />
           <Text className="text-[16px] font-semibold font-sans text-grey-900">Recommended Test</Text>
           <View className="h-[29px] w-[29px]" />

@@ -1,6 +1,5 @@
-import { useCallback } from 'react';
+import { useEffect } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
 import { toast } from '@shared/components/ui/toast';
 import { useDoctorConsultationStore } from '../store/doctorConsultation.store';
 import { useDoctorNuraAIStore } from '../store/doctorNuraAI.store';
@@ -212,59 +211,53 @@ export function useDoctorConsultation() {
   const store = useDoctorConsultationStore();
   const formattedTime = useDoctorCallTimer(store.callStatus === 'active');
 
-  useFocusEffect(
-    useCallback(() => {
-      async function boot() {
-        // Reset store so stale state from a previous session doesn't bleed in.
-        store.reset();
+  useEffect(() => {
+    async function boot() {
+      // Reset store so stale state from a previous session doesn't bleed in.
+      store.reset();
 
-        const appointmentId = params.appointmentId ? String(params.appointmentId) : '';
+      const appointmentId = params.appointmentId ? String(params.appointmentId) : '';
 
-        if (!appointmentId) {
-          store.setCallStatus('active');
-          return;
-        }
-
-        const appointment = useDoctorAppointmentsStore
-          .getState()
-          .appointments.find((item) => item.id === appointmentId);
-        const patient = findConsultationPatient(appointmentId, appointment?.patientName);
-        if (patient) {
-          store.setPatientSession(patient.name, initialsFromName(patient.name), appointmentId);
-        } else {
-          const fallbackName = appointment?.patientName?.trim() || 'Patient';
-          store.setPatientSession(fallbackName, initialsFromName(fallbackName), appointmentId);
-        }
-
-        try {
-          const join = await joinDoctorAppointmentVideo(appointmentId);
-          const meetingUrl = buildDailyJoinUrl(join.roomUrl, join.token);
-          store.setMeetingUrl(meetingUrl);
-          store.setCallStatus('active');
-        } catch (e: unknown) {
-          const msg = String(
-            (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-            (e as Error)?.message ?? '',
-          );
-          if (msg.includes('too_early_to_join')) {
-            toast.info('Too early to join. Try closer to the appointment time.');
-          } else if (msg.includes('too_late_to_join')) {
-            toast.warning('This appointment is no longer joinable.');
-          } else {
-            toast.error('Unable to join call. Please try again.');
-          }
-          store.setCallStatus('active');
-        }
+      if (!appointmentId) {
+        store.setCallStatus('active');
+        return;
       }
 
-      void boot();
+      const appointment = useDoctorAppointmentsStore
+        .getState()
+        .appointments.find((item) => item.id === appointmentId);
+      const patient = findConsultationPatient(appointmentId, appointment?.patientName);
+      if (patient) {
+        store.setPatientSession(patient.name, initialsFromName(patient.name), appointmentId);
+      } else {
+        const fallbackName = appointment?.patientName?.trim() || 'Patient';
+        store.setPatientSession(fallbackName, initialsFromName(fallbackName), appointmentId);
+      }
 
-      return () => {
-        // Cleanup on blur/unmount — reset so next focus starts fresh
-        store.reset();
-      };
-    }, []),
-  );
+      try {
+        const join = await joinDoctorAppointmentVideo(appointmentId);
+        const meetingUrl = buildDailyJoinUrl(join.roomUrl, join.token);
+        store.setMeetingUrl(meetingUrl);
+        store.setCallStatus('active');
+      } catch (e: unknown) {
+        const msg = String(
+          (e as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+          (e as Error)?.message ?? '',
+        );
+        if (msg.includes('too_early_to_join')) {
+          toast.info('Too early to join. Try closer to the appointment time.');
+        } else if (msg.includes('too_late_to_join')) {
+          toast.warning('This appointment is no longer joinable.');
+        } else {
+          toast.error('Unable to join call. Please try again.');
+        }
+        store.setCallStatus('active');
+      }
+    }
+
+    void boot();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.appointmentId]);
 
   function toggleMute() { store.setMuted(!store.muted); }
   function toggleVideo() { store.setVideoOn(!store.videoOn); }

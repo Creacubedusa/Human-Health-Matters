@@ -27,8 +27,8 @@ export function TabletContainer({
     const { width } = useWindowDimensions();
 
     if (width < TABLET_BREAKPOINT) {
-        // Phone — no wrapper, render as-is
-        return <>{children}</>;
+        // Phone — full width, just a flex container for proper absolute positioning
+        return <View className={`flex-1 ${className}`}>{children}</View>;
     }
 
     // Tablet — center content with max width

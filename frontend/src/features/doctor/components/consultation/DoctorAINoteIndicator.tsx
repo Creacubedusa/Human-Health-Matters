@@ -16,7 +16,7 @@ export function DoctorAINoteIndicator({ active }: DoctorAINoteIndicatorProps) {
 
   return (
     <Pressable
-      className="absolute top-14 left-4"
+      className="absolute top-24 left-4"
       onPress={() => setExpanded((prev) => !prev)}
       accessibilityRole="button"
       accessibilityLabel={t('consultation.aiNoteActive')}
