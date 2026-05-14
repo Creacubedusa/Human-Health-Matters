@@ -7,6 +7,7 @@ import { Button } from '@shared/components/ui/Button';
 import { Input } from '@shared/components/ui/Input';
 import { primitiveColors } from '@design/tokens';
 import { useDoctorSetPassword } from '../hooks/useDoctorSetPassword';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 
 export interface DoctorSetPasswordViewProps {
   onSuccess: () => void;
@@ -51,102 +52,104 @@ export function DoctorSetPasswordView({ onSuccess }: DoctorSetPasswordViewProps)
         </View>
       </View>
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <View className="flex-1 px-4 pt-[148px] justify-between pb-[281px]">
-          <View className="gap-8">
-            <View className="gap-2">
-              <Text className="text-h4 font-semibold font-sans text-grey-900">
-                {t('doctorSetPassword.title')}
-              </Text>
-              <Text className="text-b2 font-sans text-grey-500">
-                {t('doctorSetPassword.subtitle')}
-              </Text>
-            </View>
+      <TabletContainer>
+        <KeyboardAvoidingView
+          className="flex-1"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View className="flex-1 px-4 pt-[148px] justify-between pb-[281px]">
+            <View className="gap-8">
+              <View className="gap-2">
+                <Text className="text-h4 font-semibold font-sans text-grey-900">
+                  {t('doctorSetPassword.title')}
+                </Text>
+                <Text className="text-b2 font-sans text-grey-500">
+                  {t('doctorSetPassword.subtitle')}
+                </Text>
+              </View>
 
-            <View className="gap-4">
-              <Input
-                placeholder={t('doctorSetPassword.newPasswordPlaceholder')}
-                value={form.newPassword}
-                onChangeText={(value) => handleChange('newPassword', value)}
-                secureTextEntry={!showNewPassword}
-                status={errors.newPassword ? 'error' : 'default'}
-                helperText={errors.newPassword ? t(errors.newPassword) : undefined}
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType="next"
-                disabled={isLoading}
-                iconRight={
-                  <Pressable onPress={toggleShowNewPassword} accessibilityRole="button">
-                    <Ionicons
-                      name={showNewPassword ? 'eye-off-outline' : 'eye-outline'}
-                      size={24}
-                      color={primitiveColors['grey-400']}
-                    />
-                  </Pressable>
+              <View className="gap-4">
+                <Input
+                  placeholder={t('doctorSetPassword.newPasswordPlaceholder')}
+                  value={form.newPassword}
+                  onChangeText={(value) => handleChange('newPassword', value)}
+                  secureTextEntry={!showNewPassword}
+                  status={errors.newPassword ? 'error' : 'default'}
+                  helperText={errors.newPassword ? t(errors.newPassword) : undefined}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="next"
+                  disabled={isLoading}
+                  iconRight={
+                    <Pressable onPress={toggleShowNewPassword} accessibilityRole="button">
+                      <Ionicons
+                        name={showNewPassword ? 'eye-off-outline' : 'eye-outline'}
+                        size={24}
+                        color={primitiveColors['grey-400']}
+                      />
+                    </Pressable>
+                  }
+                />
+
+                <Input
+                  placeholder={t('doctorSetPassword.confirmPasswordPlaceholder')}
+                  value={form.confirmPassword}
+                  onChangeText={(value) => handleChange('confirmPassword', value)}
+                  secureTextEntry={!showConfirmPassword}
+                  status={errors.confirmPassword ? 'error' : 'default'}
+                  helperText={errors.confirmPassword ? t(errors.confirmPassword) : undefined}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  disabled={isLoading}
+                  iconRight={
+                    <Pressable onPress={toggleShowConfirmPassword} accessibilityRole="button">
+                      <Ionicons
+                        name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+                        size={24}
+                        color={
+                          errors.confirmPassword
+                            ? primitiveColors['red-500']
+                            : primitiveColors['grey-400']
+                        }
+                      />
+                    </Pressable>
+                  }
+                />
+              </View>
+
+              {status === 'error' && (
+                <Alert
+                  status="error"
+                  variant="outline"
+                  description={t('doctorSetPassword.errors.submitFailed')}
+                />
+              )}
+
+              <Button
+                label={t('doctorSetPassword.changePassword')}
+                onPress={() => handleSubmit(onSuccess)}
+                variant="filled"
+                size="large"
+                fullWidth
+                disabled={isDisabled}
+                iconLeft={
+                  isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined
                 }
               />
-
-              <Input
-                placeholder={t('doctorSetPassword.confirmPasswordPlaceholder')}
-                value={form.confirmPassword}
-                onChangeText={(value) => handleChange('confirmPassword', value)}
-                secureTextEntry={!showConfirmPassword}
-                status={errors.confirmPassword ? 'error' : 'default'}
-                helperText={errors.confirmPassword ? t(errors.confirmPassword) : undefined}
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType="done"
-                disabled={isLoading}
-                iconRight={
-                  <Pressable onPress={toggleShowConfirmPassword} accessibilityRole="button">
-                    <Ionicons
-                      name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
-                      size={24}
-                      color={
-                        errors.confirmPassword
-                          ? primitiveColors['red-500']
-                          : primitiveColors['grey-400']
-                      }
-                    />
-                  </Pressable>
-                }
-              />
             </View>
 
-            {status === 'error' && (
-              <Alert
-                status="error"
-                variant="outline"
-                description={t('doctorSetPassword.errors.submitFailed')}
-              />
-            )}
-
-            <Button
-              label={t('doctorSetPassword.changePassword')}
-              onPress={() => handleSubmit(onSuccess)}
-              variant="filled"
-              size="large"
-              fullWidth
-              disabled={isDisabled}
-              iconLeft={
-                isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined
-              }
-            />
+            <View className="flex-row justify-center items-center">
+              <Text className="text-b1 font-sans text-grey-900">
+                {t('doctorSetPassword.noCode')}{' '}
+              </Text>
+              <Text className="text-s2 font-sans text-primary-500">
+                {t('doctorSetPassword.resendCode')}
+              </Text>
+            </View>
           </View>
-
-          <View className="flex-row justify-center items-center">
-            <Text className="text-b1 font-sans text-grey-900">
-              {t('doctorSetPassword.noCode')}{' '}
-            </Text>
-            <Text className="text-s2 font-sans text-primary-500">
-              {t('doctorSetPassword.resendCode')}
-            </Text>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

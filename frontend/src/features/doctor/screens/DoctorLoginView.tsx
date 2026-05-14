@@ -17,6 +17,7 @@ import { PhoneInput } from '@shared/components/ui/PhoneInput';
 import { primitiveColors } from '@design/tokens';
 import type { DoctorLoginMethod } from '../types/doctor.types';
 import { useDoctorLogin } from '../hooks/useDoctorLogin';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import { useState } from 'react';
 
 export interface DoctorLoginViewProps {
@@ -43,9 +44,9 @@ const METHOD_OPTIONS: {
   labelKey: string;
   icon: keyof typeof Ionicons.glyphMap;
 }[] = [
-  { method: 'email', labelKey: 'doctorLogin.methodEmail', icon: 'mail' },
-  { method: 'phone', labelKey: 'doctorLogin.methodPhone', icon: 'call-outline' },
-];
+    { method: 'email', labelKey: 'doctorLogin.methodEmail', icon: 'mail' },
+    { method: 'phone', labelKey: 'doctorLogin.methodPhone', icon: 'call-outline' },
+  ];
 
 function MethodSelector({
   selected,
@@ -150,139 +151,141 @@ export function DoctorLoginView({
         </View>
       </View>
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView
+      <TabletContainer>
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerClassName="px-4 pt-[37px] pb-10 gap-8"
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <View className="flex-row items-start justify-between">
-            <View className="gap-2 flex-1 mr-3 w-[208px]">
-              <Text className="text-h4 font-semibold font-sans text-grey-900">
-                {t('doctorLogin.title')}
-              </Text>
-              <Text className="text-b1 font-sans text-grey-500">
-                {t('doctorLogin.subtitle')}
-              </Text>
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-4 pt-[37px] pb-10 gap-8"
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View className="flex-row items-start justify-between">
+              <View className="gap-2 flex-1 mr-3 w-[208px]">
+                <Text className="text-h4 font-semibold font-sans text-grey-900">
+                  {t('doctorLogin.title')}
+                </Text>
+                <Text className="text-b1 font-sans text-grey-500">
+                  {t('doctorLogin.subtitle')}
+                </Text>
+              </View>
+              <MethodSelector selected={signInMethod} onSelect={setSignInMethod} />
             </View>
-            <MethodSelector selected={signInMethod} onSelect={setSignInMethod} />
-          </View>
 
-          <View className="gap-4">
-            {signInMethod === 'email' ? (
-              <Input
-                placeholder={t('doctorLogin.emailPlaceholder')}
-                value={form.email}
-                onChangeText={(value) => handleChange('email', value)}
-                onBlur={() => handleBlur('email')}
-                status={errors.email ? 'error' : 'default'}
-                helperText={errors.email ? t(errors.email) : undefined}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType="next"
-                disabled={isLoading}
-              />
-            ) : (
-              <PhoneInput
-                value={form.phone}
-                onChangeText={(value) => handleChange('phone', value)}
-                onChangeCountryCode={(code) => handleChange('phoneCountryCode', code)}
-                onBlur={() => handleBlur('phone')}
-                status={errors.phone ? 'error' : 'default'}
-                helperText={errors.phone ? t(errors.phone) : undefined}
-                placeholder={t('doctorLogin.phonePlaceholder')}
-                disabled={isLoading}
+            <View className="gap-4">
+              {signInMethod === 'email' ? (
+                <Input
+                  placeholder={t('doctorLogin.emailPlaceholder')}
+                  value={form.email}
+                  onChangeText={(value) => handleChange('email', value)}
+                  onBlur={() => handleBlur('email')}
+                  status={errors.email ? 'error' : 'default'}
+                  helperText={errors.email ? t(errors.email) : undefined}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="next"
+                  disabled={isLoading}
+                />
+              ) : (
+                <PhoneInput
+                  value={form.phone}
+                  onChangeText={(value) => handleChange('phone', value)}
+                  onChangeCountryCode={(code) => handleChange('phoneCountryCode', code)}
+                  onBlur={() => handleBlur('phone')}
+                  status={errors.phone ? 'error' : 'default'}
+                  helperText={errors.phone ? t(errors.phone) : undefined}
+                  placeholder={t('doctorLogin.phonePlaceholder')}
+                  disabled={isLoading}
+                />
+              )}
+
+              <View className="gap-2">
+                <Input
+                  placeholder={t('doctorLogin.passwordPlaceholder')}
+                  value={form.password}
+                  onChangeText={(value) => handleChange('password', value)}
+                  onBlur={() => handleBlur('password')}
+                  secureTextEntry={!showPassword}
+                  status={errors.password ? 'error' : 'default'}
+                  helperText={errors.password ? t(errors.password) : undefined}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  disabled={isLoading}
+                  iconRight={
+                    <Pressable
+                      onPress={toggleShowPassword}
+                      accessibilityRole="button"
+                      accessibilityLabel={
+                        showPassword
+                          ? t('doctorLogin.hidePassword')
+                          : t('doctorLogin.showPassword')
+                      }
+                    >
+                      <Ionicons
+                        name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                        size={24}
+                        color={primitiveColors['grey-400']}
+                      />
+                    </Pressable>
+                  }
+                />
+
+                <View className="items-end">
+                  <Pressable
+                    onPress={onForgotPassword}
+                    accessibilityRole="link"
+                    disabled={isLoading}
+                  >
+                    <Text className="text-btn-medium font-sans text-primary-500">
+                      {t('doctorLogin.forgotPassword')}
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+
+            {status === 'error' && (
+              <Alert
+                status="error"
+                variant="outline"
+                description={t('doctorLogin.errors.submitFailed')}
               />
             )}
 
-            <View className="gap-2">
-              <Input
-                placeholder={t('doctorLogin.passwordPlaceholder')}
-                value={form.password}
-                onChangeText={(value) => handleChange('password', value)}
-                onBlur={() => handleBlur('password')}
-                secureTextEntry={!showPassword}
-                status={errors.password ? 'error' : 'default'}
-                helperText={errors.password ? t(errors.password) : undefined}
-                autoCapitalize="none"
-                autoCorrect={false}
-                returnKeyType="done"
-                disabled={isLoading}
-                iconRight={
-                  <Pressable
-                    onPress={toggleShowPassword}
-                    accessibilityRole="button"
-                    accessibilityLabel={
-                      showPassword
-                        ? t('doctorLogin.hidePassword')
-                        : t('doctorLogin.showPassword')
-                    }
-                  >
-                    <Ionicons
-                      name={showPassword ? 'eye-off-outline' : 'eye-outline'}
-                      size={24}
-                      color={primitiveColors['grey-400']}
-                    />
-                  </Pressable>
-                }
-              />
-
-              <View className="items-end">
-                <Pressable
-                  onPress={onForgotPassword}
-                  accessibilityRole="link"
-                  disabled={isLoading}
-                >
-                  <Text className="text-btn-medium font-sans text-primary-500">
-                    {t('doctorLogin.forgotPassword')}
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-
-          {status === 'error' && (
-            <Alert
-              status="error"
-              variant="outline"
-              description={t('doctorLogin.errors.submitFailed')}
+            <Button
+              label={t('doctorLogin.logIn')}
+              onPress={() => handleSubmit(onSuccess)}
+              variant="filled"
+              size="large"
+              fullWidth
+              disabled={isDisabled}
+              iconLeft={isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
             />
-          )}
 
-          <Button
-            label={t('doctorLogin.logIn')}
-            onPress={() => handleSubmit(onSuccess)}
-            variant="filled"
-            size="large"
-            fullWidth
-            disabled={isDisabled}
-            iconLeft={isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
-          />
-
-          <View className="flex-row justify-center items-center pt-[167px]">
-            <Text className="text-b1 font-sans text-grey-900">
-              {t('doctorLogin.noAccount')}{' '}
-            </Text>
-            <Pressable onPress={onSignUp} accessibilityRole="button" disabled={isLoading}>
-              {({ pressed }) => (
-                <Text
-                  className={[
-                    'text-s2 font-sans text-primary-500',
-                    pressed ? 'opacity-50' : '',
-                  ].join(' ')}
-                >
-                  {t('doctorLogin.signUp')}
-                </Text>
-              )}
-            </Pressable>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+            <View className="flex-row justify-center items-center pt-[167px]">
+              <Text className="text-b1 font-sans text-grey-900">
+                {t('doctorLogin.noAccount')}{' '}
+              </Text>
+              <Pressable onPress={onSignUp} accessibilityRole="button" disabled={isLoading}>
+                {({ pressed }) => (
+                  <Text
+                    className={[
+                      'text-s2 font-sans text-primary-500',
+                      pressed ? 'opacity-50' : '',
+                    ].join(' ')}
+                  >
+                    {t('doctorLogin.signUp')}
+                  </Text>
+                )}
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

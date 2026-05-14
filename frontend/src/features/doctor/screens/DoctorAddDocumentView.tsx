@@ -9,6 +9,7 @@ import { Input } from '@shared/components/ui/Input';
 import { UploadInput } from '@shared/components/ui/UploadInput';
 import { ProfileHeader } from '@features/patient/components/profile/ProfileHeader';
 import { useDoctorPatientsStore } from '../store/doctorPatients.store';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import type { DoctorReportDraft } from '../types/doctor.types';
 
 export interface DoctorAddDocumentViewProps {
@@ -54,48 +55,50 @@ export function DoctorAddDocumentView({ patientId }: DoctorAddDocumentViewProps)
         onBack={() => router.back()}
       />
 
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView
+      <TabletContainer>
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerClassName="px-4 pt-6 pb-32 gap-4"
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          {errorKey ? <Alert status="error" variant="outline" description={t(errorKey)} /> : null}
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-4 pt-6 pb-32 gap-4"
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            {errorKey ? <Alert status="error" variant="outline" description={t(errorKey)} /> : null}
 
-          <Input
-            label={t('doctorPatients.form.documentTitle')}
-            value={form.title}
-            onChangeText={(value) => updateField('title', value)}
-          />
-          <Input
-            label={t('doctorPatients.form.documentCategory')}
-            value={form.category}
-            onChangeText={(value) => updateField('category', value)}
-          />
-          <UploadInput
-            label={t('doctorPatients.form.documentFile')}
-            value={form.fileUri}
-            onChange={(uri) => updateField('fileUri', uri)}
-            placeholder={t('doctorPatients.form.documentUploadPlaceholder')}
-            loadingLabel={t('doctorPatients.form.uploading')}
-          />
-        </ScrollView>
-      </KeyboardAvoidingView>
+            <Input
+              label={t('doctorPatients.form.documentTitle')}
+              value={form.title}
+              onChangeText={(value) => updateField('title', value)}
+            />
+            <Input
+              label={t('doctorPatients.form.documentCategory')}
+              value={form.category}
+              onChangeText={(value) => updateField('category', value)}
+            />
+            <UploadInput
+              label={t('doctorPatients.form.documentFile')}
+              value={form.fileUri}
+              onChange={(uri) => updateField('fileUri', uri)}
+              placeholder={t('doctorPatients.form.documentUploadPlaceholder')}
+              loadingLabel={t('doctorPatients.form.uploading')}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
 
-      <View className="absolute bottom-0 left-0 right-0 bg-white px-4 py-6 border-t border-grey-100">
-        <Button
-          label={submitting ? '' : t('doctorPatients.saveDocument')}
-          onPress={handleSubmit}
-          size="large"
-          fullWidth
-          disabled={submitting}
-          iconLeft={submitting ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
-        />
-      </View>
+        <View className="absolute bottom-0 left-0 right-0 bg-white px-4 py-6 border-t border-grey-100">
+          <Button
+            label={submitting ? '' : t('doctorPatients.saveDocument')}
+            onPress={handleSubmit}
+            size="large"
+            fullWidth
+            disabled={submitting}
+            iconLeft={submitting ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
+          />
+        </View>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

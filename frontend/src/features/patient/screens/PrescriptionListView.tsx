@@ -7,6 +7,7 @@ import { AppointmentBookingHeader } from '../components/booking/AppointmentBooki
 import { PrescriptionCard } from '../components/prescription/PrescriptionCard';
 import { PrescriptionFilterTabs } from '../components/prescription/PrescriptionFilterTabs';
 import { usePrescriptions } from '../hooks/usePrescriptions';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import type { PrescriptionFilter } from '../types/prescription.types';
 
 export interface PrescriptionListViewProps {
@@ -67,61 +68,63 @@ export function PrescriptionListView({ onBack, onSelectPrescription }: Prescript
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
       {header}
-      <ScrollView
-        contentContainerClassName="px-4 pt-6 pb-8 gap-8"
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void refresh()}
-            tintColor={primitiveColors['primary-500']}
-            colors={[primitiveColors['primary-500']]}
-          />
-        }
-      >
-        {/* Page title */}
-        <Text className="text-h5 font-semibold font-sans text-grey-900">
-          {t('prescription.headerTitle')}
-        </Text>
+      <TabletContainer>
+        <ScrollView
+          contentContainerClassName="px-4 pt-6 pb-8 gap-8"
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => void refresh()}
+              tintColor={primitiveColors['primary-500']}
+              colors={[primitiveColors['primary-500']]}
+            />
+          }
+        >
+          {/* Page title */}
+          <Text className="text-h5 font-semibold font-sans text-grey-900">
+            {t('prescription.headerTitle')}
+          </Text>
 
-        <View className="gap-4">
-          {/* Filter tabs */}
-          <PrescriptionFilterTabs
-            options={filterOptions}
-            activeValue={filter}
-            onChange={setFilter}
-          />
+          <View className="gap-4">
+            {/* Filter tabs */}
+            <PrescriptionFilterTabs
+              options={filterOptions}
+              activeValue={filter}
+              onChange={setFilter}
+            />
 
-          {/* Card list or empty state */}
-          {status === 'success' && filteredPrescriptions.length === 0 ? (
-            <View className="items-center justify-center py-16 gap-3">
-              <Text className="text-b2 font-semibold font-sans text-grey-900 text-center">
-                {t('prescription.emptyTitle')}
-              </Text>
-              <Text className="text-b3 font-sans text-grey-500 text-center">
-                {t('prescription.emptySubtitle')}
-              </Text>
-            </View>
-          ) : (
-            <View className="gap-7">
-              {filteredPrescriptions.map((item) => (
-                <PrescriptionCard
-                  key={item.id}
-                  item={item}
-                  labels={{
-                    ...cardLabels,
-                    refillLeft:
-                      item.refillsLeft === 1
-                        ? t('prescription.refillLeft_one', { count: item.refillsLeft })
-                        : t('prescription.refillLeft_other', { count: item.refillsLeft }),
-                  }}
-                  onPress={onSelectPrescription}
-                />
-              ))}
-            </View>
-          )}
-        </View>
-      </ScrollView>
+            {/* Card list or empty state */}
+            {status === 'success' && filteredPrescriptions.length === 0 ? (
+              <View className="items-center justify-center py-16 gap-3">
+                <Text className="text-b2 font-semibold font-sans text-grey-900 text-center">
+                  {t('prescription.emptyTitle')}
+                </Text>
+                <Text className="text-b3 font-sans text-grey-500 text-center">
+                  {t('prescription.emptySubtitle')}
+                </Text>
+              </View>
+            ) : (
+              <View className="gap-7">
+                {filteredPrescriptions.map((item) => (
+                  <PrescriptionCard
+                    key={item.id}
+                    item={item}
+                    labels={{
+                      ...cardLabels,
+                      refillLeft:
+                        item.refillsLeft === 1
+                          ? t('prescription.refillLeft_one', { count: item.refillsLeft })
+                          : t('prescription.refillLeft_other', { count: item.refillsLeft }),
+                    }}
+                    onPress={onSelectPrescription}
+                  />
+                ))}
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

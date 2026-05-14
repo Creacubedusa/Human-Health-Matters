@@ -8,6 +8,7 @@ import { PrescriptionFilterTabs } from '../components/prescription/PrescriptionF
 import { OrderCard } from '../components/order/OrderCard';
 import { OrderOverviewCard } from '../components/order/OrderOverviewCard';
 import { useOrders } from '../hooks/useOrders';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import type { OrderFilter } from '../types/order.types';
 
 export interface OrderListViewProps {
@@ -82,61 +83,63 @@ export function OrderListView({ onBack, onSelectOrder }: OrderListViewProps) {
   return (
     <SafeAreaView edges={['top', 'bottom']} className="flex-1 bg-surface">
       {header}
-      <ScrollView
-        contentContainerClassName="px-4 pt-3 pb-8 gap-4"
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={() => void refresh()}
-            tintColor={primitiveColors['primary-500']}
-            colors={[primitiveColors['primary-500']]}
+      <TabletContainer>
+        <ScrollView
+          contentContainerClassName="px-4 pt-3 pb-8 gap-4"
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => void refresh()}
+              tintColor={primitiveColors['primary-500']}
+              colors={[primitiveColors['primary-500']]}
+            />
+          }
+        >
+          {/* Overview card */}
+          <OrderOverviewCard
+            ongoingCount={ongoingCount}
+            completedCount={completedCount}
+            completionPercent={completionPercent}
+            labels={overviewLabels}
           />
-        }
-      >
-        {/* Overview card */}
-        <OrderOverviewCard
-          ongoingCount={ongoingCount}
-          completedCount={completedCount}
-          completionPercent={completionPercent}
-          labels={overviewLabels}
-        />
 
-        {/* Section title */}
-        <Text className="text-s1 font-semibold font-sans text-grey-900">
-          {t('order.sectionTitle')}
-        </Text>
+          {/* Section title */}
+          <Text className="text-s1 font-semibold font-sans text-grey-900">
+            {t('order.sectionTitle')}
+          </Text>
 
-        {/* Filter tabs */}
-        <PrescriptionFilterTabs
-          options={filterOptions}
-          activeValue={filter}
-          onChange={setFilter}
-        />
+          {/* Filter tabs */}
+          <PrescriptionFilterTabs
+            options={filterOptions}
+            activeValue={filter}
+            onChange={setFilter}
+          />
 
-        {/* Order list or empty state */}
-        {filteredOrders.length === 0 ? (
-          <View className="items-center justify-center py-16 gap-3">
-            <Text className="text-b2 font-semibold font-sans text-grey-900 text-center">
-              {t('order.emptyTitle')}
-            </Text>
-            <Text className="text-b3 font-sans text-grey-500 text-center">
-              {t('order.emptySubtitle')}
-            </Text>
-          </View>
-        ) : (
-          <View className="gap-4">
-            {filteredOrders.map((item) => (
-              <OrderCard
-                key={item.id}
-                item={item}
-                labels={cardLabels}
-                onPress={onSelectOrder}
-              />
-            ))}
-          </View>
-        )}
-      </ScrollView>
+          {/* Order list or empty state */}
+          {filteredOrders.length === 0 ? (
+            <View className="items-center justify-center py-16 gap-3">
+              <Text className="text-b2 font-semibold font-sans text-grey-900 text-center">
+                {t('order.emptyTitle')}
+              </Text>
+              <Text className="text-b3 font-sans text-grey-500 text-center">
+                {t('order.emptySubtitle')}
+              </Text>
+            </View>
+          ) : (
+            <View className="gap-4">
+              {filteredOrders.map((item) => (
+                <OrderCard
+                  key={item.id}
+                  item={item}
+                  labels={cardLabels}
+                  onPress={onSelectOrder}
+                />
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

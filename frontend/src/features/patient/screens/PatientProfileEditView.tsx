@@ -14,6 +14,7 @@ import type { ProfileEditErrors } from '../hooks/usePatientProfileOverview';
 import { usePatientProfileOverview } from '../hooks/usePatientProfileOverview';
 import type { ProfileOverviewForm } from '../types/profileOverview.types';
 import { ProfileHeader } from '../components/profile/ProfileHeader';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 
 export interface PatientProfileEditViewProps {
   onBack: () => void;
@@ -106,84 +107,86 @@ export function PatientProfileEditView({ onBack, onSaveComplete }: PatientProfil
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       {header}
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={120}
-      >
-        <ScrollView
+      <TabletContainer>
+        <KeyboardAvoidingView
           className="flex-1"
-          contentContainerClassName="px-4 pt-6 pb-36 gap-5"
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={120}
         >
-          <AvatarUpload
-            uri={form.avatarUri}
-            initials={form.name.slice(0, 1)}
-            onSelect={(uri) => update('avatarUri', uri)}
-          />
+          <ScrollView
+            className="flex-1"
+            contentContainerClassName="px-4 pt-6 pb-36 gap-5"
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+          >
+            <AvatarUpload
+              uri={form.avatarUri}
+              initials={form.name.slice(0, 1)}
+              onSelect={(uri) => update('avatarUri', uri)}
+            />
 
-          <Input
-            label={t('profileOverview.fullName')}
-            value={form.name}
-            onChangeText={(value) => update('name', value)}
-            status={errors.name ? 'error' : 'default'}
-            helperText={errors.name ? t(errors.name) : undefined}
-          />
+            <Input
+              label={t('profileOverview.fullName')}
+              value={form.name}
+              onChangeText={(value) => update('name', value)}
+              status={errors.name ? 'error' : 'default'}
+              helperText={errors.name ? t(errors.name) : undefined}
+            />
 
-          <SelectInput
-            label={t('profileOverview.gender')}
-            value={form.gender.toLowerCase()}
-            onChange={(value) => update('gender', value === 'female' ? 'Female' : value === 'male' ? 'Male' : 'Other')}
-            options={[
-              { label: t('profileOverview.genderFemale'), value: 'female' },
-              { label: t('profileOverview.genderMale'), value: 'male' },
-              { label: t('profileOverview.genderOther'), value: 'other' },
-            ]}
-            status={errors.gender ? 'error' : 'default'}
-            helperText={errors.gender ? t(errors.gender) : undefined}
-          />
+            <SelectInput
+              label={t('profileOverview.gender')}
+              value={form.gender.toLowerCase()}
+              onChange={(value) => update('gender', value === 'female' ? 'Female' : value === 'male' ? 'Male' : 'Other')}
+              options={[
+                { label: t('profileOverview.genderFemale'), value: 'female' },
+                { label: t('profileOverview.genderMale'), value: 'male' },
+                { label: t('profileOverview.genderOther'), value: 'other' },
+              ]}
+              status={errors.gender ? 'error' : 'default'}
+              helperText={errors.gender ? t(errors.gender) : undefined}
+            />
 
-          <Input
-            label={t('profileOverview.height')}
-            value={form.height}
-            onChangeText={(value) => update('height', value)}
-            status={errors.height ? 'error' : 'default'}
-            helperText={errors.height ? t(errors.height) : undefined}
-          />
+            <Input
+              label={t('profileOverview.height')}
+              value={form.height}
+              onChangeText={(value) => update('height', value)}
+              status={errors.height ? 'error' : 'default'}
+              helperText={errors.height ? t(errors.height) : undefined}
+            />
 
-          <Input
-            label={t('profileOverview.weight')}
-            value={form.weight}
-            onChangeText={(value) => update('weight', value)}
-            status={errors.weight ? 'error' : 'default'}
-            helperText={errors.weight ? t(errors.weight) : undefined}
-          />
+            <Input
+              label={t('profileOverview.weight')}
+              value={form.weight}
+              onChangeText={(value) => update('weight', value)}
+              status={errors.weight ? 'error' : 'default'}
+              helperText={errors.weight ? t(errors.weight) : undefined}
+            />
 
-          <DatePickerField
-            label={t('profileOverview.dateOfBirth')}
-            value={form.dateOfBirth}
-            onChange={(value) => update('dateOfBirth', value)}
-            placeholder={t('profileOverview.dobPlaceholder')}
-            status={errors.dateOfBirth ? 'error' : 'default'}
-            helperText={errors.dateOfBirth ? t(errors.dateOfBirth) : undefined}
-            maximumDate={new Date()}
-          />
-        </ScrollView>
+            <DatePickerField
+              label={t('profileOverview.dateOfBirth')}
+              value={form.dateOfBirth}
+              onChange={(value) => update('dateOfBirth', value)}
+              placeholder={t('profileOverview.dobPlaceholder')}
+              status={errors.dateOfBirth ? 'error' : 'default'}
+              helperText={errors.dateOfBirth ? t(errors.dateOfBirth) : undefined}
+              maximumDate={new Date()}
+            />
+          </ScrollView>
 
-        <View className="absolute bottom-0 left-0 right-0 bg-white h-[112px] px-4 pt-8">
-          <Button
-            label={saving ? '' : t('profileOverview.saveChanges')}
-            onPress={() => {
-              void handleSave();
-            }}
-            fullWidth
-            size="large"
-            disabled={saving}
-            iconLeft={saving ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
-          />
-        </View>
-      </KeyboardAvoidingView>
+          <View className="absolute bottom-0 left-0 right-0 bg-white h-[112px] px-4 pt-8">
+            <Button
+              label={saving ? '' : t('profileOverview.saveChanges')}
+              onPress={() => {
+                void handleSave();
+              }}
+              fullWidth
+              size="large"
+              disabled={saving}
+              iconLeft={saving ? <ActivityIndicator size="small" color="#ffffff" /> : undefined}
+            />
+          </View>
+        </KeyboardAvoidingView>
+      </TabletContainer>
     </SafeAreaView>
   );
 }

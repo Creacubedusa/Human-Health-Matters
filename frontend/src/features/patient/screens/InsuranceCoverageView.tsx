@@ -26,6 +26,7 @@ import { OutOfPocketCard } from '../components/insurance/OutOfPocketCard';
 import { StatusBanner } from '../components/insurance/StatusBanner';
 import { UhcProfileCard } from '../components/insurance/UhcProfileCard';
 import { VerificationErrorCard } from '../components/insurance/VerificationErrorCard';
+import { TabletContainer } from '@shared/components/ui/TabletContainer';
 import type { CoverageResult } from '../types/insuranceCoverage.types';
 
 interface InsuranceCoverageViewProps {
@@ -462,50 +463,52 @@ export function InsuranceCoverageView({
       {routeViewState !== 'content' ? (
         renderRouteState()
       ) : (
-        <KeyboardAvoidingView
-          className="flex-1"
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-          <View className="flex-1">
-            <ScrollView
-              className="flex-1"
-              contentContainerClassName={[
-                'px-4 gap-6',
-                showBottomActionBar ? 'pt-[28px] pb-40' : 'pb-16',
-              ].join(' ')}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-            >
-              {showScenarioSwitcher ? (
-                <CoverageScenarioSwitcher
-                  label={t('insuranceCoverage.devScenarioLabel')}
-                  helperText={t('insuranceCoverage.devScenarioHelper')}
-                  value={isNoInsuranceBranch ? noInsuranceScenarioId : insuredScenarioId}
-                  options={isNoInsuranceBranch ? NO_INSURANCE_SCENARIO_OPTIONS : INSURED_SCENARIO_OPTIONS}
-                  onChange={(value) => {
-                    if (isNoInsuranceBranch) {
-                      setNoInsuranceScenarioId(value as typeof noInsuranceScenarioId);
-                    } else {
-                      setInsuredScenarioId(value as typeof insuredScenarioId);
-                    }
-                  }}
+        <TabletContainer>
+          <KeyboardAvoidingView
+            className="flex-1"
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <View className="flex-1">
+              <ScrollView
+                className="flex-1"
+                contentContainerClassName={[
+                  'px-4 gap-6',
+                  showBottomActionBar ? 'pt-[28px] pb-40' : 'pb-16',
+                ].join(' ')}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
+                {showScenarioSwitcher ? (
+                  <CoverageScenarioSwitcher
+                    label={t('insuranceCoverage.devScenarioLabel')}
+                    helperText={t('insuranceCoverage.devScenarioHelper')}
+                    value={isNoInsuranceBranch ? noInsuranceScenarioId : insuredScenarioId}
+                    options={isNoInsuranceBranch ? NO_INSURANCE_SCENARIO_OPTIONS : INSURED_SCENARIO_OPTIONS}
+                    onChange={(value) => {
+                      if (isNoInsuranceBranch) {
+                        setNoInsuranceScenarioId(value as typeof noInsuranceScenarioId);
+                      } else {
+                        setInsuredScenarioId(value as typeof insuredScenarioId);
+                      }
+                    }}
+                  />
+                ) : null}
+
+                {renderContent()}
+              </ScrollView>
+
+              {showBottomActionBar ? (
+                <BottomActionBar
+                  primaryLabel={primaryActionLabel}
+                  onPrimaryPress={primaryAction}
+                  primaryDisabled={primaryActionDisabled}
+                  reasonMessage={primaryReasonMessage}
+                  secondaryActions={step === 'result' ? secondaryButtons : undefined}
                 />
               ) : null}
-
-              {renderContent()}
-            </ScrollView>
-
-            {showBottomActionBar ? (
-              <BottomActionBar
-                primaryLabel={primaryActionLabel}
-                onPrimaryPress={primaryAction}
-                primaryDisabled={primaryActionDisabled}
-                reasonMessage={primaryReasonMessage}
-                secondaryActions={step === 'result' ? secondaryButtons : undefined}
-              />
-            ) : null}
-          </View>
-        </KeyboardAvoidingView>
+            </View>
+          </KeyboardAvoidingView>
+        </TabletContainer>
       )}
     </SafeAreaView>
   );
