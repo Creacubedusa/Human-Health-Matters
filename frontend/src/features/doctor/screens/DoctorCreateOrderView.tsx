@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Alert } from '@shared/components/ui/Alert';
 import { Button } from '@shared/components/ui/Button';
@@ -30,14 +31,21 @@ export function DoctorCreateOrderView({ patientId, returnTo }: DoctorCreateOrder
   const { t } = useTranslation();
   const router = useRouter();
   const addOrder = useDoctorPatientsStore((state) => state.addOrder);
-  const updateDraftTests = useDoctorConsultationStore((state) => ({
-    add: state.addPostSessionRecommendedTest,
-    update: state.updatePostSessionRecommendedTest,
-    draft: state.postSessionDraft,
-  }));
+  const addPostSessionRecommendedTest = useDoctorConsultationStore((state) => state.addPostSessionRecommendedTest);
+  const updatePostSessionRecommendedTest = useDoctorConsultationStore((state) => state.updatePostSessionRecommendedTest);
+  const postSessionDraft = useDoctorConsultationStore((state) => state.postSessionDraft);
   const [form, setForm] = useState<DoctorOrderDraft>(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+
+  // Reset form state when screen is re-focused (cached tab screens don't remount)
+  useFocusEffect(
+    useCallback(() => {
+      setForm(INITIAL_FORM);
+      setSubmitting(false);
+      setErrorKey(null);
+    }, []),
+  );
 
   function updateField<K extends keyof DoctorOrderDraft>(key: K, value: DoctorOrderDraft[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -68,12 +76,12 @@ export function DoctorCreateOrderView({ patientId, returnTo }: DoctorCreateOrder
     }
     addOrder(patientId, form);
     if (returnTo === 'post-session-care-plan') {
-      if (updateDraftTests.draft) {
-        const blankTest = updateDraftTests.draft.recommendedTests.find((item) => !item.name.trim());
+      if (postSessionDraft) {
+        const blankTest = postSessionDraft.recommendedTests.find((item) => !item.name.trim());
         if (blankTest) {
-          updateDraftTests.update(blankTest.id, form.testName);
+          updatePostSessionRecommendedTest(blankTest.id, form.testName);
         } else {
-          updateDraftTests.add();
+          addPostSessionRecommendedTest();
           const latestDraft = useDoctorConsultationStore.getState().postSessionDraft;
           const latest = latestDraft?.recommendedTests[latestDraft.recommendedTests.length - 1];
           if (latest) {
